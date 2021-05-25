@@ -15,9 +15,9 @@ paradigm for decades.
 
 PATh brings together two entities with a strong history of supporting
 dHTC-enabled research: the Center for High Throughput Computing (CHTC) and the
-Open Science Grid (OSG) Consortium. The team that founded CHTC at University of
+<a href="http://www.opensciencegrid.org/">Open Science Grid (OSG)</a> Consortium. The team that founded CHTC at University of
 Wisconsin–Madison pioneered, in the mid 1990s, the concept and principles of
-HTC and has advanced and sustained the HTCondor Software Suite (HTCSS) ever
+HTC and has advanced and sustained the <a href="http://research.cs.wisc.edu/htcondor/">HTCondor Software Suite (HTCSS)</a> ever
 since. Roughly in parallel and driven by the needs of physics researchers, a
 diverse and multidisciplinary collaboration laid the foundation of the OSG in
 the late 1990s to develop, deploy, operate, and sustain a shared and global
