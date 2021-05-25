@@ -42,7 +42,7 @@ facilities, and active participation by developers in community email lists and
 workshops.  We recognize a key part of our translational research is to observe
 the end-user and administrator user experience. As such, our use activities will
 directly involve developers in the operation of a large, production dHTC
-infrastructure at CHTC to function as a living lab for the team to understand
+infrastructure at <a href="https://chtc.cs.wisc.edu/">CHTC</a> to function as a living lab for the team to understand
 first-hand the strengths and weaknesses of their work, as well as obtain
 feedback on the user experience.
 
