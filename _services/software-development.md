@@ -6,12 +6,13 @@ weight: 2
 excerpt_separator: <!--more-->
 ---
 
-The Software Development Team supports, sustains, and enhances the HTCondor
-Software Suite (HTCSS) to enable the potential of distributed High Throughput
+The Software Development Team supports, sustains, and enhances the 
+<a href="http://research.cs.wisc.edu/htcondor/">HTCondor Software Suite (HTCSS)</a> 
+to enable the potential of distributed High Throughput
 Computing. This suite of software tools includes HTCondor, components to build
 both on-premise HTCondor compute clusters for use by independent academic,
 commercial, and government campuses, and components to support the federation of
-processing and data resources across the Open Science Grid. 
+processing and data resources across the <a href="http://www.opensciencegrid.org/">Open Science Grid</a>. 
 <!--more-->
 
 Software Development Team activities balance the inherent tension between the
@@ -41,7 +42,7 @@ facilities, and active participation by developers in community email lists and
 workshops.  We recognize a key part of our translational research is to observe
 the end-user and administrator user experience. As such, our use activities will
 directly involve developers in the operation of a large, production dHTC
-infrastructure at CHTC to function as a living lab for the team to understand
+infrastructure at <a href="https://chtc.cs.wisc.edu/">CHTC</a> to function as a living lab for the team to understand
 first-hand the strengths and weaknesses of their work, as well as obtain
 feedback on the user experience.
 
