@@ -7,7 +7,7 @@ excerpt: |
     NSF to advance High Throughput Computing (HTC) and its impact on research and
     education. To achieve this goal, PATh operates a fabric of capacity services
     that ranges from Research Computing Facilitation, to Access Points capable of
-    managing distributed HTC workloads. Starting January 2022, PATh will add to its
+    managing distributed HTC workloads. Starting Spring 2022, PATh will add to its
     fabric of services support for capacity credit accounts.
 weight: 3
 published: true
@@ -20,7 +20,9 @@ and its impact on research and
 education. To achieve this goal, PATh operates a fabric of capacity services
 that range from Research Computing Facilitation, to Access Points capable of
 managing distributed HTC workloads. Starting January 2022, PATh will add 
-support for capacity credit accounts. These accounts will
+support for capacity credit accounts, with an NSF 
+[Pilot for the Allocation of High-Throughput Computing Resources](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp). 
+These accounts will
 provide dedicated HTC computing resources and storage capacity for scholars with 
 HTC workloads. NSF will deposit credit into these accounts
 when funding a proposal that includes a request for credits.
