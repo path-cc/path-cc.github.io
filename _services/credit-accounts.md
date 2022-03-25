@@ -19,7 +19,7 @@ project is funded by the NSF to advance
 and its impact on research and
 education. To achieve this goal, PATh operates a fabric of capacity services
 that range from Research Computing Facilitation, to Access Points capable of
-managing distributed HTC workloads. Starting January 2022, PATh will add 
+managing distributed HTC workloads. Starting Spring 2022, PATh will add 
 support for capacity credit accounts, with an NSF 
 [Pilot for the Allocation of High-Throughput Computing Resources](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp). 
 These accounts will
