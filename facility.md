@@ -16,7 +16,7 @@ description: The PATh facilities consist of dedicated, distributed computational
 ---
 
 
-The PATh team is constructing a dedicated, distributed computational resources composed of over 20,000 cores and 2 dozen A100 GPUs across 6 different sites.  This facility will be available to researchers starting in spring 2022.
+The PATh team is constructing a dedicated, distributed computational resources composed of over 20,000 cores and 2 dozen A100 GPUs across 6 different sites.  This facility will be available to researchers in a pilot program starting in spring 2022.
 
 **[Contact NSF now](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) to request credits for the PATh facility.**
 
