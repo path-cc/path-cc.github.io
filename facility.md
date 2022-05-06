@@ -16,21 +16,29 @@ description: The PATh facilities consist of dedicated, distributed computational
 ---
 
 
-The PATh team is constructing a dedicated, distributed computational resources composed of over 20,000 cores and 2 dozen A100 GPUs across 6 different sites.  This facility will be available to researchers in a pilot program starting in spring 2022.
+The PATh team is constructing a dedicated, distributed high-throughput computing system resource composed of over 20,000 cores and 2 dozen A100 GPUs across 6 different sites.  This facility will be available by summer 2002, and researchers are encouraged to get in touch ahead of that time to discuss their research projects to inform requests for credit requests.
 
-**[Contact NSF now](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) to request credits for the PATh facility.**
+## Requesting Credits on the PATh Facility
 
-## Using PATh Facilities
+Users of the facility can request [credit accounts](/services/credit-accounts/) directly from the NSF via the below mechanisms:
 
-Users of the facility will receive [credit accounts](/services/credit-accounts/) directly from the NSF which they can utilize to run high throughput computing workflows.  The NSF is making credits available through a number of mechanisms, including:
-
-
+- **2022 Dear Colleague Letter Pilot project**: For participating programs, the NSF [22-051 DCL](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) provides a mechanism for PIs of existing awards to email their program officer with a request for credits. 
+{: #dear-colleague-letter}
 - **Solicitations**: The 2021 [CSSI solicitation](https://www.nsf.gov/pubs/2021/nsf21617/nsf21617.pdf) included a mechanism to request credits as part of the project proposal. 
 {: #solicitations}
-- **2022 Dear Colleague Letter Pilot project**: For participating programs, the NSF [22-051 DCL](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) provides a mechanism where existing PIs can email their program officer with a request for credits. 
-{: #dear-colleague-letter}
 
-The PATh team is here to help!  As part of the consulting services offered to any researcher, our team can help you decompose your workload to ensembles of jobs and generate resource estimates for the various tasks in the ensemble.  Please reach out to [credit-accounts@path-cc.io](mailto:credit-accounts@path-cc.io) to initiate your consult.
+**[Contact NSF now](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) to discuss the credit request process for the PATh facility.**
+
+
+## Estimate your HTC Needs
+
+The PATh team is here to help!  As part of the consulting services offered to any researcher, our team can help you decompose your workload to ensembles of jobs and generate resource estimates for the various tasks in the ensemble.  Please reach out to [credit-accounts@path-cc.io](mailto:credit-accounts@path-cc.io) to initiate your consultation prior to submitting your request.
+
+The PATh system's HTC resource management (via HTCondor) is designed differently 
+than traditional HPC Clusters.  For example, PATh has more
+scheduling flexibility for large numbers of smaller jobs, such that larger jobs (multi-core, multi-GPU, high-memory) come with an increasing credit calculation.
+
+See our [Credit Accounts](/services/credit-accounts/) and [2022 Charge Listing](/credit-account-charges) pages for more details about relevant use cases, system features, and credit estimation to additionally inform your credit request.
 
 
 <div class="row justify-content-center py-3 pb-4">
