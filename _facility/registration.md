@@ -109,4 +109,4 @@ The process below describes how to upload a public key to the registration websi
 
 ## Get Help
 
-For questions regarding logging in or creating an account, contact us at  [support@opensciencegrid.org](mailto:support@opensciencegrid.org).
+For questions regarding logging in or creating an account, contact us at  [support@path-cc.io](mailto:support@path-cc.io).
