@@ -11,7 +11,7 @@
     - name: PATh for Organizations
       url: /#path-for-organizations
     - name: Software
-      url: /services/software-development/
+      url: /software/
 - name: Documentation
   id: documentation
   children:
