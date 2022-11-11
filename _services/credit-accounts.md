@@ -42,7 +42,7 @@ collection of [science stories](/news/htc-in-support-of-science/).
 
 ## FAQs
 
-##### What hardware resources are available through PATh credit accounts?
+### What hardware resources are available through PATh credit accounts?
 
 Dedicated PATh resources that power the capacity credit accounts consist of:
 - Compute servers with up to 128 AMD ‘Milan’ cores, 1.6TB of NVMe, and 512 GB RAM.
@@ -59,7 +59,7 @@ Given that the PATh system is designed for HTC, there is no inter-node networkin
 and multi-node (HPC) jobs are not supported. It is often possible to break up large jobs to run efficiently 
 with an HTC approach. See "What workloads run well on PATh resources?", below, for more details.
 
-##### Are PATh dedicated resources part of the Open Science Pool?
+### Are PATh dedicated resources part of the Open Science Pool?
 
 PATh dedicated resources are distinct from the [Open Science Pool (OSPool)](https://opensciencegrid.org/about/open_science_pool/), which is composed of in-kind and mostly opportunistic resources that can interrupt jobs at any time.
 
@@ -67,7 +67,7 @@ The _dedicated_ PATh-managed resources are funded by NSF and accessible via the 
 credit account system, such that PATh-managed resources support longer runtimes and larger jobs
 (in terms of number of CPU cores, RAM) than the OSPool's opportunitic resources support.
 
-##### Can I access other resources in combination with PATh resources?
+### Can I access other resources in combination with PATh resources?
 
 Workloads placed on a PATh Access Point can harness resources pools
 beyond credit-based dedicated resources, perhaps for different phases of an overall workflow.  For example, the [Open Science
@@ -79,7 +79,7 @@ While PATh resources explicitly support work that can be run with HTC approaches
 the integration of these other resources can allow phases within a workflow to 
 run on resources designed for other, non-HTC job requirements (e.g. multi-node HPC jobs).
 
-##### What workloads run well on PATh resources?
+### What workloads run well on PATh resources?
 
 Requests should be for workloads that are amenable to the distributed high
 throughput computing services provided by PATh. Work that can be run in the 
@@ -100,20 +100,20 @@ the following information:
 4.	Expected number and size of shared input files within an ensemble?  Which inputs are common across tasks within and across ensembles?
 5.	Number of different ensembles?
 
-##### What about Software?
+### What about Software?
 
 The dedicated PATh resources support the ability to execute software via Docker or Singularity
 containers or via portable, self-contained applications (e.g. statically-compiled binaries, conda environments, etc.). 
 While multi-node jobs are not supported by PATh hardware, MPI-dependent software can be supported via containers
 (to achieve multi-core parallelism within a single node).
 
-##### How can I “test drive” the HTC services?
+### How can I “test drive” the HTC services?
 
 A strength of the PATh Access Point is that users can get started without any
 credits by testing work on the [OSPool’s](https://opensciencegrid.org/about/open_science_pool/) opportunistic resources, via the OSG Connect Service and Access Points.  We encourage
 users to contact [support@osg-htc.org](mailto:support@osg-htc.org) to get started on an Access Point, today!
 
-##### What Data Services does PATh provide?
+### What Data Services does PATh provide?
 
 Users place data at the PATh Access Point; this can be moved to computing by:
 - Specifying the data as input or output to jobs, triggering a built-in file transfer mechanism, or
@@ -123,7 +123,7 @@ Users place data at the PATh Access Point; this can be moved to computing by:
 
 Given the distributed nature of the hardware, there is no global shared filesystem.
 
-##### Can I get help estimating my HTC needs?
+### Can I get help estimating my HTC needs?
 
 PATh Research Computing Facilitators are available to help explain the above concepts
 and discuss how a workload can be adapted to run on PATh.  Please contact
@@ -136,7 +136,7 @@ scheduling flexibility for smaller jobs, resulting in an escalating charge in cr
 
 Please see our [2022 Charge Listing](/credit-account-charges) for more details.
 
-##### Where is the dedicated hardware located?
+### Where is the dedicated hardware located?
 
 There are six locations that have dedicated hardware:
 
