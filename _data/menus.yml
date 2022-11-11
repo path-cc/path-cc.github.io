@@ -2,15 +2,16 @@ main:
   - name: "Services"
     url: "/services/"
     weight: 2
+  - name: "Software"
+    url: "/software"
+    weight: 3
   - name: "News"
     url: "/news/"
     weight: 4
   - name: "Events"
     url: "/events/"
     weight: 5
-  - name: "Contact"
-    url: "/contact/"
-    weight: 7
+
 
 footer:
   - name: "Home"

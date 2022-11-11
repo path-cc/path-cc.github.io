@@ -9,10 +9,7 @@ google_analytics_id: G-0CCSDQV212
 homepage:
   show_alert: true
   show_call_box: true
-logo:
-  mobile: 'images/logo/Logo_Round_Med.png'
-  desktop: 'images/logo/Logo_Round_Med.png'
-  desktop_height: "70px"
+logo: '/images/logo/Logo_Round_Med.png'
 footer:
   copyright_text: 'This project is supported by National Science Foundation under Cooperative Agreement OAC-2030508. Any opinions, findings, conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation.'
 
@@ -96,3 +93,4 @@ sass:
 plugins:
   - jekyll-environment-variables
   - jekyll-sitemap
+  - jekyll-seo-tag

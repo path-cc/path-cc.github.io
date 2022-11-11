@@ -9,7 +9,7 @@ excerpt: |
     coordination services evolves. To facilitate ingestion of ideas into HTCSS,
     and services into FoCaS, the Global Infrastructure Lab (GIL) tests and
     evaluate infrastructure software from inside and outside the partnership.
-weight: 4
+weight: 6
 ---
 
 {{ page.excerpt }}

@@ -1,0 +1,199 @@
+---
+layout: default
+title: Partnership to Advance Throughput Computing
+description: Partnership to Advance Throughput Computing
+intro_image_CHTC: "images/CHTC-centered.svg"
+intro_image_OSG: "images/logo/OSG-logo.svg"
+intro_image_absolute: true
+intro_image_hide_on_mobile: true
+---
+
+<div class="py-1 mb-1 bg-primary">
+    <div class="container-lg py-1">
+        <a href="/facility#accessing-the-path-facility" class="text-decoration-none border border-1 bg-light rounded py-1 p-2 me-2">Apply for Compute Credits</a><span class="text-light">Compute credits available to researchers, apply now to access the <a class="text-light text-decoration-underline" href="/facility#accessing-the-path-facility">PATh facility</a></span>
+    </div>
+</div>
+{% include layout/header.html logo=layout.logo header_class=page.header_class %}
+<main>
+    <div id="hero" class="">
+        <div class="container-lg py-4">
+            <div class="row justify-content-center mb-6">
+                <div class="col-12 col-md-12 col-lg-10 col-xxl-8">
+                    <div class="p-2">
+                        <h1 class="text-center fw-normal pb-4">Bring the power of throughput<br> computing to your science with <img height="32px" class="mb-2" src="images/logo/PATh_Logo_Primary_Color_Just_PATh.png"></h1>
+                        <div class="row gx-2 pb-2">
+                            <div class="col-12 col-sm-6">
+                                <div class="p-2 border-end d-flex flex-column">
+                                    <h3 class="fw-normal pb-2 text-center">If you are a <b>Researcher</b></h3>
+                                    <div class="mx-auto">
+                                        <h5 class="">Apply for <a href="/facility#accessing-the-path-facility" class="btn btn-outline-primary text-decoration-none">PATh Compute Credits</a></h5>
+                                        <h5 class="">or Sign up for <a class="btn  btn-outline-primary text-decoration-none" href="https://connect.osg-htc.org/signup">OSG-Connect</a></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="p-2">
+                                    <h3 class="fw-normal text-center pb-2">If you are an <b>Organization</b></h3>
+                                    <h5 class="text-center pt-sm-4">Join us at <a href="#path-for-organizations" class="btn btn-outline-primary text-decoration-none">PATh for Organizations</a></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-center"><a href="/software" class="btn btn-outline-primary text-decoration-none">Our Software</a></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-lg my-5">
+        <div id="path-for-researchers" class="row my-3">
+            <div class="col-12 col-md-4 col-xxl-4">
+                <img class="d-none d-md-block img-fluid" src="{{ 'images/PATh_Researchers.svg' | relative_url}}"/>
+            </div>
+            <div class="col-12 col-md-8 col-xxl-8 d-flex">
+                <div class="my-auto d-flex flex-column">
+                    <h3 class="header-bar">
+                        For Researchers
+                    </h3>
+                    <p class="fs-5">
+                        <b>New!</b> The <a href="/facility/#using-path-facilities">PATh facility</a> provides
+                        compute capacity made available for researchers by the NSF through request. The dedicated capacity
+                        allows researchers to run HTC workloads on purpose built hardware from the convenience of a
+                        dedicated Access Point.
+                        <div>
+                            <a class="btn  btn-outline-primary text-decoration-none" href="https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp">Apply for Compute Credits</a>
+                        </div>
+                    </p>
+                    <p class="fs-5">
+                        US-affiliated researchers can use an OSG-Connect Access Point to harness the capacity of the
+                        <a href="https://opensciencegrid.org/about/open_science_pool/">Open Science Pool</a>. Sign up now
+                        and join the hundreds of <a href="https://osg-htc.org/projects">projects</a> using the OSPool!
+                        <div>
+                            <a class="btn  btn-outline-primary text-decoration-none" href="https://connect.osg-htc.org/">Sign up for OSG-Connect</a>
+                        </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="path-for-organizations" class="row my-5">
+            <div class="col-12 col-lg-8 col-xxl-8 d-flex">
+                <div class="my-auto d-flex flex-column">
+                    <h3 class="text-start text-lg-end header-bar">
+                        For Organizations
+                    </h3>
+                    <p class="fs-5 text-start text-lg-end">
+                        Build local HTC capacity with the <a href="https://htcondor.org">HTCondor Software Suite</a>.
+                        Share computing capacity, data, and software between collaborators and even across continents.
+                    </p>
+                    <p class="fs-5 text-start text-lg-end">
+                        Share campus computing and data resources into the
+                        <a href="https://opensciencegrid.org/campus-cyberinfrastructure.html">US national cyberinfrastructure
+                            </a> via OSG. Contact our support staff to collaborate on the right options for your desired outcomes.
+                        <div class="d-flex">
+                            <a class="ms-lg-auto btn  btn-outline-primary text-decoration-none" href="mailto:support@opensciencegrid.org">Contact Support Staff</a>
+                        </div>
+                    </p>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 col-xxl-4 d-none d-lg-block">
+                <img class="d-none d-md-block img-fluid" src="{{ 'images/University_And_Organization.svg' | relative_url}}"/>
+            </div>
+        </div>
+    </div>
+    <div class="container-lg">
+        {% include text-hr.html text="News & Events" %}
+        <div class="row">
+            {% include get/articles.liquid %}
+            <div class="col-12 col-md-6 col-lg-4">
+                {% for article in articles limit: 1 %}
+                    {% include highlighted-title-image-text-card.html
+                        internal_href=article.url
+                        image=article.image.path
+                        alt=article.image.alt
+                        title=article.title
+                        desc=article.excerpt
+                        class="rounded p-2 pt-1 shadow-sm hover-shadow bg-light"
+                    %}
+                {% endfor %}
+            </div>
+            {% include get/future_events.html %}
+            <div class="col-12 col-md-6 col-lg-4 my-3 my-md-0">
+                {% if future_events.length != 0  %}
+
+                    <h2 class="text-primary pb-1">
+                        Upcoming Events
+                    </h2>
+                    {% for event in future_events limit:2 %}
+                        <div>
+                            {% include event/event-card.html event=event %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="row pt-md-0 pt-3">
+                        {% for article in articles limit: 2 offset: continue %}
+                        <div class="col-12">
+                            {% include light-title-date-desc-card.html
+                            title=article.title
+                            href=article.url
+                            desc=article.excerpt
+                            %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 d-none d-lg-block">
+                <a class="twitter-timeline" data-height="600" data-dnt="true" data-theme="light" href="https://twitter.com/opensciencegrid/lists/1508877823339073540?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </div>
+        {% include text-hr.html text="About" %}
+        <div class="row mb-4">
+            <div class="col-12 col-lg-4 order-2">
+                <h2 class="text-primary  pb-1">Partners</h2>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-sm-6 col-lg-12">
+                        {% include title-image-card.html
+                            image="images/CHTC-centered.svg"
+                            alt="Center for High Throughput Computing Logo"
+                            href="https://chtc.cs.wisc.edu/"
+                        %}
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-12">
+                        {% include title-image-card.html
+                            image="images/logo/OSG-logo.svg"
+                            alt="Open Science Grid Logo"
+                            href="https://opensciencegrid.org/"
+                        %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-8 mb-4 order-1">
+                <div class="row justify-content-start">
+                    {% for service in site.services %}
+                    <div class="col-12 col-md-6">
+                        <div class="service service-summary">
+                            <div class="service-content">
+                                <h2 class="service-title">
+                                    <a href="{{site.baseurl}}{{ service.url }}">{{ service.title }}</a>
+                                </h2>
+                                <p>{{ service.excerpt | markdownify | strip_html}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <a class="button button-primary" href="{{site.baseurl}}/services">View All Services</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% include layout/footer.html %}
+{% include layout/sub-footer.html %}
+<script type="text/javascript" src="{{ '/assets/js/scripts.js' | relative_url }}"></script>
+{% include google-analytics.html %}

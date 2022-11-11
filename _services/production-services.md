@@ -8,7 +8,7 @@ excerpt: |
   Management_ services provide for serving and pre-placing data in support of
   workflows. Additionally, services such as identity management, monitoring, and
   accounting enhance and secure the fabric.
-weight: 3
+weight: 5
 ---
 
 {{ page.excerpt }}

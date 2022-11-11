@@ -8,9 +8,39 @@ layout: container-default
   </div>
 </div>
 
-{% capture content %}
-<div class="service service-single">
-  <div>{{content}}</div>
+
+<div class="row justify-content-between">
+  <div class="col-12 col-xl-8 col-lg-9 col-md-10">
+    <div class="service service-single">
+      <div class="fs-5">{{content}}</div>
+    </div>
+  </div>
+  <div class="col-xl-3 d-none d-xl-block bg-light p-1">
+    <div class="row py-3">
+      <div class="col-12">
+        <div class="p-2 d-flex flex-column">
+          <h4 class="fw-normal pb-2 text-center"><b>Researchers</b></h4>
+          <div class="mx-auto">
+            <h5 class="text-center">Apply for <a href="/facility#accessing-the-path-facility" class="btn btn-outline-primary text-decoration-none">Compute Credits</a></h5>
+            <h5 class="text-center">Sign up for <a class="btn  btn-outline-primary text-decoration-none" href="https://connect.osg-htc.org/signup">OSG-Connect</a></h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="p-2">
+          <h4 class="fw-normal text-center pb-2"><b>Organizations</b></h4>
+          <h5 class="text-center">Join us <a href="/#path-for-organizations" class="btn btn-outline-primary text-decoration-none">PATh for Organizations</a></h5>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="p-2 d-flex flex-column">
+          <h4 class="fw-normal pb-2 text-center"><b>Everyone</b></h4>
+          <div class="mx-auto">
+            <h5 class="text-center">Download our <a href="/software" class="btn btn-outline-primary text-decoration-none">Software</a></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="twitter-timeline" data-height="600" data-dnt="true" data-theme="light" href="https://twitter.com/opensciencegrid/lists/1508877823339073540?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
 </div>
-{% endcapture %}
-{% include body-container-twitter-right.html %}

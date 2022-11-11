@@ -2,6 +2,7 @@
 # this ensures Jekyll reads the file to be transformed into CSS later
 ---
 
+$enable-shadows: true;
 
 $spacer: 1rem;
 $spacers: (
@@ -15,16 +16,15 @@ $spacers: (
         7: $spacer * 8,
 ) !default;
 
-@import "bootstrap/functions";
-@import "bootstrap/variables";
-
 // Colors
 $primary: #d41041;
-$primary-light: tint-color($primary, 30%);
-$primary-white: tint-color($primary, 40%);
+$primary-light: lighten($primary, 30%);
+$primary-white: lighten($primary, 40%);
 $secondary: #000000;
-$secondary-light: tint-color($secondary, 50%);
-$secondary-white: tint-color($secondary, 97%);
+$secondary-light: lighten($secondary, 50%);
+$secondary-white: lighten($secondary, 97%);
+
+$text-muted: #626a72;
 
 $text-muted: #626a72;
 
@@ -33,17 +33,6 @@ $black: #000000;
 $white: #ffffff;
 $white-offset: $secondary-white;
 $steel: #5C5A5A;
-
-$theme-colors: (
-        "primary":    $primary,
-        "secondary":  $secondary,
-        "success":    $success,
-        "info":       $info,
-        "warning":    $warning,
-        "danger":     $danger,
-        "light":      $light,
-        "dark":       $dark
-);
 
 // Cards
 $card-background-color: lighten($secondary-light, 5);
@@ -55,10 +44,14 @@ $link-hover-color: lighten($primary, 10%);
 $link-hover-decoration: underline;
 
 // Fonts
+$headings-font-weight:  300;
+
+$nav-link-font-weight:  300;
+
 $font-family-base: Helvetica, Arial, sans-serif, -apple-system;
-$font-family-heading: 'Playfair Display', serif, -apple-system;
-$font-family-nav: 'Playfair Display', serif, -apple-system;
 $font-size-base: 1rem;
+
+$font-family-heading: $font-family-base;
 
 // Navbar
 $navbar-light-color: $black;
@@ -78,24 +71,14 @@ $sub-footer-text-color: $white;
 @import 'libraries/hamburgers/hamburgers';
 
 // Components
-@import 'components/type';
-@import 'components/page';
-@import 'components/header';
 @import 'components/footer';
 @import 'components/sub-footer';
-@import 'components/logo';
-@import 'components/buttons';
-@import 'components/call';
-@import 'components/title';
-@import 'components/content';
-@import 'components/intro';
-@import 'components/intro-image';
-@import 'components/strip';
-@import 'components/feature';
-@import 'components/social';
+@import 'components/main-menu';
+@import 'components/main-menu-mobile';
+@import 'components/hamburger';
+
 
 // Pages
-@import 'pages/home';
 @import 'pages/team/team-summary';
 @import 'pages/services/page-services-single';
 @import 'pages/news/page-news-single';
@@ -146,30 +129,11 @@ body {
 .navbar {
   width: 100%;
   font-size: 1.2rem;
-  .nav-link {
-    font-family: 'Playfair Display', serif, -apple-system;
-  }
   .social-media {
     img {
       margin-left: map-get($spacers, 1);
       height: 35px;
     }
-  }
-}
-
-
-.section-break {
-  font-weight: bold;
-  hr {
-    background-color: $primary;
-    border-top-width: 3px;
-    opacity: 1;
-    padding: 1px;
-  }
-  .section-header {
-    text-align: center;
-    margin-top: auto;
-    margin-bottom: auto;
   }
 }
 
@@ -201,3 +165,62 @@ main {
     top: #{$padding}
   }
 }
+
+.image-card-cap {
+  height:150px;
+  object-fit: cover;
+}
+
+.content {
+  img {
+    max-width: 100%;
+  }
+}
+
+.hover-shadow-sm:hover {
+  box-shadow: 0 .125rem .25rem rgba($black, .075) !important;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 .5rem 1rem rgba($black, .15) !important;
+}
+
+#hero {
+  position: relative;
+}
+
+@include media-breakpoint-down(lg) {
+  #hero {
+    background-color: $light;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  #hero::before {
+    content: " ";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url({{ '/images/PATH_swoop.png' | relative_url }}) no-repeat center;;
+  }
+}
+@include media-breakpoint-up(xl) {
+  #hero::before {
+    content: " ";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url({{ '/images/PATH_swoop.png' | relative_url }}) no-repeat center;;
+  }
+}
+
+.header-bar {
+  border-bottom: $primary 1px solid;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+

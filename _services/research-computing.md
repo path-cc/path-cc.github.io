@@ -19,6 +19,7 @@ table_of_contents:
       href: "#data-storage"
 head_extension: |
     <link rel="canonical" href="https://osg-htc.org/campus-cyberinfrastructure.html" />
+weight: 3
 ---
 
 

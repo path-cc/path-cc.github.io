@@ -3,7 +3,7 @@ title: "Facilitation Services"
 date: 2018-11-28T15:15:26+10:00
 featured: true
 excerpt: Facilitation Services leverage the CHTC-pioneered principles of Research Computing Facilitation to accelerate dHTC uptake by campus researchers and collaborations via the Open Science Federation and OSG Connect, and by campuses and other organizations interested in advancing their own dHTC and dHTC Facilitation capabilities.
-weight: 3
+weight: 2
 ---
 
 {{ page.excerpt }}
