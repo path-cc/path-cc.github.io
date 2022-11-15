@@ -1,22 +1,99 @@
 ---
-title: Software Downloads
+title: Install Our Software
 layout: service
 ---
 
-<h2 class="fw-normal"><a href="https://htcondor.org">HTCSS</a></h2>
+<div class="bg-light p-3">
+    <div class="row">
+        <div class="col-4 d-flex">
+            <a class="my-auto" href="https://htcondor.org">
+                <img class="w-100" src="/images/logo/HTCondor_red_blk.svg" alt="HTCondor Logo"/>
+            </a>
+        </div>
+        <div class="col-8">
+            <h2 class="fw-normal header-bar"><a href="https://htcondor.org">HTCSS</a></h2>
+            <p>
+                HTCondor Software Suite (HTCSS) provides an array of services for automating
+                and managing High Throughput workloads and computing capacity.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="border-start ps-3">
+    <a  href="https://htcondor.org/htcondor/download/"><h3 class="py-2">HTCondor</h3></a>
+    <p class="mb-2">
+        HTCondor is a software system that creates a High-Throughput Computing (HTC) environment.
+        It effectively uses the computing power of machines connected over a network, be they a
+        single cluster, a set of clusters on a campus, cloud resources either standalone or
+        temporarily joined to a local cluster, or international grids. Power comes from the
+        ability to effectively harness shared resources with distributed ownership.
+    </p>
+    <a class="btn btn-primary text-decoration-none mb-4" href="https://htcondor.org/htcondor/download/">Install HTCondor</a>
 
-<p>
-    HTCondor Software Suite (HTCSS) provides an array of services for automating and managing High Throughput workloads and computing capacity.
-</p>
-
-<a class="btn btn-primary text-decoration-none" href="https://htcondor.org/htcondor/download/">Download HTCondor</a>
-<a class="btn btn-primary text-decoration-none" href="https://htcondor.org/htcondor-ce/download/">Download HTCondor-CE</a>
-
-<h2 class="fw-normal pt-4">OSG Software</h2>
-
-<p>
-    OSG Software Yum repositories and how they are used in the OSG.
-</p>
+    <a class="pt-2" href="https://htcondor.org/htcondor/download/"><h3>HTCondor-CE</h3></a>
+    <p class="mb-2">
+        The HTCondor-CE software is a Compute Entrypoint (CE) based on HTCondor for sites that
+        are part of a larger computing grid (e.g. European Grid Infrastructure, Open Science Grid).
+        As such, HTCondor-CE serves as a "door" for incoming resource allocation requests (RARs) —
+        it handles authorization and delegation of these requests to a grid site's local batch system.
+        Supported batch systems include Grid Engine, HTCondor, LSF, PBS Pro/Torque, and Slurm.
+    </p>
+    <a class="btn btn-primary text-decoration-none" href="https://htcondor.org/htcondor-ce/download/">Install HTCondor-CE</a>
+</div>
 
 
-<a class="btn btn-primary text-decoration-none" href="https://osg-htc.org/docs/common/yum/">Download OSG Software</a>
+<div class="bg-light p-3 mt-4">
+    <div class="row">
+        <div class="col-4 d-flex">
+            <a class="my-auto" href="https://osg-htc.org/docs/common">
+                <img class="w-100" src="/images/logo/OSG-logo.svg" alt="OSG Logo"/>
+            </a>
+        </div>
+        <div class="col-8">
+            <h2 class="fw-normal header-bar"><a href="https://osg-htc.org">OSG</a></h2>
+            <p>
+                Through the OSG consortium, PATh provides a variety of software that
+                integrate with the OSG fabric of services.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="border-start ps-3">
+    <a  href="https://osg-htc.org/docs/submit/osg-flock/"><h3 class="py-2">OSPool Access Point (AP)</h3></a>
+    <p class="mb-2">
+        This specialized HTCSS Access Point (AP) allows a user to submit locally and have their jobs run locally or,
+        if the user chooses and if local resources are unavailable, have their jobs
+        automatically flock to OSG.
+    </p>
+    <a class="btn btn-primary text-decoration-none mb-4" href="https://osg-htc.org/docs/submit/osg-flock/">Install an OSPool AP</a>
+
+    <h3 class="pt-2">Data Cache</h3>
+    <p class="mb-2">
+        OSDF Caches transfer data to clients such as jobs or users. A set of caches
+        are operated across the OSG for the benefit of nearby sites; in addition,
+        each site may run its own cache in order to reduce the amount of data
+        transferred over the WAN.
+    </p>
+    <div class="row gx-1 mb-4">
+        <div class="col-12 col-sm-auto">
+            <a class="btn btn-primary text-decoration-none" href="https://osg-htc.org/docs/data/stashcache/run-stashcache-container/">Install from Container</a>
+        </div>
+        <div class="col-12 col-sm-auto">
+            <a class="btn btn-primary text-decoration-none mt-1 mt-sm-0" href="https://osg-htc.org/docs/data/stashcache/install-cache/">Install from RPM</a>
+        </div>
+    </div>
+
+    <h3 class="pt-2">Data Origin</h3>
+    <p class="mb-2">
+        Origins store copies of users' data. Each community (or experiment) needs
+        to run one origin to export its data via the federation.
+    </p>
+    <div class="row gx-1 mb-4">
+        <div class="col-12 col-sm-auto">
+            <a class="btn btn-primary text-decoration-none" href="https://osg-htc.org/docs/data/stashcache/run-stash-origin-container/">Install from Container</a>
+        </div>
+        <div class="col-12 col-sm-auto">
+            <a class="btn btn-primary text-decoration-none mt-1 mt-sm-0" href="https://osg-htc.org/docs/data/stashcache/install-origin/">Install from RPM</a>
+        </div>
+    </div>
+</div>
