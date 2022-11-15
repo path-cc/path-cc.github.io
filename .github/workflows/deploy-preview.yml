@@ -8,7 +8,7 @@ on:
 jobs:
   Deploy-Web-Preview:
     if: ${{ github.repository_owner == 'path-cc' }}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     env:
       preview_url: https://github.com/path-cc/web-preview.git
     steps:
