@@ -25,9 +25,9 @@
     - name: News
       url: /news
     - name: Events
-      url: /events.html
+      url: /events/
     - name: Contact
-      url: /contact.html
+      url: /contact/
     - name: Branding
       url: /branding/
 
