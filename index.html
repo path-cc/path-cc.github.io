@@ -117,10 +117,9 @@ intro_image_hide_on_mobile: true
                     %}
                 {% endfor %}
             </div>
-            {% include get/future_events.html %}
+            {% include get/future_events.liquid %}
             <div class="col-12 col-md-6 col-lg-4 my-3 my-md-0">
-                {% if future_events.length != 0  %}
-
+                {% if future_events.size != 0  %}
                     <h2 class="text-primary pb-1">
                         Upcoming Events
                     </h2>
