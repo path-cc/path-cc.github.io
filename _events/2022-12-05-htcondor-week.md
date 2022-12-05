@@ -1,15 +1,16 @@
 ---
 short_title: Save the Date: HTCondor Week 2023
-title: "Save the Date: HTCondor Week 2023"
+title: "HTCondor Week 2023, June 5-8"
+layout: events
 published: true
 
 excerpt: |
-    HTCondor Week 2023 will be held from Monday, June 5th, to Thursday, June 8th 2023.
+    HTCondor Week 2023 will be held from Monday, June 5 to Thursday, June 8 2023
     
 start_date: 2023-06-05
 end_date: 2023-06-08
-location: "TBD"
-link: ""
+location: "To be announced"
+link: "http://htcondor.org/HTCondorWeek2023"
 image: "/images/HTCondor_Banner.jpg"
 header_image: "/images/HTCondor_Banner.jpg"
 ---
@@ -45,7 +46,7 @@ Monday, June 5th to Thursday, June 8th 2023
 
 # Where
 
-TBD
+TBA
 
 # Questions?
 
