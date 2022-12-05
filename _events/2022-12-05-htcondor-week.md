@@ -29,7 +29,7 @@ More information about registration coming soon.
 
 We will have a variety of in-depth tutorials and talks where you can learn more about HTCondor and how other people are using and deploying HTCondor. Best of all, you can establish contacts and learn best practices from people in industry, government, and academia who are using HTCondor to solve hard problems, many of which may be similar to those you are facing.
 
-Check out these articles written on presentations from last year's HTCondor Week (2022):
+And make sure you check out these articles written on presentations from last year's HTCondor Week!
 - [Using high throughput computing to investigate the role of neural oscillations in visual working memory](https://path-cc.io/news/2022-07-06-Fulvio/)
 - [Using HTC and HPC Applications to Track the Dispersal of Spruce Budworm Moths](https://path-cc.io/news/2022-07-06-Garcia/)
 - [Testing GPU/ML Framework Compatibility](https://path-cc.io/news/2022-07-06-Hiemstra/)
