@@ -1,5 +1,5 @@
 ---
-short_title: HTCondor Week 2022 
+short_title: HTCondor Week 2023 
 title: "HTCondor Week 2022, May 23-26"
 layout: events
 published: true
@@ -10,8 +10,8 @@ excerpt: |
     Registration is now open for HTCondor Week 2022 to be held May 23-26 virtually and in-person at the Fluno Center on the University of Wisconsin-Madison campus. We are planning a hybrid event.
 start_date: 2023-06-05
 end_date: 2023-06-08
-location: "UW-Madison and Virtual"
-link: "http://htcondor.org/HTCondorWeek2022"
+location: "To be announced."
+link: "http://htcondor.org/HTCondorWeek2023"
 image: "/images/HTCondor_Banner.jpg"
 header_image: "/images/HTCondor_Banner.jpg"
 ---
