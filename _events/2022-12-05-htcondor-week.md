@@ -1,5 +1,5 @@
 ---
-short_title: HTCondor Week 2023 
+short_title: Save the Date: HTCondor Week 2023 
 title: "HTCondor Week 2023, June 5-8"
 layout: events
 published: true
