@@ -25,9 +25,17 @@ Hello HTCondor Users and Collaborators!
 
 We want to invite you to HTCondor Week 2023, our annual HTCondor user conference, from June 5-8, 2023!
 
-More information about location and registration coming soon.
+More information about registration coming soon.
 
 We will have a variety of in-depth tutorials and talks where you can learn more about HTCondor and how other people are using and deploying HTCondor. Best of all, you can establish contacts and learn best practices from people in industry, government, and academia who are using HTCondor to solve hard problems, many of which may be similar to those you are facing.
+
+Check out these articles written on presentations from last year's HTCondor Week (2022):
+[Using high throughput computing to investigate the role of neural oscillations in visual working memory](https://path-cc.io/news/2022-07-06-Fulvio/)
+[Using HTC and HPC Applications to Track the Dispersal of Spruce Budworm Moths](https://path-cc.io/news/2022-07-06-Garcia/)
+[Testing GPU/ML Framework Compatibility](https://path-cc.io/news/2022-07-06-Hiemstra/)
+[Expediting Nuclear Forensics and Security Using High Throughput Computing](https://path-cc.io/news/2022-07-06-Opotowsky/)
+[The Future of Radio Astronomy Using High Throughput Computing](https://path-cc.io/news/2022-07-12-Wilcots/)
+[LIGO's Search for Gravitational Waves Signals Using HTCondor](https://path-cc.io/news/2022-07-21-Messick/)
 
 Hope to see you there,
 
@@ -47,7 +55,7 @@ HTCondor Users and Collaborators.
 
 ### Where
 
-TBA
+Fluno Center, University of Madison-Wisconsin
 
 ### Questions?
 
