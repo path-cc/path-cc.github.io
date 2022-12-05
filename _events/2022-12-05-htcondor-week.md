@@ -6,7 +6,8 @@ published: true
 
 excerpt: |
     HTCondor Week 2023 will be held from Monday, June 5 to Thursday, June 8 2023
-    
+   
+   
 start_date: 2023-06-05
 end_date: 2023-06-08
 location: "To be announced"
