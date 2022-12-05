@@ -37,19 +37,19 @@ Hope to see you there,
 
 
 {% capture subsection %}
-# Who
+### Dates
+
+June 5-8, 2023
+
+### Who
 
 HTCondor Users and Collaborators.
 
-# When
-
-Monday, June 5th to Thursday, June 8th 2023
-
-# Where
+### Where
 
 TBA
 
-# Questions?
+### Questions?
 
 For questions, write to <events@opensciencegrid.org>.
 
