@@ -8,7 +8,7 @@ excerpt: |
     
 start_date: 2023-06-05
 end_date: 2023-06-08
-location: ""
+location: "TBD"
 link: ""
 image: "/images/HTCondor_Banner.jpg"
 header_image: "/images/HTCondor_Banner.jpg"
