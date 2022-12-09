@@ -6,7 +6,6 @@ layout: table-of-contents
 table_of_contents:
   - name: 2023 CC* Proposals
     href: "#proposal"
-  - name: How Path Supports CC* Proposees
   - name: Deployment
     href: "#deployment"
   - name: Operation
