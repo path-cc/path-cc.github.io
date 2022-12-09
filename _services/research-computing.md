@@ -4,12 +4,13 @@ date: 2021-08-12 12:00:00 -0600
 categories: NSF Campus Cyberinfrastructure (CC*)
 layout: table-of-contents
 table_of_contents:
-  - name: Assistance for CC* Proposals
-    href: "#assistance-for-cc-proposals"
-  - name: Services to CC* Awardees
-    href: "#services-to-cc-awardees"
-  - name: Actively Supported Colleges
-    href: "#osg-supported-colleges-and-universities-contributing-via-the-cc-program"
+  - name: 2023 CC* Proposals
+    href: "#proposal"
+  - name: How Path Supports CC* Proposees
+  - name: Deployment
+    href: "#deployment"
+  - name: Operation
+    href: "#operation"
   - name: CC* Impact on Open Science
     href: "#cc-campus-impact-on-open-science"
     children:
@@ -22,86 +23,125 @@ head_extension: |
 weight: 3
 ---
 
-
-Our project – the  Partnership to Advance Throughput Computing (PATh) – is funded by the NSF to 
-facilitate sharing of research computing capabilities across campuses. As such it is aligned with 
-the vision of the NSF Campus Cyberinfrastructure (CC*) 
-<a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748" target="_blank">(NSF 22-582)</a> program. 
-We provide state-of-the-art 
-open source software tools, dependable services, and facilitation to translate the power of 
-research computing into advances in education and scientific discovery.
-
-
-## Assistance for CC* Proposals
-
-
-When planning or preparing a proposal for the NSF CC* program, please feel free to contact 
-us with any questions you may have about the program and the services we can provide your proposed project once awarded.
-
-
-Once we agree on how the PATh project will be involved in your proposed project, we 
-will be happy to provide a letter of commitment. Please share with us in advance 
-the text referring to our involvement, the title of the proposal and the name of 
-the PI.
-
-<div class="bg-light py-3 my-2 mb-4">
-<div class="row justify-content-center">
-<div class="col-auto">
-<a class="btn btn-primary" href="mailto:leadership@path-cc.io">Email questions or meeting requests to PATh Leadership</a>
-</div>
-</div>
+<div class="p-3 my-4 bg-white-offset fs-5 rounded shadow">
+    <h3 class="mt-0 text-center pb-3">We are here to help with your <a href="https://www.nsf.gov/publications/pub_summ.jsp?ods_key=nsf23526&org=NSF">CC* Proposal (NSF 23-526)!</a></h3>
+    <p class="text-center">
+        Campuses with awards from the
+        <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748">NSF Campus Cyberinfrastructure (CC*)</a>
+        Program play an important role in supporting Open Science. To date, 25 CC* campuses contribute to the processing and storage capacity of the
+        <a href="{{ '/services/open_science_pool/' | relative_url }}">Open Science Pool (OSPool)</a> that is 
+        harnessed weekly by more than 2M jobs.
+    </p>
+    <p class="mb-0 d-flex justify-content-center pt-3">
+        <a class="btn btn-primary text-decoration-underline fs-5" href="mailto:cc-star-proposals@osg-htc.org">Email Us</a>
+        <a class="btn btn-primary text-decoration-underline ms-1 fs-5" href="#let-osg-help-with-your-cc-proposal">How We Can Help</a>
+    </p>
 </div>
 
-## Services to CC* Awardees
+{: .fs-5 }
+Enhancing the capacity of Research Computing of US campuses through local deployment and cross campus sharing is
+fully aligned with the vision of our NSF funded project - [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io).
+Our project is committed to support CC* projects from proposal, through deployment, to operation.
 
 
-Our experienced and responsive team of engineers and facilitators is dedicated to 
-supporting system engineers and campus research groups. This team provides helpful
-expertise and guidance, offering networking, computing and data storage consulting in
-support of proposals. 
+## [Proposal](https://www.nsf.gov/pubs/2023/nsf23526/nsf23526.htm)
 
-Services include:
+<div class="border p-3 mt-3 mb-3 pb-0 rounded bg-light" markdown="1">
 
+{: .fs-5 }
+Proposals in response to the 2023 CC* program solicitation ([NSF 23-526](https://www.nsf.gov/pubs/2023/nsf23526/nsf23526.htm))
+are due on March 1, 2023. Please contact us at [cc-star-proposals@osg-htc.org](mailto:cc-star-proposals@osg-htc.org)
+(the earlier the better!) with any questions
+or requests you may have regarding the involvement of [PATh](https://path-cc.io) in your proposed project. Our technology and services are
+readily available to support a spectrum of CC* projects.
 
-- Meeting CC*-required resource sharing as specified in <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748" target="_blank">(NSF 22-582)</a>, and other options for integrating with the OSG Consortium
-- Providing connections to help with data storage systems for shared inter-campus or intra-campus resources
-  - We have collected [community data storage systems](/organization/osdf/example_data_origin.html) for your consideration
-- Building regional computing networks
-- Developing science gateways to utilize high throughput computing via the [OSPool](/services/open_science_pool.html)
+{: .fs-5 }
+The [NSF 23-526](https://www.nsf.gov/pubs/2023/nsf23526/nsf23526.htm) solicitation explicitly mentions the OSG services
+we provide as a means to meet requirements for the following areas:
+
+{: .fs-5 }
+__(4) Campus Computing and the Computing Continuum__
+
+{: .fs-5 }
+NSF recommends reaching out to [PATh](https://path-cc.io) for "technical direction/expertise during their proposal
+development" and suggests working with the OSG to contribute its "minimum of 20% shared time on the cluster" to the
+[OSPool](/services/open_science_pool).
+
+{: .fs-5 }
+__(5) Regional Computing awards__
+
+{: .fs-5 }
+NSF strongly encourages joining PATh, and suggests working with the OSG to contribute its "minimum of 20% shared time on the cluster" to the
+[OSPool](/services/open_science_pool).
+
+{: .fs-5 }
+__(6) Data Storage awards__
+
+{: .fs-5 }
+NSF solely mentions the OSG's [Open Science Data Federation](/services/osdf.html) as a federated data sharing fabric to share
+its required "20% of the disk/storage space on the proposed storage system."
+
+</div>
+
+## Let the PATh team help with your proposal
+
+{: .fs-5 }
+The National Science Foundation Campus Cyberinfrastructure (CC*) program
+([NSF 23-526](https://www.nsf.gov/pubs/2023/nsf23526/nsf23526.htm)) invests in coordinated campus
+and regional-level cyberinfrastructure improvements and innovation.
+
+{: .fs-5 }
+[PATh](https://path-cc.io) has experience offering consulting to CC* projects during the proposal phase for the
+following aspects of the proposed project:
+
+{: .fs-5 }
 - Sharing data with authorized users via the [Open Science Data Federation (OSDF)](/services/osdf.html)
 - Bringing the power of high throughput computing via the [OSPool](/services/open_science_pool.html) to your researchers
-- Gathering science drivers and planning local computing resources
+- Meeting CC*-required resource sharing as specified in <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748" target="_blank">(NSF 23-526)</a>, and other options for integrating with the OSG Consortium
+- Providing connections to help with data storage systems for shared inter-campus or intra-campus resources
+    - We have collected [community data storage systems](/organization/osdf/example_data_origin.html) for your consideration
+- Building regional computing networks
+- Developing science gateways to utilize high throughput computing via the [OSPool](/services/open_science_pool.html)
+
+{: .fs-5 }
+Please do not hesitate (or wait too long) to contact us at
+[cc-star-proposals@osg-htc.org](mailto:cc-star-proposals@osg-htc.org) with
+questions or requests for letters of support regarding your CC* proposed project.
+
+## Deployment
+
+{: .fs-5 }
+Our experienced and friendly team of engineers and facilitators is dedicated to supporting system engineers and
+campus research groups. This team provides networking, computing and data storage consulting in support of
+proposals, providing expertise and guidance.
+
+{: .fs-5 }
+Post award, these teams continue their support to ensure smooth integration and onboarding into the OSPool or OSDF.
+The facilitation team also provides extensive support to researchers with regular training, weekly office hours,
+documentation, videos and more.
+
+{: .fs-5 }
+Please contact us at [help@osg-htc.org](mailto:help@osg-htc.org) to schedule a consultation to discuss deployment
+of OSG resources at your campus.
+
+## Operation
+
+{: .fs-5 }
+After your campus has integrated with the OSPool or OSDF, our team offers continued support to make the best use of
+computational resources at your campus. This includes troubleshooting of OSG services as well as providing accounting
+data for the research projects and kinds of research making use of your resources.
+
+{: .fs-5 }
+Our staff remains available to assist you with meeting your goals as your research computing needs evolve. If you or
+your researchers have any questions or issues, please contact us at [support@osg-htc.org](mailto:support@osg-htc.org).
 
 ### OSG supported Colleges and Universities contributing via the CC* program:
 
 <iframe width="100%" height="500px" frameBorder="0" style="margin-bottom:1em; margin-top:1em" src="https://map.opensciencegrid.org/map/iframe?view=CCStar#38.61687,-97.86621|4|hybrid"></iframe>
 
-
-
-- <a href="https://www.amnh.org/research/computational-sciences" target="_blank">American Museum of Natural History</a>
-- <a href="https://cores.research.asu.edu/research-computing/about" target="_blank">Arizona State University</a>
-- <a href="https://sites.clarkson.edu/acres/" target="_blank">Clarkson University</a>
-- <a href="https://computerscience.tcnj.edu/cs-programs-research/funded-projects/" target="_blank">The College of New Jersey</a>
-- <a href="https://pace.gatech.edu/" target="_blank"> Georgia Institute of Technology</a>
-- <a href="https://www1.lehigh.edu/" target="_blank">Lehigh University</a>
-- <a href="http://www.hpc.lsu.edu/about/index.php" target="_blank"> Louisiana State University</a>
-- <a href="https://www.lsuhsc.edu/" target="_blank"> LSU Health</a>
-- <a href="https://www.nmsu.edu/" target="_blank"> New Mexico State University</a>
-- <a href="https://www.purdue.edu/newsroom/releases/2019/Q3/nsf-supports-purdue-team-developing-online-manufacturing-education.html" target="_blank">Purdue University</a>
-- <a href="https://news.syr.edu/blog/2020/09/03/national-science-foundation-awards-390000-to-syracuse-university-computing-initiative/" target="_blank"> Syracuse University</a>
-- <a href="https://www.siue.edu/its/cyberinfrastructure/" target="_blank"> Southern Illinois University Edwardsville</a>
-- <a href="https://tcnj.edu/" target="_blank">The College of New Jersey</a>
-- <a href="https://now.tufts.edu/articles/tufts-awarded-nsf-grant-expand-big-data-innovation-and-discovery" target="_blank"> Tufts University</a>
-- <a href="https://ucsdnews.ucsd.edu/pressrelease/sdsc-awarded-nsf-grant-for-triton-shared-computing-cluster-upgrade" target="_blank">University of California San Diego</a>
-- <a href="https://news.engr.uconn.edu/500k-nsf-grant-awarded-to-dr-bing-wang-uconn-health-center-2.php" target="_blank">University of Connecticut</a>
-- <a href="https://www.colorado.edu/rc/" target="_blank"> University of Colorado Boulder</a>
-- <a href="https://uwm.edu/" target="_blank">University of Wisconsin-Milwaukee</a>
-- <a href="https://www.nd.edu/" target="_blank">University of Notre Dame</a>
-- <a href="https://www.utc.edu/" target="_blank">University of Tennessee at Chattanooga</a>
-- <a href="https://www.uwb.edu/" target="_blank">University of Washington-Bothell</a>
-- <a href="https://www1.villanova.edu/university.html" target="_blank">Villanova</a>
-- <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1925467&HistoricalAwards=false" target="_blank">Wayne State University</a>
-- <a href="https://www.wtamu.edu/" target="_blank">West Texas A&M University</a>
+{% assign cc_star_sites = site.data.cc_star | sort: "name" %}
+{% for cc_star_site in cc_star_sites %}
+- <a href="{{ cc_star_site.href }}" target="_blank">{{ cc_star_site.name }}</a>{% endfor %}
 
 ### CC* Campus impact on Open Science
 
