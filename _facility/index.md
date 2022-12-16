@@ -14,9 +14,13 @@ table_of_contents:
       href: '#facility-description'
 description: The PATh Facility is a national-scale distributed High Throughput Computing resource to deliver computational capacity to NSF researchers through dHTC.
 below_table_of_contents: |
-    <h3>Have PATh Credits?</h3>
+    <h4>Have PATh Credits?</h3>
     <div>
-        <a class="btn btn-primary" href="registration.html">Register Now</a>
+        <a class="btn btn-outline-primary" href="https://portal.path-cc.io/documentation/overview/account_setup/registration/">Register Now</a>
+    </div>
+    <h4 class="pt-3">Current User?</h3>
+    <div>
+        <a class="btn btn-outline-primary" href="https://portal.path-cc.io/documentation/">Facility Documentation</a>
     </div>
 ---
 
