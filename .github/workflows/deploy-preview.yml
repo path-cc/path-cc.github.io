@@ -17,20 +17,10 @@ jobs:
     env:
       preview_url: https://github.com/path-cc/web-preview.git
     steps:
-      - name: Set env
-        run: |-
-          echo "BRANCH=$(
-          if ${{ inputs.branch }}; then
-            echo ${{ inputs.branch }}
-          elif [ ${{ github.ref_name }} == dev]; then
-            echo "master"
-          fi
-          )" >> $GITHUB_ENV
-
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-          ref: ${{ env.BRANCH  }}
+          ref: ${{ inputs.branch }}
 
       - name: Get branch name
         run: echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
