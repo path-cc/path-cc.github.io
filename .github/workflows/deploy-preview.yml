@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - preview-**
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
 
 jobs:
   Deploy-Web-Preview:
@@ -12,9 +17,20 @@ jobs:
     env:
       preview_url: https://github.com/path-cc/web-preview.git
     steps:
+      - name: Set env
+        run: |-
+          echo "BRANCH=$(
+          if ${{ inputs.branch }}; then
+            echo ${{ inputs.branch }}
+          elif [ ${{ github.ref_name }} == dev]; then
+            echo "master"
+          fi
+          )" >> $GITHUB_ENV
+
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
+          ref: ${{ env.BRANCH  }}
 
       - name: Get branch name
         run: echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
@@ -54,3 +70,4 @@ jobs:
           git checkout -b preview web-preview/main
           git merge $SPLIT_BRANCH -m "Merge Split Branch" --allow-unrelated-histories -X theirs
           git push web-preview HEAD:main
+
