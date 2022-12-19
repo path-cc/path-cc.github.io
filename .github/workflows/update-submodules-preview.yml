@@ -14,7 +14,6 @@ jobs:
 
       - name: Pull down submodules
         run: |
-          git branch -D preview-update-submodules
           git checkout -b preview-update-submodules
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
