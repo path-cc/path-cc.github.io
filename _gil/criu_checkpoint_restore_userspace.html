@@ -1,0 +1,985 @@
+---
+title: CRIU - Checkpoint Restore in Userspace
+date: 2022-8-23
+layout: container-default
+excerpt: |
+    While executing scientific applications, they must sometimes stop the process due to
+    hardware problems or even job end-of-life. In that case, some applications can create a set of
+    files to save their current state to be loaded on a restoring process at a later time. However,
+    most applications  do not have this feature. CRIU (Checkpoint Restore in Userspace, pronounced
+    kree-oo) is a tool  for checkpointing and restoring applications in GNU/Linux environment. With
+    CRIU it is possible  to stop an application, save the working memory on disk and restore this
+    state. As the OSPool is built around the notion of pre-emptable resources, this  could be very
+    useful on jobs that get pre-empted or exceed allocated runtimes.
+---
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="pt-3 pb-2">
+            {% include layout/subpage-header.html %}
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <p>
+            While executing scientific applications, they must sometimes stop the process due to hardware problems
+            or even job end-of-life. In that case, some applications can create a set of files to save their current
+            state from being loaded on a restoring process later. However, most applications do not have this feature.
+            CRIU (Checkpoint Restore in Userspace, pronounced kree-oo) is a tool for checkpointing and restoring
+            applications in GNU/Linux environment. With CRIU it is possible to stop an application, save the working
+            memory on disk and restore this state. As the OSPool is built around the notion of pre-emptable resources,
+            this could be very useful on jobs that get pre-empted or exceed allocated runtimes.
+        </p>
+        <h2>Executive summary</h2>
+        <p>
+            The checking/restore tool is vital for time-consuming scientific applications or for stopping applications
+            due to pre-emption, maintenance or other problems. About CRIU:
+        </p>
+        <ul>
+            <li>CRIU can provide several options to stop and restore applications.</li>
+            <li>It is possible to control applications with multiple threads and processes maintaining network
+                connections.
+            </li>
+            <li>CRIU supports containers using docker and podman</li>
+            <li>It requires a “form” of root access: sudo, SUID Bit, or Kernel capabilities.</li>
+            <li>To use Kernel capabilities requires a specific version of CRIU and Linux.</li>
+            <li>Restoring a previously checkpointed process requires that the same directory paths are used during
+                restore as during checkpointing.
+            </li>
+            <li>There is no support for GPUs.</li>
+        </ul>
+        <h2>Tests using CRIU</h2>
+        <p>
+            The table below shows the tests run using the CRIU. CRIU non-root requires a kernel version of 5.9 or later.
+            On
+            the results, “root access” means any way to reach root privileges or the needed capabilities.
+        </p>
+    </div>
+    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <td>
+                        Test
+                    </td>
+
+                    <td>
+                        CRIU 3.17.1
+                    </td>
+
+                    <td>
+                        CRIU Branch non-root/criu dev (setcap cap_checkpoint_restore+eip)
+                    </td>
+
+                    <td>
+                        Comments
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Simple C code: writing on the terminal. Using the same
+                        operational system and hardware
+                    </td>
+
+                    <td>
+                        Successful with
+
+                        root access
+                    </td>
+
+                    <td>
+                        Successful without root
+
+                        access
+                    </td>
+
+                    <td>
+                        The test was successful, only requiring a few options on restore
+                        and dump
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        LAMMPS: read and write files.&nbsp; Using the same operational
+                        system and hardware
+                    </td>
+
+                    <td>
+                        Successful with
+
+                        root access
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        If CRIU detects any file or&nbsp;
+
+                        directory change location, the restoration fails. To restore it
+                        is required to set the paths from before the CRIU dump.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Simple C code: dump from Intel hardware to AMD hardware.
+                    </td>
+
+                    <td>
+                        Successful with
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        If it is used any kind of processer code optimization it will
+                        fail, and&nbsp; all the system libraries should be&nbsp; the same
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Simple C code &#8211; dump from AMD hardware to Intel
+                        hardware.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        If it is used any kind of processer code optimization it will
+                        fail, and&nbsp; all the system libraries should be&nbsp; the same
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Open files and dump the software
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        The file structure should be the same on dump and restore
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, one machine - dump and restore the
+                        client on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        The was made using two&nbsp;
+
+                        software, one was TCP server and other was TCP client. It
+                        requires a few options to load and restore on&nbsp; CRIU. CRIU uses a advanced
+                        way to put the socket in a wait mode - <a href=
+                                                                          "https://www.criu.org/TCP_connection">https://www.criu.org/TCP_connection</a>
+
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, one machine - dump and restore the
+                        server on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, one machine - dump and restore the
+                        server and the client on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, two machines, server and client on each
+                        machine respectively - dump and restore the client.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, two machines, server and client on each
+                        machine respectively - dump and restore the server.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, two machines, server and client on each
+                        machine respectively - dump and restore the client executed first on the other
+                        machine
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        TCP Network connections, two machines, server and client on each
+                        machine respectively - dump and restore the server executed first on the other
+                        machine
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, one machine - dump and restore the
+                        client on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, one machine - dump and restore the
+                        server on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, one machine - dump and restore the
+                        server and the client on the same computer.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, two machines, server, and client on each
+                        machine respectively - dump and restore the client.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, two machines, server, and client on each
+                        machine respectively - dump and restore the server.
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to restore only once the application
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, two machines, server, and client on each
+                        machine respectively - dump and restore the client executed first on the other
+                        machine
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        UDP Network connections, two machines, server, and client on each
+                        machine respectively - dump and restore the server executed first on the other
+                        machine
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Nvidia GPUs are not supported at all
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Singularity &#8211; Test to dump and restore inside the
+                        container
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Singularity &#8211;&nbsp;&nbsp; Test to dump and restore outside
+                        the container
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Podman &#8211; Test to dump and restore outside the container
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Using podman/CRIU integration interface is possible to dump and
+                        check containers using the podman command.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        podman &#8211;&nbsp; Test to dump and restore inside the
+                        container
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        docker &#8211; Test to dump and restore outside the contaier
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful with root access
+                    </td>
+
+                    <td>
+                        Using docker/CRIU integration interface is possible to dump and
+                        check containers using the podman command.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Docker &#8211;&nbsp;&nbsp; Test to dump and restore inside the
+                        container
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        CRIU requires a specific&nbsp;
+
+                        integration just like podman or docker
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Dumping and restoring a POD using CVMFS
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root
+                    </td>
+
+                    <td>
+                        Successful without root access
+                    </td>
+
+                    <td>
+                        It is possible to recover the&nbsp;
+
+                        CVMFS.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Dumping and restoring a process with FORK
+                    </td>
+
+                    <td>
+                        Successful with&nbsp;
+
+                        root access
+                    </td>
+
+                    <td>
+                        Successful with root access
+                    </td>
+
+                    <td>
+                        The restore process requires root access
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Dumping and restoring a process with MPI
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Unsuccessful
+                    </td>
+
+                    <td>
+                        Several tests resulted in &#8220;hung&#8221; dump or restore
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <h2>Recommendations</h2>
+        <p>
+            Following the tests executed using CRIU, we have some recommendations related to how to use CRIU and what to do in the future with CRIU.
+        </p>
+        <ol>
+            <li>Work with the apptainer developers to create an interface with CRIU. That way creates the possibility to checkpoint and dump softwares executed by apptainer</li>
+            <li>Add CRIU support in HTCondor for non-pilot use cases. CRIU can be used in some scenarios where it is possible to have some “root” access.</li>
+            <li>Define a policy that will minimize app errors due to changes in HW (e.g., Intel to AMD). CRIU can’t recover applications using a crossover CPU architecture.</li>
+            <li>Add CRIU support in pilots, but only when using containers (see also (E) ). Using CRIU on container scenarios is possible, but some configurations are necessary.</li>
+            <li>Re-evaluate CRIU non-root capabilities a few months from now. It is interesting to check if the non-root capabilities are present in the new CRIU version.</li>
+        </ol>
+        <h2>Tests and Description</h2>
+        <p>
+            During the test we found a bug and report it to CRIU dev team: <a href="https://github.com/checkpoint-restore/criu/issues/2032">https://github.com/checkpoint-restore/criu/issues/2032</a>
+        </p>
+        <p>
+            Code 1 and 2 shows the TCP client and server, Code 3 and 4 shows the UDP client and server.
+        </p>
+        <h3>Code 1: TCP Client.</h3>
+        <pre class="p-2 bg-light"><code>#include &lt;arpa/inet.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;strings.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;unistd.h&gt;
+#define MAX 80
+#define PORT 8090
+#define SA struct sockaddr
+void func(int sockfd)
+{
+        char buff[MAX];
+        int n;
+        for (;;) {
+                bzero(buff, sizeof(buff));
+                printf(&quot;Enter the string : &quot;);
+                n = 0;
+                while ((buff[n++] = getchar()) != &#39;\n&#39;)
+                        ;
+                write(sockfd, buff, sizeof(buff));
+                bzero(buff, sizeof(buff));
+                read(sockfd, buff, sizeof(buff));
+                printf(&quot;From Server : %s&quot;, buff);
+                if ((strncmp(buff, &quot;exit&quot;, 4)) == 0) {
+                        printf(&quot;Client Exit...\n&quot;);
+                        break;
+                }
+        }
+}
+
+int main()
+{
+        int sockfd, connfd;
+        struct sockaddr_in servaddr, cli;
+
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd == -1) {
+                printf(&quot;socket creation failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;Socket successfully created..\n&quot;);
+        bzero(&amp;servaddr, sizeof(servaddr));
+
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_addr.s_addr = inet_addr(&quot;169.228.130.112&quot;);
+        servaddr.sin_port = htons(PORT);
+
+        if (connect(sockfd, (SA*)&amp;servaddr, sizeof(servaddr))
+                        != 0) {
+                printf(&quot;connection with the server failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;connected to the server..\n&quot;);
+
+        func(sockfd);
+
+        close(sockfd);
+}</code></pre>
+        <h3>Code 2: TCP server</h3>
+        <pre class="p-2 bg-light"><code>#include &lt;stdio.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt; // read(), write(), close()
+#define MAX 80
+#define PORT 8090
+#define SA struct sockaddr
+
+// Function designed for chat between client and server.
+void func(int connfd)
+{
+        char buff[MAX];
+        int n;
+        // infinite loop for chat
+        for (;;) {
+                bzero(buff, MAX);
+
+                // read the message from client and copy it in buffer
+                read(connfd, buff, sizeof(buff));
+                // print buffer which contains the client contents
+                printf(&quot;From client: %s\t To client : &quot;, buff);
+                bzero(buff, MAX);
+                n = 0;
+                // copy server message in the buffer
+                while ((buff[n++] = getchar()) != &#39;\n&#39;)
+                        ;
+
+                // and send that buffer to client
+                write(connfd, buff, sizeof(buff));
+
+                // if msg contains &quot;Exit&quot; then server exit and chat ended.
+                if (strncmp(&quot;exit&quot;, buff, 4) == 0) {
+                        printf(&quot;Server Exit...\n&quot;);
+                        break;
+                }
+        }
+}
+
+// Driver function
+int main()
+{
+        int sockfd, connfd, len;
+        struct sockaddr_in servaddr, cli;
+
+        // socket create and verification
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd == -1) {
+                printf(&quot;socket creation failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;Socket successfully created..\n&quot;);
+        bzero(&amp;servaddr, sizeof(servaddr));
+
+        // assign IP, PORT
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        servaddr.sin_port = htons(PORT);
+
+        // Binding newly created socket to given IP and verification
+        if ((bind(sockfd, (SA*)&amp;servaddr, sizeof(servaddr))) != 0) {
+                printf(&quot;socket bind failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;Socket successfully binded..\n&quot;);
+
+        // Now server is ready to listen and verification
+        if ((listen(sockfd, 5)) != 0) {
+                printf(&quot;Listen failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;Server listening..\n&quot;);
+        len = sizeof(cli);
+
+        // Accept the data packet from client and verification
+        connfd = accept(sockfd, (SA*)&amp;cli, &amp;len);
+        if (connfd &lt; 0) {
+                printf(&quot;server accept failed...\n&quot;);
+                exit(0);
+        }
+        else
+                printf(&quot;server accept the client...\n&quot;);
+
+        // Function for chatting between client and server
+        func(connfd);
+
+        // After chatting close the socket
+        close(sockfd);
+}</code></pre>
+        <h3>Code 3: UDP client.</h3>
+        <pre class="p-2 bg-light"><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+
+#define PORT     8080
+#define MAXLINE 1024
+
+// Driver code
+int main() {
+        int sockfd;
+        char buffer[MAXLINE];
+        //char *hello = &quot;Hello from client&quot;;
+        char *hello = calloc(100,sizeof(char));
+        struct sockaddr_in       servaddr;
+
+        // Creating socket file descriptor
+        if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) &lt; 0 ) {
+                perror(&quot;socket creation failed&quot;);
+                exit(EXIT_FAILURE);
+        }
+
+        memset(&amp;servaddr, 0, sizeof(servaddr));
+
+        // Filling server information
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_port = htons(PORT);
+        servaddr.sin_addr.s_addr = inet_addr(&quot;169.228.130.115&quot;);
+
+        int n, len;
+        while(1)
+        {
+
+           printf(&quot;Type msg:.\n&quot;);
+           fgets (hello,10 , stdin);
+           sendto(sockfd, (const char *)hello, strlen(hello),
+                MSG_CONFIRM, (const struct sockaddr *) &amp;servaddr,
+                        sizeof(servaddr));
+           printf(&quot;Hello message sent.\n&quot;);
+
+           n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+                                MSG_WAITALL, (struct sockaddr *) &amp;servaddr,
+                                &amp;len);
+           buffer[n] = &#39;\0&#39;;
+           printf(&quot;Server : %s\n&quot;, buffer);
+        }
+
+        close(sockfd);
+        return 0;
+}</code></pre>
+        <h3>Code 4: UDP server</h3>
+        <pre class="p-2 bg-light"><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+
+#define PORT     8080
+#define MAXLINE 1024
+
+// Driver code
+int main() {
+        int sockfd;
+        char buffer[MAXLINE];
+        char *hello = &quot;Hello from server&quot;;
+        struct sockaddr_in servaddr, cliaddr;
+
+        // Creating socket file descriptor
+        if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) &lt; 0 ) {
+                perror(&quot;socket creation failed&quot;);
+                exit(EXIT_FAILURE);
+        }
+
+        memset(&amp;servaddr, 0, sizeof(servaddr));
+        memset(&amp;cliaddr, 0, sizeof(cliaddr));
+
+        // Filling server information
+        servaddr.sin_family = AF_INET; // IPv4
+        servaddr.sin_addr.s_addr = INADDR_ANY;
+        servaddr.sin_port = htons(PORT);
+
+        // Bind the socket with the server address
+        if ( bind(sockfd, (const struct sockaddr *)&amp;servaddr,
+                        sizeof(servaddr)) &lt; 0 )
+        {
+                perror(&quot;bind failed&quot;);
+                exit(EXIT_FAILURE);
+        }
+
+        int len, n;
+
+        len = sizeof(cliaddr); //len is value/result
+        while(1)
+        {
+            n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+                                MSG_WAITALL, ( struct sockaddr *) &amp;cliaddr,
+                                &amp;len);
+            buffer[n] = &#39;\0&#39;;
+
+            printf(&quot;Client : %s\n&quot;, buffer);
+            sendto(sockfd, (const char *)hello, strlen(hello),
+                MSG_CONFIRM, (const struct sockaddr *) &amp;cliaddr,
+                        len);
+             printf(&quot;Hello message sent.\n&quot;);
+        }
+
+        return 0;
+}</code></pre>
+    </div>
+</div>
