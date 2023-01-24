@@ -1,45 +1,46 @@
 ---
-short_title: Save the Date! HTCondor Week 2023 
-title: "HTCondor Week 2023, June 5-8"
+short_title: Joint OSG All Hands Meeting and HTCondor Week July 10-14
+title: "Save the Dates for the Joint HTCondor Week - OSG All-Hands Meeting - 10-14 July 2023"
 layout: events
 published: true
 
 excerpt: |
-    HTCondor Week 2023 will be held from Monday, June 5 to Thursday, June 8 2023
+    Joint OSG All Hands Meeting and HTCondor Week July 10-14 2023
     
     
-start_date: 2023-06-05
-end_date: 2023-06-08
-location: "To be announced."
-link: "http://htcondor.org/HTCondorWeek2023"
-image: "/images/HTCondor_Banner.jpg"
-header_image: "/images/HTCondor_Banner.jpg"
+start_date: 2023-07-10
+end_date: 2023-07-14
+location: "University of Wisconsin–Madison’s Fluno Center and Online via Zoom"
+link: "http://htcondor.org/HTCondorWeekandOSGAHM"
+image: "/images/montage.jpg"
+header_image: "/images/montage.jpg"
 ---
 
 {% capture main %}
 
-<p style="font-size: larger; font-weight: bold;">Save the Date for HTCondor Week May 23 - 26!</p>
+<p style="font-size: larger; font-weight: bold;">Save the Dates for the Joint HTCondor Week - OSG All-Hands Meeting - 10-14 July 2023</p>
 
 
-Hello HTCondor Users and Collaborators!
+Save the dates! For the first time, the OSG Consortium, the HTCondor team, and the Center for High Throughput Computing will be hosting a Joint HTCondor Week - OSG All-Hands Meeting from July 10–14 at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/).
 
-We want to invite you to HTCondor Week 2023, our annual HTCondor user conference, from June 5-8, 2023!
+Our hope is that this will primarily be an in-person event, but remote participation (via Zoom) for plenary events will also be offered. Required registration for both components will open in March 2023.
 
-More information about registration coming soon.
+ If you register for and travel to the University of Wisconsin in Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. In addition, evening events are planned throughout the week.
 
-We will have a variety of in-depth tutorials and talks where you can learn more about HTCondor and how other people are using and deploying HTCondor. Best of all, you can establish contacts and learn best practices from people in industry, government, and academia who are using HTCondor to solve hard problems, many of which may be similar to those you are facing.
+Topics  will include:
+- Science Enabled by the OSPool and the HTCondor Software Suite (HTCSS)
+- OSG Technology
+- HTCSS  Technology
+- HTCSS and OSG Tutorials
+- State of the OSG
+- Campus  Services and Perspectives
 
-And make sure you check out these articles written on presentations from last year's HTCondor Week!
-- [Using high throughput computing to investigate the role of neural oscillations in visual working memory](https://path-cc.io/news/2022-07-06-Fulvio/)
-- [Using HTC and HPC Applications to Track the Dispersal of Spruce Budworm Moths](https://path-cc.io/news/2022-07-06-Garcia/)
-- [Testing GPU/ML Framework Compatibility](https://path-cc.io/news/2022-07-06-Hiemstra/)
-- [Expediting Nuclear Forensics and Security Using High Throughput Computing](https://path-cc.io/news/2022-07-06-Opotowsky/)
-- [The Future of Radio Astronomy Using High Throughput Computing](https://path-cc.io/news/2022-07-12-Wilcots/)
-- [LIGO's Search for Gravitational Waves Signals Using HTCondor](https://path-cc.io/news/2022-07-21-Messick/)
+For questions, please contact us at events@osg-htc.org or htcondor-week@cs.wisc.edu. 
 
-Hope to see you there,
+View last year’s schedules for 
 
-\- The Center for High Throughput Computing
+- [OSG All-Hands Meeting](https://osg-htc.org/all-hands/2022/schedule/)
+- [HTCondor Week 2022](https://agenda.hep.wisc.edu/event/1733/timetable/#20220523)
 
 {% endcapture %}
 
@@ -47,19 +48,19 @@ Hope to see you there,
 {% capture subsection %}
 ### Dates
 
-June 5-8, 2023
+Monday, July 10 through Friday, July 14, 2023. (Required registration opens in March.)
 
 ### Who
 
-HTCondor Users and Collaborators.
+Organizations, researchers, campuses, facilitators and administrators interested in the [HTCondor Software Suite](https://htcondor.com/) and high throughput computing or the [OSG Consortium](https://osg-htc.org/) resources or services (including the [OSPool](https://osg-htc.org/services/open_science_pool.html), the [Open Science Data Federation](https://osg-htc.org/services/osdf.html) or the [PATh Facility](https://path-cc.io/facility/).)
 
 ### Where
 
-Fluno Center, University of Madison-Wisconsin
+[Fluno Center](https://fluno.com/) on the University of Wisconsin-Madison campus and Online via Zoom.
 
 ### Questions?
 
-For questions, write to <events@opensciencegrid.org>.
+Please email htcondor-week@cs.wisc.edu or events@osg-htc.org with any questions.
 
 {% endcapture %}
 
