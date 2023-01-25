@@ -12,8 +12,8 @@ start_date: 2023-07-10
 end_date: 2023-07-14
 location: "University of Wisconsin–Madison’s Fluno Center and Online via Zoom"
 link: "http://htcondor.org/HTCondorWeekandOSGAHM"
-image: "/images/capital.jpg"
-header_image: "/images/capital.jpg"
+image: "/images/capital.jpeg"
+header_image: "/images/capital.jpeg"
 ---
 
 {% capture main %}
