@@ -35,7 +35,7 @@ Topics  will include:
 - State of the OSG
 - Campus  Services and Perspectives
 
-For questions, please contact us at events@osg-htc.org or htcondor-week@cs.wisc.edu. 
+For questions, please contact us at [events@osg-htc.org](events@osg-htc.org) or [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu). 
 
 View last year’s schedules for 
 
@@ -60,7 +60,7 @@ Organizations, researchers, campuses, facilitators and administrators interested
 
 ### Questions?
 
-Please email htcondor-week@cs.wisc.edu or events@osg-htc.org with any questions.
+Please email [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu) or [events@osg-htc.org](events@osg-htc.org) with any questions.
 
 {% endcapture %}
 
