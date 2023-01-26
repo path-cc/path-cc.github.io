@@ -18,7 +18,7 @@ header_image: "/images/capital.jpeg"
 
 {% capture main %}
 
-<p style="font-size: larger; font-weight: bold;">Save the Dates for the Joint HTCondor Week - OSG All-Hands Meeting - 10-14 July 2023</p>
+<p style="font-size: larger; font-weight: bold;">Don't miss these in-person learning opportunities in beautiful Madison, Wisconsin!</p>
 
 
 Save the dates! For the first time, the OSG Consortium, the HTCondor team, and the Center for High Throughput Computing will be hosting a Joint HTCondor Week - OSG All-Hands Meeting from July 10–14 at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/).
