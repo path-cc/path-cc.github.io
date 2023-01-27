@@ -1,6 +1,6 @@
 ---
-short_title: Joint OSG All Hands Meeting and HTCondor Week July 10-14
-title: "Save the Dates for the Joint HTCondor Week - OSG All-Hands Meeting - 10-14 July 2023"
+short_title: Throughput Computing 2023
+title: Throughput Computing 2023
 layout: events
 published: true
 
@@ -18,16 +18,14 @@ header_image: "/images/capital.jpeg"
 
 {% capture main %}
 
-<p style="font-size: larger; font-weight: bold;">Don't miss these in-person learning opportunities in beautiful Madison, Wisconsin!</p>
+Save the dates for Throughput Computing 2023! For the first time, HTCondor Week and the OSG All-Hands Meeting will join together as a single, integrated event from July 10–14 to be held at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). Throughput Computing 2023 is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing.
 
+This will primarily be an in-person event, but remote participation (via Zoom) for the many plenary events will also be offered. Required registration for both components will open in March 2023.
 
-Save the dates! For the first time, the OSG Consortium, the HTCondor team, and the Center for High Throughput Computing will be hosting a Joint HTCondor Week - OSG All-Hands Meeting from July 10–14 at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/).
+If you register for the in-person event at the University of Wisconsin–Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. Evening events are also planned throughout the week.
 
-Our hope is that this will primarily be an in-person event, but remote participation (via Zoom) for plenary events will also be offered. Required registration for both components will open in March 2023.
+All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting will be included:
 
- If you register for and travel to the University of Wisconsin in Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. In addition, evening events are planned throughout the week.
-
-Topics  will include:
 - Science Enabled by the OSPool and the HTCondor Software Suite (HTCSS)
 - OSG Technology
 - HTCSS  Technology
@@ -35,9 +33,11 @@ Topics  will include:
 - State of the OSG
 - Campus  Services and Perspectives
 
-For questions, please contact us at [events@osg-htc.org](events@osg-htc.org) or [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu). 
+The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related topics during the event on Wednesday, July 12. (For other attendees, Wedneday's schedule will also include parallel HTCondor and OSG tutorials and OSG Collaborations sessions.)
 
-View last year’s schedules for 
+For questions, please contact us at [events@osg-htc.org](events@osg-htc.org) or [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu).
+
+View last year’s schedules for
 
 - [OSG All-Hands Meeting](https://osg-htc.org/all-hands/2022/schedule/)
 - [HTCondor Week 2022](https://agenda.hep.wisc.edu/event/1733/timetable/#20220523)
