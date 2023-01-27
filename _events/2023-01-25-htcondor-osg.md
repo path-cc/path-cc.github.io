@@ -1,11 +1,11 @@
 ---
 short_title: Announcing Throughput Computing 2023 to be held July 10-14
-title: "Save the Dates for Throughput Computing 2023 - a joint HTCondor/OSG event"
+title: "Save the dates for Throughput Computing 2023 - a joint HTCondor/OSG event"
 layout: events
 published: true
 
 excerpt: |
-    Save the dates for **Throughput Computing 2023** - a joint OSG HTCondor Week and OSG All-Hands Meeting event to be held July 10-14, 2023 in Madison, Wisconsin.
+    Save the dates for **Throughput Computing 2023** - a joint OSG HTCondor/OSG event to be held July 10-14, 2023 in Madison, Wisconsin.
     
     
 start_date: 2023-07-10
