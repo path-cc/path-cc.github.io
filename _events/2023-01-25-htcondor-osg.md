@@ -25,7 +25,7 @@ Save the dates for **Throughput Computing 2023!** For the first time, we will be
 
 This will primarily be an in-person event, but remote participation (via Zoom) for the many plenary events will also be offered. Required registration for both components will open in March 2023.
 
-If you register for and travel to the University of Wisconsin in Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. In addition, evening events are planned throughout the week.
+If you register for the in-person event at the University of Wisconsin–Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. Evening events are also planned throughout the week.
 
 All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting will be included:
 
