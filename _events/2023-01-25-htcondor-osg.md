@@ -5,7 +5,7 @@ layout: events
 published: true
 
 excerpt: |
-    Save the Dates for **Throughput Computing 2023** - a joint OSG All Hands Meeting and HTCondor Week to be held July 10-14 2023 in Madison, Wisconsin
+    Save the Dates for **Throughput Computing 2023** - a joint OSG All-Hands Meeting and HTCondor Week to be held July 10-14 2023 in Madison, Wisconsin
     
     
 start_date: 2023-07-10
@@ -21,9 +21,9 @@ header_image: "/images/capital.jpeg"
 <p style="font-size: larger; font-weight: bold;">Don't miss these in-person learning opportunities in beautiful Madison, Wisconsin!</p>
 
 
-Save the dates for **Throughput Computing 2023!** For the first time, we will be offerring **Throughput Computing 2023**, which combines the much loved events **HTCondor Week** and the **OSG All-Hands Meeting** into a new joint event to be held July 10–14 at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). **Througput Computing 2023** is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing. 
+Save the dates for **Throughput Computing 2023!** For the first time, we will be offerring **Throughput Computing 2023**, which combines the much loved events **HTCondor Week** and the **OSG All-Hands Meeting** into a new joint event to be held July 10–14 at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). **Throughput Computing 2023** is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing. 
 
-Our hope is that this will primarily be an in-person event, but remote participation (via Zoom) for the many plenary events will also be offered. Required registration for both components will open in March 2023.
+This will primarily be an in-person event, but remote participation (via Zoom) for the many plenary events will also be offered. Required registration for both components will open in March 2023.
 
  If you register for and travel to the University of Wisconsin in Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. In addition, evening events are planned throughout the week.
 
