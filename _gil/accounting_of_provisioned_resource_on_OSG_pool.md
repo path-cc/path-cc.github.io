@@ -1187,7 +1187,7 @@ On the *completed_jobs_\*.log*, we have a compilation of the user_\*/glidein_gfa
 - There are files with “duration=-1” when the pilots have no jobs. 
 
 <figure>
-    <pre class="border rounded p-2"><code>&lt;job terminated="2022-02-09T05:55:38-08:00" client="fermilab_okd_gpfe01_frontend"  username="fefermilab"  id="6767402.000"   duration="1359"  condor_started="True"   condor_duration="1266"><user     jobsnr="0"      duration="0"      goodput="0"      terminated="0"/><wastemill   validation="66" idle="1000"    nosuccess="0" badput="1000"/></job></code></pre>
+    <pre class="border rounded p-2"><code>&lt;job terminated="2022-02-09T05:55:38-08:00" client="fermilab_okd_gpfe01_frontend"  username="fefermilab"  id="6767402.000"   duration="1359"  condor_started="True"   condor_duration="1266"><user     jobsnr="0"      duration="0"      goodput="0"      terminated="0"/&gt;&lt;wastemill   validation=&quot;66&quot; idle=&quot;1000&quot;    nosuccess=&quot;0&quot; badput=&quot;1000&quot;/&gt;&lt;/job&gt;</code></pre>
     <figcaption>Figure 9: Example of completed_jobs_20220209.log.</figcaption>
 </figure>
 
