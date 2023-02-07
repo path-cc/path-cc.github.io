@@ -35,7 +35,7 @@ All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting 
 
 The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related topics during the event on Wednesday, July 12. (For other attendees, Wedneday's schedule will also include parallel HTCondor and OSG tutorials and OSG Collaborations sessions.)
 
-For questions, please contact us at [events@osg-htc.org](events@osg-htc.org) or [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu).
+For questions, please contact us at [events@osg-htc.org](mailto:events@osg-htc.org) or [htcondor-week@cs.wisc.edu](mailto:htcondor-week@cs.wisc.edu).
 
 View last year’s schedules for
 
@@ -60,7 +60,7 @@ Organizations, researchers, campuses, facilitators and administrators interested
 
 ### Questions?
 
-Please email [htcondor-week@cs.wisc.edu](htcondor-week@cs.wisc.edu) or [events@osg-htc.org](events@osg-htc.org) with any questions.
+Please email [htcondor-week@cs.wisc.edu](mailto:htcondor-week@cs.wisc.edu) or [events@osg-htc.org](mailto:events@osg-htc.org) with any questions.
 
 {% endcapture %}
 
