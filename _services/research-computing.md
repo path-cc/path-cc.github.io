@@ -67,7 +67,7 @@ NSF strongly encourages joining PATh, and suggests working with the OSG to contr
 
 __(6) Data Storage awards__
 
-NSF solely mentions the OSG's [Open Science Data Federation](/services/osdf.html) as a federated data sharing fabric to share
+NSF solely mentions the OSG's [Open Science Data Federation](https://osg-htc.org/services/osdf.html) as a federated data sharing fabric to share
 its required "20% of the disk/storage space on the proposed storage system."
 
 </div>
