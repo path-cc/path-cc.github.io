@@ -102,7 +102,7 @@ Registration for in-person attendance will cost $100 per day; there if no fee fo
 
 ### Questions?
 
-Please email [htc23@path-cc.io](mailto:\htc23@path-cc.io) with any questions.
+Please email [htc23@path-cc.io](mailto:htc23@path-cc.io) with any questions.
 
 {% endcapture %}
 
