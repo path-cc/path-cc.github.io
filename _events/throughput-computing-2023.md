@@ -18,28 +18,27 @@ header_image: "/images/events/capital.jpeg"
 
 {% capture main %}
 
-### Save the date!
+### Registration for Throughput Computing 2023
 
-Save the dates for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/)! For the first time, HTCondor Week and the OSG All-Hands Meeting will join together as a single, integrated event from July 10–14 to be held at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). Throughput Computing 2023 is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing.
+Registration for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/) is now open!
 
-### Registration
+For the first time, HTCondor Week and the OSG All-Hands Meeting will join together as a single, integrated event from July 10–14 to be held at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). Throughput Computing 2023 is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing.
 
 This will primarily be an in-person event, but remote participation (via Zoom) for the many plenary events will also be offered. 
 
 **Registration for in-person attendance:** [Register here.](https://uw.ungerboeck.com/prod/emc00/PublicSignIn.aspx?&aat=hAc2KhMWB4wgUAGwFEqLOM9xYB4D841E2wk3wrAJ6R8%3d)
 
-
-**Registration for in-person attendance:** [Register here.](https://agenda.hep.wisc.edu/event/2014/registrations/251/)
+**Registration for virtual attendance:** [Register here.](https://agenda.hep.wisc.edu/event/2014/registrations/251/)
 
 If you register for the in-person event at the University of Wisconsin–Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. Evening events are also planned throughout the week.
 
-*Registration for in-person attendance closes June 15; there is no deadline for virtual registration.*
+If this is your first time registering for an event, you will have to create an account first by following either of the links above (the in-person attendance should prompt you right away to make an account; for virtual attendance, press the blue **login to proceed** button to create a new account.)
+
+*Registration for in-person attendance closes June 15.*
 
 ### Schedule
 
-The schedule can be found under the [General Schedule](https://agenda.hep.wisc.edu/event/2014/timetable/#20230710) section on the Throughput Computing  2023 page. Please note the schedule is subject to change.
-
-### Topics
+The schedule can be found under the [General Schedule](https://agenda.hep.wisc.edu/event/2014/timetable/#20230710) section on the Throughput Computing  2023 page. The session block topics will not change; however there will likely be timing adjustments in the schedule as speakers are finalized. 
 
 All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting will be included:
 
@@ -50,25 +49,25 @@ All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting 
 - State of the OSG
 - Campus  Services and Perspectives
 
-The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related topics during the event on Wednesday, July 12. (For other attendees, Wedneday's schedule will also include parallel HTCondor and OSG tutorials and OSG Collaborations sessions.)
+The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related topics during the event on Wednesday, July 12.
 
 ### Workshop Hotel Accommodations
 
 We've arranged hotel reservations at nearby hotels. We strongly recommend you reserve your hotel room **ASAP**, as the number of reserved rooms at the reduced rate is limited. Please visit the Local Arrangements page to find information about how to book your hotel room at the reduced rate for each hotel.
 
-**Please note:** DoubleTree Madison is the only hotel with a *free shuttle service* to and from the airport - all other hotels require you to make your transportation arrangements.
+**Please note:** DoubleTree Madison is the only hotel with a *free shuttle service* to and from the airport.
 
-### Call for Abstracts: HTCondor Sessions ONLY
+### Call for Abstracts: HTCondor Sessions
 
 The call for abstracts for the **HTCondor sessions** of Throughput Computing 23 is now open. Please visit the [Call for Abstracts](https://agenda.hep.wisc.edu/event/2014/abstracts/) page to learn how to sign up to give a talk, talk content and length, and how to submit your presentation.
 
-*The submission deadline is May 1, 2023, at 4:00 AM CST*
+*The submission deadline is May 1, 2023*
 
 ### Questions and Resources
 
 For questions about attending, speaking, accommodations, and other concerns please contact us at [htc23@path-cc.io](mailto:\htc23@path-cc.io).
 
-View last year’s schedules for
+To learn about this event in more detail, view last year’s schedules for: 
 
 - [OSG All-Hands Meeting](https://osg-htc.org/all-hands/2022/schedule/)
 - [HTCondor Week 2022](https://agenda.hep.wisc.edu/event/1733/timetable/#20220523)
@@ -79,7 +78,7 @@ View last year’s schedules for
 {% capture subsection %}
 ### Dates
 
-Monday, July 10 through Friday, July 14, 2023. Registration for both in-person and virtual attendance are LIVE! In-person registration closes June 15.
+Monday, July 10 through Friday, July 14, 2023. Registration for both in-person and virtual attendance is open!! In-person registration closes June 15.
 
 ### Who
 
@@ -88,6 +87,12 @@ Organizations, researchers, campuses, facilitators and administrators interested
 ### Where
 
 [Fluno Center](https://fluno.com/) on the University of Wisconsin-Madison campus and Online via Zoom.
+
+### Fees
+
+Registration for in-person attendance will cost $100 per day; there if no fee for registration for virtual attendance.
+
+**Registration is still required for both in-person and virtual to attend this event.** 
 
 ### Questions?
 
