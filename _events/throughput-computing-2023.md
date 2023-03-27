@@ -18,7 +18,7 @@ header_image: "/images/events/capital.jpeg"
 
 {% capture main %}
 
-### Registration for Throughput Computing 2023
+### Registration
 
 Registration for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/) is now open!
 
@@ -32,28 +32,28 @@ This will primarily be an in-person event, but remote participation (via Zoom) f
 
 If you register for the in-person event at the University of Wisconsin–Madison, you can attend plenary and non-plenary sessions, mingle with colleagues, and have planned or ad hoc meetings. Evening events are also planned throughout the week.
 
-If this is your first time registering for an event, you will have to create an account first by following either of the links above (the in-person attendance should prompt you right away to make an account; for virtual attendance, press the blue **login to proceed** button to create a new account.)
+If this is your first time registering for an event on the registration site, you will have to create an account first and then register.
 
 *Registration for in-person attendance closes June 15.*
 
 ### Schedule
 
-The schedule can be found under the [General Schedule](https://agenda.hep.wisc.edu/event/2014/timetable/#20230710) section on the Throughput Computing  2023 page. The session block topics will not change; however there will likely be timing adjustments in the schedule as speakers are finalized. 
+The schedule can be found under the [General Schedule](https://agenda.hep.wisc.edu/event/2014/timetable/#20230710) section on the Throughput Computing  2023 event website. The session block topics will not change; however, there will likely be timing adjustments in the schedule as speakers are finalized. 
 
 All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting will be included:
 
 - Science Enabled by the OSPool and the HTCondor Software Suite (HTCSS)
 - OSG Technology
-- HTCSS  Technology
-- HTCSS and OSG Tutorials
+- HTCondor Technology
+- HTCondor and OSG Tutorials
 - State of the OSG
 - Campus  Services and Perspectives
 
-The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related topics during the event on Wednesday, July 12.
+The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related sessions during the event on Wednesday, July 12.
 
 ### Workshop Hotel Accommodations
 
-We've arranged hotel reservations at nearby hotels. We strongly recommend you reserve your hotel room **ASAP**, as the number of reserved rooms at the reduced rate is limited. Please visit the Local Arrangements page to find information about how to book your hotel room at the reduced rate for each hotel.
+We have arranged room blocks at a reduced rate at the Fluno Center and at two nearby hotels. We recommend you make your room reservation **ASAP**, as the number of rooms available at the reduced rate is limited (Madison is also a popular place to visit in the summer!) Please visit the [Local Arrangements](https://agenda.hep.wisc.edu/event/2014/page/55-local-arrangements) page to find information about how to book your hotel room at the reduced rate for each hotel.
 
 **Please note:** DoubleTree Madison is the only hotel with a *free shuttle service* to and from the airport.
 
@@ -78,7 +78,7 @@ To learn about this event in more detail, view last year’s schedules for:
 {% capture subsection %}
 ### Dates
 
-Monday, July 10 through Friday, July 14, 2023. Registration for both in-person and virtual attendance is open!! In-person registration closes June 15.
+Monday, July 10 through Friday, July 14, 2023.
 
 ### Who
 
@@ -88,7 +88,13 @@ Organizations, researchers, campuses, facilitators and administrators interested
 
 [Fluno Center](https://fluno.com/) on the University of Wisconsin-Madison campus and Online via Zoom.
 
-### Fees
+### Registration
+
+Registration for Throughput Computing 2023 is now open! Please visit the links below to register:
+
+**Registration for in-person attendance:** [Register here.](https://uw.ungerboeck.com/prod/emc00/PublicSignIn.aspx?&aat=hAc2KhMWB4wgUAGwFEqLOM9xYB4D841E2wk3wrAJ6R8%3d)
+
+**Registration for virtual attendance:** [Register here.](https://agenda.hep.wisc.edu/event/2014/registrations/251/)
 
 Registration for in-person attendance will cost $100 per day; there if no fee for registration for virtual attendance.
 
