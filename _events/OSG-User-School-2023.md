@@ -47,7 +47,7 @@ The University of Wisconsin-Madison.
 ### Application and Deadlines
 Details about the application process can be found on the [OSG User School 2023 site](https://osg-htc.org/user-school-2023/).
 
-The deadline for applications is Monday, 17 April 2023.
+The deadline for applications is Monday, April 17, 2023.
 
 ### Contact Us
 
