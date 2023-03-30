@@ -6,18 +6,16 @@ published: true
 
 excerpt: |
     Throughput Computing July 10-14 2023
-    
-    
+
 start_date: 2023-07-10
 end_date: 2023-07-14
 location: "University of Wisconsin–Madison’s Fluno Center and Online via Zoom"
 link: "http://htcondor.org/ThroughputComputing2023"
-image: "/images/events/capital.jpeg"
-header_image: "/images/events/capital.jpeg"
+image: "/images/events/Throughput-Computing-2023-Banner.png"
+header_image: "/images/events/Throughput-Computing-2023-Banner.png"
 ---
 
 {% capture main %}
-
 ### Registration
 
 Registration for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/) is now open!
