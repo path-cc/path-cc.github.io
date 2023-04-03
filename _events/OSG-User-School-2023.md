@@ -18,12 +18,6 @@ header_image: "/images/osg-user-school-2023-event.jpg"
 
 The OSG User School provides researchers the opportunity to learn how to use high-throughput computing (HTC) systems to run large-scale computing applications at their campus or using the national-scale OSG consortium. Please join us and learn how you can use HTC methods and services to handle large-scale computing applications to advance your research!
 
-Applications are now open! The deadline to apply is Monday, 17 April 2023. Submit your application soon to ensure consideration!
-
-To apply, complete the [online application form](https://uwmadison.co1.qualtrics.com/jfe/form/SV_9shkUL5ZDSghKvk) and have someone email a letter of recommendation for you to [user-school@osg-htc.org](mailto:user-school@osg-htc.org).
-
-For more information about the School and to stay up-to-date with any announcements, please visit the [OSG User School 2023 site](https://osg-htc.org/user-school-2023/).
-
 To learn more about the event, check out these articles written about the OSG User School 2022:
 - Read about last year's [OSG User School student lightning talks](https://osg-htc.org/spotlights/Lightning-Talks.html), where researchers showcased their work and future plans to implement HTC.
 - This article spotlights [studens from the NIAID/ACE students who attended this year’s OSG User School 2022](https://osg-htc.org/spotlights/NIAID-ACE-students-attend-OSG-User-School.html). Learn more about these students and their work and the ongoing collaboration between the OSG and ACE/NIAID teams.
