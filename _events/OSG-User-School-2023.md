@@ -10,8 +10,8 @@ start_date: 2023-08-07
 end_date: 2023-08-11
 location: "University of Wisconsin-Madison"
 link: "https://osg-htc.org/user-school-2023/"
-image: "/images/osg-user-school-2023-event.jpeg"
-header_image: "/images/osg-user-school-2023-event.jpeg"
+image: "/images/osg-user-school-2023-event.jpg"
+header_image: "/images/osg-user-school-2023-event.jpg"
 ---
 
 {% capture main %}
