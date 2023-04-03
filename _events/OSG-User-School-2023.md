@@ -1,33 +1,33 @@
 ---
 short_title: OSG User School 2023
-title: "OSG User School 2023, August 7–11"
+title: "OSG User School 2023, Aug. 7–11"
 layout: events
 published: true
 
 excerpt: |
-    The OSG User School 2023 will be held from Monday, August 7 to Friday, August 11 in person at the University of Wisconsin-Madison campus.
+    Applications for the OSG User School 2023 at the University of Wisconsin-Madison are now open!
 start_date: 2023-08-07
 end_date: 2023-08-11
 location: "University of Wisconsin-Madison"
-link: "https://opensciencegrid.org/user-school-2023/#applications"
-image: "/images/Madison_Skyline.jpg"
-header_image: "/images/Madison_Skyline.jpg"
+link: "https://osg-htc.org/user-school-2023/"
+image: "/images/osg-user-school-2023-event.jpeg"
+header_image: "/images/osg-user-school-2023-event.jpeg"
 ---
 
 {% capture main %}
 
-The OSG User School will occur on August 7–11, where you will learn to use high-throughput computing (HTC) systems to run large-scale computing applications at your campus or using the national-scale OSG.
+The OSG User School provides researchers the opportunity to learn how to use high-throughput computing (HTC) systems to run large-scale computing applications at their campus or using the national-scale OSG consortium. Please join us and learn how you can use HTC methods and services to handle large-scale computing applications to advance your research!
 
-Applications are now open. The deadline for applications is Monday, 17 April 2023. Submit your application soon to ensure consideration!
+Applications are now open! The deadline to apply is Monday, 17 April 2023. Submit your application soon to ensure consideration!
 
 To apply, complete the [online application form](https://uwmadison.co1.qualtrics.com/jfe/form/SV_9shkUL5ZDSghKvk) and have someone email a letter of recommendation for you to [user-school@osg-htc.org](mailto:user-school@osg-htc.org).
 
 For more information about the School and to stay up-to-date with any announcements, please visit the [OSG User School 2023 site](https://osg-htc.org/user-school-2023/).
 
 To learn more about the event, check out these articles written about the OSG User School 2022:
-- [OSG User School 2022 Researchers Present Inspirational Lightning Talks](https://osg-htc.org/spotlights/Lightning-Talks.html)
-- [NIAID/ACE students attend this year’s OSG User School 2022](https://osg-htc.org/spotlights/NIAID-ACE-students-attend-OSG-User-School.html)
-- [OSG User School Concludes](https://osg-htc.org/spotlights/OSG-User-School-Concludes.html)
+- Read about last year's [OSG User School student lightning talks](https://osg-htc.org/spotlights/Lightning-Talks.html), where researchers showcased their work and future plans to implement HTC.
+- This article spotlights [studens from the NIAID/ACE students who attended this year’s OSG User School 2022](https://osg-htc.org/spotlights/NIAID-ACE-students-attend-OSG-User-School.html). Learn more about these students and their work and the ongoing collaboration between the OSG and ACE/NIAID teams.
+- To view last year's lesson plans and materials, check out the [OSG User School Concludes](https://osg-htc.org/spotlights/OSG-User-School-Concludes.html) article on the OSG website.
 
 {% endcapture %}
 
