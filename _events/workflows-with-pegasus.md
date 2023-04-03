@@ -10,8 +10,8 @@ start_date: 2023-04-18
 end_date: 2023-04-18
 location: "Virtual"
 link: "https://osgfacilitation.setmore.com/bookclass"
-image: "https://raw.githubusercontent.com/CHTC/Articles/main/images/Facilitation-cover.jpeg"
-header_image: "https://raw.githubusercontent.com/CHTC/Articles/main/images/Facilitation-cover.jpeg"
+image: "/images/events/pegasus-banner.jpg"
+header_image: "/images/events/pegasus-banner.jpg"
 ---
 
 {% capture main %}
