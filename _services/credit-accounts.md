@@ -110,7 +110,7 @@ While multi-node jobs are not supported by PATh hardware, MPI-dependent software
 ### How can I “test drive” the HTC services?
 
 A strength of the PATh Access Point is that users can get started without any
-credits by testing work on the [OSPool’s](https://opensciencegrid.org/about/open_science_pool/) opportunistic resources, via the OSG Connect Service and Access Points.  We encourage
+credits by testing work on the [OSPool’s](https://opensciencegrid.org/about/open_science_pool/) opportunistic resources, via the <a href="https://portal.osg-htc.org">OSG Portal</a> and OSG-Operated Access Points.  We encourage
 users to contact [support@osg-htc.org](mailto:support@osg-htc.org) to get started on an Access Point, today!
 
 ### What Data Services does PATh provide?

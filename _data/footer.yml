@@ -3,8 +3,8 @@
   children:
     - name: PATh Compute Credits
       url: /facility/#accessing-the-path-facility
-    - name: OSG Connect Account
-      url: https://connect.osg-htc.org/signup
+    - name: OSG Portal
+      url: https://portal.osg-htc.org
 - name: Organizations
   id: organizations
   children:
