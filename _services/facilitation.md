@@ -2,7 +2,7 @@
 title: "Facilitation Services"
 date: 2018-11-28T15:15:26+10:00
 featured: true
-excerpt: Facilitation Services leverage the CHTC-pioneered principles of Research Computing Facilitation to accelerate dHTC uptake by campus researchers and collaborations via the Open Science Federation and OSG Connect, and by campuses and other organizations interested in advancing their own dHTC and dHTC Facilitation capabilities.
+excerpt: Facilitation Services leverage the CHTC-pioneered principles of Research Computing Facilitation to accelerate dHTC uptake by campus researchers and collaborations via the Open Science Federation and OSG-Operated Access Points, and by campuses and other organizations interested in advancing their own dHTC and dHTC Facilitation capabilities.
 weight: 2
 ---
 
@@ -24,9 +24,9 @@ campuses and organizations that support them. These principles include:
 PATh Research Computing Facilitators apply these principles to the practice of
 dHTC Facilitation for researchers, research groups, and multi-institutional
 collaborations leveraging the dHTC environment of the OSG
-via access services like [OSG Connect](https://connect.osg-htc.org/) (available
+via access services like the [OSG Portal](https://portal.osg-htc.org) (available
 to researchers affiliated with any US-based academic, government, or non-profit
-organization). For example, all new users of the OSG Connect service first
+organization). For example, all new users of the OSG-Operated Access Points first
 meet with a Facilitator to collaborate on an efficient on-ramp plan and
 anticipated impact, with accessible ongoing support.
 
