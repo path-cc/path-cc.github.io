@@ -177,12 +177,16 @@ intro_image_hide_on_mobile: true
             </div>
         </div>
         {% include text-hr.html text="OSG by Maps" %}
-        <div class="row gx-2">
+        <div class="row gx-2 gy-2 row-cols-3 row-cols-md-5 justify-content-center">
             {% for map in site.data.maps %}
-                <div class="col-12 col-sm-6 col-lg-3 {% cycle '', 'd-none d-sm-block', 'd-none d-lg-block', 'd-none d-lg-block' %}">
-                    <a href="https://map.opensciencegrid.org{{ map.params }}">
+                <div class="col">
+                    {% if map.href %}
+                        <a href="{{ map.href }}">
+                    {% else %}
+                        <a href="https://map.opensciencegrid.org{{ map.params }}">
+                    {% endif %}
                         <div class="rounded bg-white hover-shadow border-dark border">
-                            <h4 class="m-0 p-2">{{ map.title }}</h4>
+                            <h6 class="m-0 p-2">{{ map.title }}</h6>
                             <picture>
                                 <source srcset="{{ map.image}}.webp">
                                 <img class="img-fluid rounded-bottom" src="{{ map.image }}.png">
