@@ -18,7 +18,7 @@ header_image: "/images/events/Throughput-Computing-2023-Banner.jpg"
 {% capture main %}
 ### Registration
 
-Registration for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/) is now open!
+Registration for [Throughput Computing 2023](https://agenda.hep.wisc.edu/event/2014/) is open, but in-person registration closes on **June 15!**
 
 For the first time, HTCondor Week and the OSG All-Hands Meeting will join together as a single, integrated event from July 10–14 to be held at the University of Wisconsin–Madison’s [Fluno Center](https://fluno.com/). Throughput Computing 2023 is sponsored by the OSG Consortium, the HTCondor team, and the UW-Madison Center for High Throughput Computing.
 
@@ -47,11 +47,17 @@ All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting 
 - State of the OSG
 - Campus  Services and Perspectives
 
+We’ve also have an exciting group of speakers for this year’s Throughput Computing 2023, including:
+
+- Laura Cadonati, Professor, School of Physics and Center for Relativistic Astrophysics, Associate Dean for Research, College of Science, Georgia Institute of Technology
+- Kevin L. Thompson, NSF Program Director
+- Daniel Andresen, Director, Institute for Computational Research in Engineering and Science, Professor, Dept. of Computer Science; Michelle Munson-Serban Simu Keystone Research Scholar, Kansas State University
+
 The **U.S. ATLAS and U.S. CMS high-energy physics projects** are also planning parallel OSG-related sessions during the event on Wednesday, July 12.
 
 ### Workshop Hotel Accommodations
 
-We have arranged room blocks at a reduced rate at the Fluno Center and at two nearby hotels. We recommend you make your room reservation **ASAP**, as the number of rooms available at the reduced rate is limited. (Madison is also a popular place to visit in the summer!) Please visit the [Local Arrangements](https://agenda.hep.wisc.edu/event/2014/page/55-local-arrangements) page to find information about how to book your hotel room at the reduced rate for each hotel.
+We have arranged room blocks at a reduced rate at the Fluno Center and at two nearby hotels. We recommend you make your room reservation **ASAP**, as the number of rooms available at the reduced rate is limited. (Madison is also a popular place to visit in the summer!) Reserved room blocks at these rates begin expiring as soon as **June 9th.** Please visit the [Local Arrangements](https://agenda.hep.wisc.edu/event/2014/page/55-local-arrangements) page to find information about how to book your hotel room at the reduced rate for each hotel. 
 
 **Please note:** DoubleTree Madison is the only hotel with a *free shuttle service* to and from the airport.
 
