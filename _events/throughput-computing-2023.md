@@ -47,7 +47,7 @@ All the topics typically covered by HTCondor Week and the OSG All-Hands Meeting 
 - State of the OSG
 - Campus  Services and Perspectives
 
-We’ve also have an exciting group of speakers for this year’s Throughput Computing 2023, including:
+We also have an exciting group of speakers for this year’s Throughput Computing 2023, including:
 
 - Laura Cadonati, Professor, School of Physics and Center for Relativistic Astrophysics, Associate Dean for Research, College of Science, Georgia Institute of Technology
 - Kevin L. Thompson, NSF Program Director
