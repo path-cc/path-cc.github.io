@@ -1,0 +1,21 @@
+---
+    layout: sub-page
+---
+
+<h1>Throughput Computing 2023 Participants</h1>
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Institution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for registrant in site.data.throughput-computing.2023.participants %}
+        <tr>
+            <td>{{ registrant.Name }}</td>
+            <td>{{ registrant.Institution }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
