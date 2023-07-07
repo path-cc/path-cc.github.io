@@ -13,8 +13,8 @@
     <tbody>
     {% for registrant in site.data.throughput-computing.2023.participants %}
         <tr>
-            <td>{{ registrant.Name }}</td>
-            <td>{{ registrant.Institution }}</td>
+            <td style="text-transform: capitalize">{{ registrant.Name | downcase }}</td>
+            <td style="text-transform: capitalize">{{ registrant.Institution }}</td>
         </tr>
     {% endfor %}
     </tbody>
