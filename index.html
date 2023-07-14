@@ -173,7 +173,16 @@ intro_image_hide_on_mobile: true
                 {% endif %}
             </div>
             <div class="col-12 col-md-6 col-lg-4 d-none d-lg-block">
-                <a class="twitter-timeline" data-height="600" data-dnt="true" data-theme="light" href="https://twitter.com/osg_htc/lists/1508877823339073540?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                {% for article in articles limit: 1 offset: 1 %}
+                    {% include highlighted-title-image-text-card.html
+                            internal_href=article.url
+                            image=article.image.path
+                            alt=article.image.alt
+                            title=article.title
+                            desc=article.excerpt
+                            class="rounded p-2 pt-1 shadow-sm hover-shadow bg-light"
+                    %}
+                {% endfor %}
             </div>
         </div>
         {% include text-hr.html text="OSG by Maps" %}
