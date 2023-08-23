@@ -5,15 +5,7 @@ main:
   - name: "Software"
     url: "/software"
     weight: 3
-  - name: "Spotlights"
-    url: "/spotlights/"
-    weight: 4
-  - name: "News"
-    url: "/news/"
-    weight: 5
-  - name: "Events"
-    url: "/events/"
-    weight: 6
+
 
 
 footer:
