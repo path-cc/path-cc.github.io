@@ -41,6 +41,16 @@
             <a class="nav-link" href="{{ item.url | relative_url }}">{{ item.name }}</a>
           </li>
           {% endfor %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="community-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Community
+            </a>
+            <div class="dropdown-menu" aria-labelledby="community-nav">
+              <a class="dropdown-item" href="{{ '/spotlights' | relative_url }}">Spotlights</a>
+              <a class="dropdown-item" href="{{ '/events' | relative_url }}">Events</a>
+              <a class="dropdown-item" href="{{ '/news' | relative_url }}">News</a>
+            </div>
+          </li>
         </ul>
         <div class="social-media d-none d-lg-block">
           <a class="text-decoration-none" href="https://twitter.com/opensciencegrid">
