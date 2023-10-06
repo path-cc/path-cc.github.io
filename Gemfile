@@ -6,3 +6,4 @@ gem "github-pages"
 gem 'jekyll-sitemap'
 gem 'jekyll-seo-tag'
 gem 'webrick'
+gem 'csv'
