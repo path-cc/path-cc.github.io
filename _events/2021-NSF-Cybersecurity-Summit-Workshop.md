@@ -113,7 +113,7 @@ You want to put the content that you want in the subsection in this capture
 {% endcomment %}
 {% capture subsection %}
 ### Registration
-Fill out the registration [form](https://forms.uits.iu.edu/machform/view.php?id=134371) found on the
+Fill out the registration form found on the
 [event page](https://www.trustedci.org/2021-cybersecurity-summit).
 
 ### Date
