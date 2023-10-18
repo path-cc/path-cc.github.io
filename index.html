@@ -120,6 +120,7 @@ intro_image_hide_on_mobile: true
             <div class="col-12 col-md-6 col-lg-4">
                 {% for article in articles limit: 1 %}
                     {% include highlighted-title-image-text-card.html
+                        date=article.date
                         internal_href=article.url
                         image=article.image.path
                         alt=article.image.alt
@@ -145,6 +146,7 @@ intro_image_hide_on_mobile: true
                         {% for article in articles limit: 2 offset: continue %}
                         <div class="col-12">
                             {% include light-title-date-desc-card.html
+                            date=article.date
                             title=article.title
                             href=article.url
                             desc=article.excerpt
@@ -155,8 +157,9 @@ intro_image_hide_on_mobile: true
                 {% endif %}
             </div>
             <div class="col-12 col-md-6 col-lg-4 d-none d-lg-block">
-                {% for article in articles limit: 1 offset: 1 %}
+                {% for article in articles limit: 1 offset: continue %}
                     {% include highlighted-title-image-text-card.html
+                            date=article.date
                             internal_href=article.url
                             image=article.image.path
                             alt=article.image.alt
