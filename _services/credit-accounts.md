@@ -72,7 +72,7 @@ credit account system, such that PATh-managed resources support longer runtimes 
 Workloads placed on a PATh Access Point can harness resources pools
 beyond credit-based dedicated resources, perhaps for different phases of an overall workflow.  For example, the [Open Science
 Pool (OSPool)](https://opensciencegrid.org/about/open_science_pool/) capacity consists of aggregated opportunistic resources across
-about 60 sites on a fair-share basis for relevant workloads.  PIs can also utilize their [XRAC](https://portal.xsede.org/my-xsede#/guest) or
+about 60 sites on a fair-share basis for relevant workloads.  PIs can also utilize their XRAC or
 [Frontera](https://www.tacc.utexas.edu/systems/frontera) allocations through PATh Access Points.
 
 While PATh resources explicitly support work that can be run with HTC approaches, 
