@@ -79,7 +79,7 @@ These campuses are contributing to an <a href="https://research.cs.wisc.edu/htco
 >- <a href="https://www.siue.edu/its/cyberinfrastructure/" target="_blank"> Southern Illinois University Edwardsville</a>
 >- <a href="https://now.tufts.edu/articles/tufts-awarded-nsf-grant-expand-big-data-innovation-and-discovery" target="_blank"> Tufts University</a>
 >- <a href="https://ucsdnews.ucsd.edu/pressrelease/sdsc-awarded-nsf-grant-for-triton-shared-computing-cluster-upgrade" target="_blank">University of California San Diego</a>
->- <a href="https://news.engr.uconn.edu/500k-nsf-grant-awarded-to-dr-bing-wang-uconn-health-center-2.php" target="_blank">University of Connecticut</a>
+>- <a href="https://today.uconn.edu/2014/04/500k-nsf-grant-awarded-to-dr-bing-wang-uconn-health-center-2/" target="_blank">University of Connecticut</a>
 >- <a href="https://www.colorado.edu/rc/" target="_blank"> University of Colorado Boulder</a>
 >- <a href="https://www.nd.edu/" target="_blank">University of Notre Dame</a>
 >- <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1925467&HistoricalAwards=false" target="_blank">Wayne State University</a>
