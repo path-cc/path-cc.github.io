@@ -38,13 +38,14 @@ If this is your first time using Jekyll, please follow the [Jekyll docs](https:/
 Depending on your environment, it may be more useful to run Jekyll inside a container.  To do this, run the following from your laptop while inside the checked-out copy of the website source:
 
 ```
-docker run -p 8000:8000 --rm --volume $PWD:/srv/jekyll -it jekyll/jekyll:latest /bin/sh
+docker run -it -p 8003:8000 -v $PWD:/app -w /app ruby:2.7 /bin/bash
 ```
 
 This will utilize the latest Jekyll version and map port `8000` to your host.  Within the container, a small HTTP server can be started with the following command:
 
 ```
-jekyll serve --watch -H 0.0.0.0 -P 8000
+bundle install
+bundle exec jekyll serve --watch --config _config.yml -H 0.0.0.0 -P 8000
 ```
 
 This will build and serve the website; it can be viewed by navigating your web browser to <http://localhost:8000>.
