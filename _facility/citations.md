@@ -16,8 +16,9 @@ Papers, presentations, and other publications that feature research that benefit
 
 and include in the text the following acknowledgement:
 
-{: .bg-light .pt-2 .pb-1 }
+{: .bg-light .pt-2 .pb-1 .px-3 }
 > This research was done using services provided by the PATh Facility [1,2,3,4], which is supported by the National Science Foundation award #1836650.
 
 For acknowledgments of the OSG Consortium, see [https://osg-htc.org/acknowledging](https://osg-htc.org/acknowledging)
-For your convenience, [a BibTex file containing the above three references](/assets/path.bib) has been provided.
+
+For your convenience, [a BibTex file containing the above four references](/assets/path.bib) has been provided.
