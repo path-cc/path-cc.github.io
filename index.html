@@ -45,12 +45,34 @@ intro_image_hide_on_mobile: true
         </div>
     </div>
 
-<!--     <div class="container-xxl"> -->
-<!--         <h1 id="active-nsf-proposals" class="text-center pt-3 pt-lg-0">Active Opportunities</h1> -->
-<!--         <h5 class="text-center"> -->
-<!--             The PATh team is here to help with the following opportunities. -->
-<!--         </h5> -->
-<!--     </div> -->
+    <div class="container-xxl">
+        <h1 id="active-nsf-proposals" class="text-center pt-3 pt-lg-0">Active Opportunities</h1>
+        <h5 class="text-center">
+            The PATh team is here to help with the following opportunities.
+        </h5>
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-7">
+                {% assign now = "now" | date: "%s" %}
+                {% if now < "1729036799" %}
+                <div class="p-3 my-4 bg-white-offset rounded shadow">
+                    <h3 class="mt-0 fw-bold text-center">We are here to help with your <a href="https://new.nsf.gov/funding/opportunities/campus-cyberinfrastructure-cc/nsf24-530/solicitation">CC* Proposal (NSF 24-530)!</a></h3>
+                    <p class="text-center">
+                        Campuses with awards from the
+                        <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748">NSF Campus Cyberinfrastructure (CC*)</a>
+                        Program play an important role in supporting Open Science. To date, 37 CC* campuses contribute to the processing and storage capacity of the
+                        <a href="{{ '/services/open_science_pool/' | relative_url }}">Open Science Pool (OSPool)</a> that is
+                        harnessed weekly by more than 3M jobs.
+                    </p>
+                    <p class="mb-0 d-flex justify-content-center pt-3">
+                        <a class="btn btn-outline-dark" href="mailto:cc-star-proposals@osg-htc.org">Contact Us</a>
+                        <a class="btn btn-outline-dark ms-1" href="/services/research-computing/#let-the-path-team-help-with-your-proposal">How We Can Help</a>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
 
     <div class="container-lg my-5">
         <div id="path-for-researchers" class="row my-3">
