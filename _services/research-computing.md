@@ -147,10 +147,6 @@ your researchers have any questions or issues, please contact us at [support@osg
 
 <iframe width="100%" height="500px" frameBorder="0" style="margin-bottom:1em; margin-top:1em" src="https://map.opensciencegrid.org/map/iframe?view=CCStar#38.61687,-97.86621|4|hybrid"></iframe>
 
-{% assign cc_star_sites = site.data.cc_star | sort: "name" %}
-{% for cc_star_site in cc_star_sites %}
-- <a href="{{ cc_star_site.href }}" target="_blank">{{ cc_star_site.name }}</a>{% endfor %}
-
 ### CC* Campus impact on Open Science
 
 The OSG Consortium has been working with CC* campuses pre and post award for several years.
