@@ -109,7 +109,7 @@ NSF states that "All Area (4) proposals are required to have interoperability wi
 ## Let the PATh team help with your proposal
 
 The National Science Foundation Campus Cyberinfrastructure (CC*) program
-([NSF 23-526](https://www.nsf.gov/pubs/2023/nsf23526/nsf23526.htm)) invests in coordinated campus
+([NSF 24-530](https://new.nsf.gov/funding/opportunities/campus-cyberinfrastructure-cc/nsf24-530/solicitation)) invests in coordinated campus
 and regional-level cyberinfrastructure improvements and innovation.
 
 [PATh](https://path-cc.io) has experience offering consulting to CC* projects during the proposal phase for the
@@ -117,10 +117,10 @@ following aspects of the proposed project:
 
 - Sharing data with authorized users via the [Open Science Data Federation (OSDF)](https://osg-htc.org/services/osdf.html)
 - Bringing the power of high throughput computing via the [OSPool](https://osg-htc.org/services/open_science_pool.html) to your researchers
-- Meeting CC*-required resource sharing as specified in <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748" target="_blank">(NSF 23-526)</a>, and other options for integrating with the OSG Consortium
+- Meeting CC*-required resource sharing as specified in <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748" target="_blank">(NSF 24-530)</a>, and other options for integrating with the OSG Consortium
 - Providing connections to help with data storage systems for shared inter-campus or intra-campus resources
     - We have collected [community data storage systems](https://osg-htc.org/organization/osdf/example_data_origin.html) for your consideration
-- Building regional computing networks
+- Building [regional computing networks](https://osg-htc.org/spotlights/gpargo-cc-star.html)
 - Developing science gateways to utilize high throughput computing via the [OSPool](https://osg-htc.org/services/open_science_pool.html)
 
 Please do not hesitate (or wait too long) to contact us at
@@ -160,25 +160,21 @@ your researchers have any questions or issues, please contact us at [support@osg
 
 ### CC* Campus impact on Open Science
 
-
-The OSG Consortium has been working with CC* campuses pre and post award for several years. 
-These campuses have made significant contributions in support of science, both on their 
+The OSG Consortium has been working with CC* campuses pre and post award for several years.
+These campuses have made significant contributions in support of science, both on their
 own campus and for the entire country.
 
 #### Computing
 
-
-In the last year, twenty-two campuses contributed over 235 million core hours to researchers 
-via the [OSPool](https://osg-htc.org/services/open_science_pool.html) (April 2021 - March 2022). These contributions supported more than 230 
-research groups, campuses, multi-campus collaborations, and gateways, and in fields of 
-study ranging from the medicine to economics, and from genomics to physics. Every month,
-OSG services help additional campuses to support open science by sharing their resources 
-via the OSPool.
+Campuses contribute core hours to researchers
+via the [OSPool](/services/open_science_pool.html), a compute resource accessible to any
+researcher affiliated with a US academic institution. These contributions support more than 230
+research groups, campuses, multi-campus collaborations, and gateways, and in fields of
+study ranging from the medicine to economics, and from genomics to physics.
 
 #### Data Storage
 
+The [Open Science Data Federation](/services/osdf.html) integrates data origins, making data
+accessible via caches, of which many are strategically located in the R&E network backbone.
+The CC* solicitation of 2024 (NSF 24-530) requires interoperability with a national and federated data sharing fabric such as PATh/OSDFs.
 
-As of March 2022, the [Open Science Data Federation](https://osg-htc.org/services/osdf.html) integrates 10 data origins, making data 
-accessible via 20 caches, 6 of which are strategically located in the R&E network backbone.
-The CC* solicitation of 2022 (NSF 22-582) encourages responses that would add data origins 
-or caches at campuses.
