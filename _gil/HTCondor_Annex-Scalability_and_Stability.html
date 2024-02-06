@@ -46,7 +46,7 @@ excerpt: |
             <li>Integrating clusters besides the one already coded on the HTCondor Annex is
                 impossible.</li>
             <li>The job removal doesn’t always work to remove the HTCondor Annexes from the
-                target host.</li>
+                target host. SSH sessions toward the target are also sometimes left behind</li>
         </ul>
         <h2>Recommendations</h2>
         <p>
@@ -55,7 +55,7 @@ excerpt: |
         <ol>
             <li>Improve the checks when an Annex or job is interrupted; there are cases where the
                 jobs stay on target.</li>
-            <li>Check why creating the Annex with 50k jobs or more is impossible.</li>
+            <li>Fix orphaned SSH connections toward target after the Annexes have terminated.</li>
             <li>Create multiple jobs in the same scripts (“queue X”) using HTCondor Annex.</li>
             <li>Show the options for shared connection before the Annex starts the process. This
                 could be very useful to prevent problems with the 2-step or CILogon authentication
