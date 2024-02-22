@@ -115,20 +115,21 @@ excerpt: |
         </p>
     </div>
     <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+        <h2>Table 1: Tests Executed using HTCondor Annex.</h2>
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
-                    <td>
+                    <th>
                         Test
-                    </td>
+                    </th>
 
-                    <td>
+                    <th>
                         Results
-                    </td>
+                    </th>
 
-                    <td>
+                    <th>
                         Comments
-                    </td>
+                    </th>
                 </tr>
 
                 <tr>
@@ -303,20 +304,15 @@ excerpt: |
             Adding more Annex, the job per second rate starts to decrease.
         </p>
         <img src="/images/GIL/HTCondor_annex_scalability_and_stability/figure1gilannex.png" alt="Figure1" width="100%" height="400px">
-       
-        <p>
-            Figure 1: Number of Annex and jobs related to time and Jobs per second.
-        </p>
+        <figcaption>Figure 1: Number of Annex and jobs related to time and Jobs per second.</figcaption>
         <p>
             Figure 2 shows the same results as Figure 1. However, 3D visualization makes it
             possible to check the points where the performance starts to decrease; the bar color
             represents the jobs per second.
         </p>
         <img src="/images/GIL/HTCondor_annex_scalability_and_stability/figure2gilannex.png" alt="Figure2" width="100%" height="400px">
-    
-        <p>
-            Figure 2: Number of Annex and jobs related to time and Jobs per second in 3D.
-        </p>
+        <figcaption>Figure 2: Number of Annex and jobs related to time and Jobs per second in 3D.</figcaption>
+        
         <h2>Appendix</h2>
         <p>
             The tests used two hosts, ap40.uw.osg-htc.org, to create jobs and Annexes, ap1.facility.pathcc.io, to run the Annexes:
