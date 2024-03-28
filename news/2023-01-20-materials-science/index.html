@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Empowering Computational Materials Science Research using HTC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/images/logo/Logo_Round_32x32.png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    
+    <meta name="description" content="Ajay Annamareddy, a research scientist at the University of Wisconsin-Madison, describes how he utilizes high-throughput computing in computational materials science.
+" />
+    
+    <meta property="og:title" content="Partnership to Advance Throughput Computing" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://path-cc.io" />
+    <meta property="og:image" content="https://path-cc.io/images/logo/Logo_Primary_Acronym.png" />
+    <meta property="og:description" content="PATh brings together the Center for High Throughput Computing and the Open Science Grid in order to advance the nation’s campuses and science communities through the use of distributed High Throughput Computing." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="PATh" />
+    <meta name="twitter:creator" content="" />
+    <meta name="twitter:image" content="images/logo/Logo_Round_Med.png" />
+    <meta name="google-site-verification" content="ZmoYUNawmA-Tr3VNrpFqNBEMCBeldJxpgFwOAaa0TNw" />
+
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Empowering Computational Materials Science Research using HTC | PATh</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Empowering Computational Materials Science Research using HTC" />
+<meta name="author" content="Hannah Cheren" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Ajay Annamareddy, a research scientist at the University of Wisconsin-Madison, describes how he utilizes high-throughput computing in computational materials science." />
+<meta property="og:description" content="Ajay Annamareddy, a research scientist at the University of Wisconsin-Madison, describes how he utilizes high-throughput computing in computational materials science." />
+<link rel="canonical" href="https://chtc.cs.wisc.edu/materials-science.html" />
+<meta property="og:url" content="https://chtc.cs.wisc.edu/materials-science.html" />
+<meta property="og:site_name" content="PATh" />
+<meta property="og:image" content="https://raw.githubusercontent.com/CHTC/Articles/main/images/materials-science.jpg" />
+<meta property="og:image:alt" content="Computer screen with lines of code. Uploaded by AltumCode on Unsplash." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-01-20T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://raw.githubusercontent.com/CHTC/Articles/main/images/materials-science.jpg" />
+<meta name="twitter:image:alt" content="Computer screen with lines of code. Uploaded by AltumCode on Unsplash." />
+<meta property="twitter:title" content="Empowering Computational Materials Science Research using HTC" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Hannah Cheren"},"dateModified":"2023-01-20T00:00:00+00:00","datePublished":"2023-01-20T00:00:00+00:00","description":"Ajay Annamareddy, a research scientist at the University of Wisconsin-Madison, describes how he utilizes high-throughput computing in computational materials science.","headline":"Empowering Computational Materials Science Research using HTC","image":{"alt":"Computer screen with lines of code. Uploaded by AltumCode on Unsplash.","url":"https://raw.githubusercontent.com/CHTC/Articles/main/images/materials-science.jpg","@type":"imageObject"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://chtc.cs.wisc.edu/materials-science.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://path-cc.io/images/logo/Logo_Round_Med.png"},"name":"Hannah Cheren"},"url":"https://chtc.cs.wisc.edu/materials-science.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</head>
+<body class='page page-news-single'>
+
+
+
+<div>
+  <div class="container-xxl">
+    <nav class="navbar navbar-expand-lg navbar-light ps-0 pe-0">
+
+      <a class="navbar-brand" href="/">
+        <img height="70" src="/images/logo/Logo_Round_Med.png" alt="PATh"/>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarNavDropdown" class="collapse navbar-collapse justify-content-between">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="about-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              About
+            </a>
+            <div class="dropdown-menu" aria-labelledby="about-nav">
+              <a class="dropdown-item" href="/about">PATh</a>
+              <a class="dropdown-item" href="/team">Team</a>
+              <a class="dropdown-item" href="/glossary">Glossary</a>
+              <a class="dropdown-item" href="/contact">Contact</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="facility-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Facility
+            </a>
+            <div class="dropdown-menu" aria-labelledby="facility-nav">
+              <a class="dropdown-item" href="/facility/index.html">About</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/overview/account_setup/registration/">Registration</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/">Documentation</a>
+              <a class="dropdown-item" href="/facility/citations.html">Citing PATh</a>
+            </div>
+          </li>
+          
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/services/">Services</a>
+          </li>
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/software">Software</a>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="community-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Community
+            </a>
+            <div class="dropdown-menu" aria-labelledby="community-nav">
+              <a class="dropdown-item" href="/spotlights">Spotlights</a>
+              <a class="dropdown-item" href="/events">Events</a>
+              <a class="dropdown-item" href="/news">News</a>
+            </div>
+          </li>
+        </ul>
+        <div class="social-media d-none d-lg-block">
+          <a class="text-decoration-none" href="https://www.youtube.com/channel/UCd1UBXmZIgB4p85t2tu-gLw">
+            <img alt="Youtube Icon" src="/images/icons/youtube.svg"/>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<main>
+  <div class="container-xxl pb-5">
+
+
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-9 col-xl-8 fs-5 ">
+    <h1 class="title my-3">Empowering Computational Materials Science Research using HTC</h1>
+
+<h1 class="mb-3 d-flex flex-row justify-content-between">
+    
+    <small class="text-muted article-date">Hannah Cheren</small>
+    
+    
+    <small class="text-muted article-date">January 20, 2023</small>
+    
+</h1>
+
+
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-9 col-xl-8">
+    <div class="news news-single">
+      <div class="content fs-5"><p><strong><em>Ajay Annamareddy, a research scientist at the University of Wisconsin-Madison, describes how he utilizes high-throughput computing in computational materials science.</em></strong></p>
+
+<figure>
+  <img class="w-100" src="https://raw.githubusercontent.com/CHTC/Articles/main/images/materials-science.jpg" alt="Computer screen with lines of code. Uploaded by AltumCode on [Unsplash](https://unsplash.com/photos/oZ61KFUQsus)." />
+  <figcaption class="figure-caption">Computer screen with lines of code. Uploaded by AltumCode on Unsplash<br /></figcaption>
+</figure>
+
+<p>Groundbreaking research is in the works for the <a href="https://matmodel.engr.wisc.edu/">Computational Materials Group (CMG)</a> at the University of Wisconsin-Madison (UW-Madison). <a href="https://matmodel.engr.wisc.edu/members/">Ajay Annamareddy</a>, a research scientist within CMG, has been a leading user of GPU hours with the <a href="https://chtc.cs.wisc.edu/">Center for High Throughput Computing</a> (CHTC). He utilizes this capacity to run machine learning (ML) simulations as applied to material science problems that have gained tremendous interest in the past decade. CHTC resources have allowed him to study hugely data-driven problems that are practically impossible to deal with using regular resources.</p>
+
+<p>Before coming to UW-Madison, Annamareddy received his Ph.D. in Nuclear Engineering from North Carolina State University. He was introduced to modeling and simulation work there, but he started using high-throughput computing (HTC) and CHTC services when he came to UW-Madison to work as a PostDoc with <a href="https://energy.wisc.edu/about/energy-experts/dane-morgan">Prof. Dane Morgan in the Materials Science and Engineering department</a>. He now works for CMG as a Research Scientist, where he’s been racking up GPU hours for over a year.</p>
+
+<p>Working in the field of computational materials, Annamareddy and his group use computers to determine the properties of materials. So rather than preparing material and measuring it in experiments, they use a computer, which is less expensive and more time efficient. Annamareddy studies metallic glasses. These materials have many valuable properties and applications, but are not easy to make. Instead, he uses computer simulations of these materials to analyze and understand their fundamental properties.</p>
+
+<p>Annamareddy’s group utilizes HTC and high-performance computing (HPC) for their work, so his project lead asked him to contact CHTC and set up an account. Christina Koch, the lead research computing facilitator, responded. “She helped me set up the account and determine how many resources we needed,” Annamareddy explained. “She was very generous in that whenever I exceeded my limits, she would increase them a bit more!”</p>
+
+<p>CHTC resources have become critical for Annamareddy’s work. One of the projects involves running ML simulations, which he notes would be “difficult to complete” without the support of CHTC. Annamareddy uses graph neural networks (GNN), a powerful yet slightly inefficient deep learning technique. The upside to using GNN is that as long as there is some physics component in the underlying research problem, this technique can analyze just about anything. “The caveat is you need to provide lots of data for this technique to figure out a solution.”</p>
+
+<p>Meeting this data challenge, Annamareddy put the input data he generates using high-performance computing (HPC) on the HTC staging location, which gets transferred to a local machine before the ML job starts running. “I use close to twenty gigabytes of data for my simulation, so this would be extremely inefficient to run without staging,” he explains. The CHTC provides Annamareddy with the storage and organization he needs to perform these potentially ground-breaking ML simulations.</p>
+
+<p>Researchers often study materials in traditional atomistic simulations at different timescales, ranging from picoseconds to microseconds. Annamareddy’s goal with his work is to extend the time scales of these conventional simulations by using ML, which he found is well supported by HTC resources. “We have yet to reach it, but we hope we can use ML to extend the time scale of atomistic simulations by a few orders of magnitude. This would be extremely valuable when modeling systems like glass-forming materials where we should be able to obtain properties, like density and diffusion coefficients, much closer to experiments than currently possible with atomistic simulations,” Annamareddy elaborates. This is something that has never been done before in the field.</p>
+
+<p>This project can potentially extend the time scales possible for conventional molecular dynamic simulations, allowing researchers in this field to predict how materials will behave over more extended periods of time. “It’s ambitious – but I’ve been working on it for more than a year, and we’ve made a lot of progress…I enjoy the challenge immensely and am happy I’m working on this problem!”</p>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</main>
+<footer id="footer" class="mt-auto pt-2">
+  <div class="bg-primary">
+    <div class="container-xxl">
+      <div class="row justify-content-center py-2">
+        <div class="col-auto me-4 d-none d-md-flex">
+          <a class="my-auto" href="/"><img style="height:5rem" src="/images/logo/Logo_Round_Med.png" alt="PATh logo"></a>
+        </div>
+        <div class="col-12 col-md-8 col-lg-8">
+          <div class="row justify-content-between my-2">
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Researchers</th></tr>
+                
+                <tr><td><a class="text-white" href="/facility/#accessing-the-path-facility">PATh Compute Credits</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org">OSG Portal</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Organizations</th></tr>
+                
+                <tr><td><a class="text-white" href="/#path-for-organizations">PATh for Organizations</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/software/">Software</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Documentation</th></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.path-cc.io/documentation">PATh Facility</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org/documentation">OSPool User</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Engagement</th></tr>
+                
+                <tr><td><a class="text-white" href="/news">News</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/events/">Events</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/contact/">Contact</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/branding/">Branding</a></td></tr>
+                
+              </table>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <div class="social">
+              <a href="https://www.nsf.gov/oac">
+                  <img alt="NSF Logo" height="70px" width="70px" src="/images/logo/nsf-logo.svg">
+              </a>
+          </div>
+          <div class="copyright">
+              This project is supported by National Science Foundation under Cooperative Agreement
+              <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030508">OAC-2030508</a>.
+              Any opinions, findings, conclusions or recommendations expressed in this material are those of the
+              authors and do not necessarily reflect the views of the National Science Foundation.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/assets/js/scripts.js"></script>
+
+    
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0CCSDQV212"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-0CCSDQV212');
+    </script>
+    
+
+
+
+</body>
+</html>

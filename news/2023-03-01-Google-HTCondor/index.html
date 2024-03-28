@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Google Quantum Computing Utilizing HTCondor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/images/logo/Logo_Round_32x32.png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    
+    <meta name="description" content="Google's launch of a Quantum Virtual Machine emulates the experience and results of programming one of Google's quantum computers, managed by an HTCondor system running in Google Cloud.
+" />
+    
+    <meta property="og:title" content="Partnership to Advance Throughput Computing" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://path-cc.io" />
+    <meta property="og:image" content="https://path-cc.io/images/logo/Logo_Primary_Acronym.png" />
+    <meta property="og:description" content="PATh brings together the Center for High Throughput Computing and the Open Science Grid in order to advance the nation’s campuses and science communities through the use of distributed High Throughput Computing." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="PATh" />
+    <meta name="twitter:creator" content="" />
+    <meta name="twitter:image" content="images/logo/Logo_Round_Med.png" />
+    <meta name="google-site-verification" content="ZmoYUNawmA-Tr3VNrpFqNBEMCBeldJxpgFwOAaa0TNw" />
+
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Google Quantum Computing Utilizing HTCondor | PATh</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Google Quantum Computing Utilizing HTCondor" />
+<meta name="author" content="Hannah Cheren" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Google’s launch of a Quantum Virtual Machine emulates the experience and results of programming one of Google’s quantum computers, managed by an HTCondor system running in Google Cloud." />
+<meta property="og:description" content="Google’s launch of a Quantum Virtual Machine emulates the experience and results of programming one of Google’s quantum computers, managed by an HTCondor system running in Google Cloud." />
+<link rel="canonical" href="https://www.chtc.cs.wisc.edu/Google-HTCondor.html" />
+<meta property="og:url" content="https://www.chtc.cs.wisc.edu/Google-HTCondor.html" />
+<meta property="og:site_name" content="PATh" />
+<meta property="og:image" content="https://raw.githubusercontent.com/CHTC/Articles/main/images/google-qvm.jpg" />
+<meta property="og:image:alt" content="Quantum AI Logo. Image from Quantum AI Product Manager Catherine Vollgraff Heidweiller’s research blog post." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-03-01T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://raw.githubusercontent.com/CHTC/Articles/main/images/google-qvm.jpg" />
+<meta name="twitter:image:alt" content="Quantum AI Logo. Image from Quantum AI Product Manager Catherine Vollgraff Heidweiller’s research blog post." />
+<meta property="twitter:title" content="Google Quantum Computing Utilizing HTCondor" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Hannah Cheren"},"dateModified":"2023-03-01T00:00:00+00:00","datePublished":"2023-03-01T00:00:00+00:00","description":"Google’s launch of a Quantum Virtual Machine emulates the experience and results of programming one of Google’s quantum computers, managed by an HTCondor system running in Google Cloud.","headline":"Google Quantum Computing Utilizing HTCondor","image":{"alt":"Quantum AI Logo. Image from Quantum AI Product Manager Catherine Vollgraff Heidweiller’s research blog post.","url":"https://raw.githubusercontent.com/CHTC/Articles/main/images/google-qvm.jpg","@type":"imageObject"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.chtc.cs.wisc.edu/Google-HTCondor.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://path-cc.io/images/logo/Logo_Round_Med.png"},"name":"Hannah Cheren"},"url":"https://www.chtc.cs.wisc.edu/Google-HTCondor.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</head>
+<body class='page page-news-single'>
+
+
+
+<div>
+  <div class="container-xxl">
+    <nav class="navbar navbar-expand-lg navbar-light ps-0 pe-0">
+
+      <a class="navbar-brand" href="/">
+        <img height="70" src="/images/logo/Logo_Round_Med.png" alt="PATh"/>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarNavDropdown" class="collapse navbar-collapse justify-content-between">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="about-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              About
+            </a>
+            <div class="dropdown-menu" aria-labelledby="about-nav">
+              <a class="dropdown-item" href="/about">PATh</a>
+              <a class="dropdown-item" href="/team">Team</a>
+              <a class="dropdown-item" href="/glossary">Glossary</a>
+              <a class="dropdown-item" href="/contact">Contact</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="facility-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Facility
+            </a>
+            <div class="dropdown-menu" aria-labelledby="facility-nav">
+              <a class="dropdown-item" href="/facility/index.html">About</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/overview/account_setup/registration/">Registration</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/">Documentation</a>
+              <a class="dropdown-item" href="/facility/citations.html">Citing PATh</a>
+            </div>
+          </li>
+          
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/services/">Services</a>
+          </li>
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/software">Software</a>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="community-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Community
+            </a>
+            <div class="dropdown-menu" aria-labelledby="community-nav">
+              <a class="dropdown-item" href="/spotlights">Spotlights</a>
+              <a class="dropdown-item" href="/events">Events</a>
+              <a class="dropdown-item" href="/news">News</a>
+            </div>
+          </li>
+        </ul>
+        <div class="social-media d-none d-lg-block">
+          <a class="text-decoration-none" href="https://www.youtube.com/channel/UCd1UBXmZIgB4p85t2tu-gLw">
+            <img alt="Youtube Icon" src="/images/icons/youtube.svg"/>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<main>
+  <div class="container-xxl pb-5">
+
+
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-9 col-xl-8 fs-5 ">
+    <h1 class="title my-3">Google Quantum Computing Utilizing HTCondor</h1>
+
+<h1 class="mb-3 d-flex flex-row justify-content-between">
+    
+    <small class="text-muted article-date">Hannah Cheren</small>
+    
+    
+    <small class="text-muted article-date">March 01, 2023</small>
+    
+</h1>
+
+
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-9 col-xl-8">
+    <div class="news news-single">
+      <div class="content fs-5"><p><strong><em>Google’s launch of a Quantum Virtual Machine emulates the experience and results of programming one of Google’s quantum computers, managed by an HTCondor system running in Google Cloud.</em></strong></p>
+
+<figure>
+  <img class="w-100" src="https://raw.githubusercontent.com/CHTC/Articles/main/images/google-qvm.jpg" alt="Quantum AI Logo. Image from Quantum AI Product Manager Catherine Vollgraff Heidweiller’s research blog post." />
+  <figcaption class="figure-caption">Quantum AI Logo. Image from Quantum AI Product Manager Catherine Vollgraff Heidweiller’s research blog post.<br /></figcaption>
+</figure>
+
+<p>The CEO of Google and Alphabet, Sudar Pichai, tweeted out some thrilling news:</p>
+
+<p>“Excited to launch a Quantum Virtual Machine (QVM) which emulates the experience and results of programming one of our quantum computers. It will make it easier for researchers to prototype new algorithms and help students learn how to program a quantum computer.” – <a href="https://twitter.com/sundarpichai/status/1549448858282774528">Tweet</a>.</p>
+
+<p>Today’s “classical” computing systems, from laptops to large supercomputers, are built using circuit behavior defined by classical physics. Quantum computer circuity, still in the early phases of development, harnesses the laws of quantum mechanics to solve computing problems in new ways. Quantum computers offer exponential speedups – over 100 million times faster for specific issues – to produce groundbreaking results. However, quantum computing will require scientists and engineers to revisit many classical algorithms and develop new ones tailored to exploit the benefits of quantum processors. Therefore, the QVM is a helpful tool for quantum algorithms research.</p>
+
+<p>“The QVM is, in essence, a realistic simulation of a grid on our quantum hardware using classical computers,” Tom Downes, a consultant for High-Performance Computing (HPC) at Google Cloud, explains. Simulating a grid of qubits, the basic unit of quantum information, on a quantum processor requires many trajectory simulations of quantum noise. Downes explains, “quantum computers are noisy, so it is important to test and adjust your quantum circuits in realistic conditions so they can perform well and output the data you are looking for in your research problem. To virtualize a processor, the QVM uses the noise data and topology of Google’s real hardware.” This grid size determines whether a researcher can use their laptop or require a setup utilizing many classical computers to power the simulation. Essentially, research on the QVM is “proof of concept” research.</p>
+
+<p>To enable researchers to test their algorithms on a larger grid of qubits, Google utilized the <a href="https://htcondor.org">HTCondor Software Suite</a> (HTCSS) to organize the capacity of many classical computers to run multiple simulations of a quantum circuit simultaneously. The HTCondor Software Suite enables researchers to easily harness the collective computing power of many classical computers and submit and manage large numbers of computing jobs. Today, HTCSS is used at universities, government labs, and commercial organizations worldwide, including within Google’s own Google Cloud Platform, to power QVM.  Downes details, “this ability to test on a 32-qubit grid can extrapolate its performance to a non-simulatable grid more feasible.”</p>
+
+<p>The new <a href="https://quantumai.google/qsim/tutorials/multinode">Google Quantum AI tutorial</a> shows users how to use the Cloud HPC Toolkit, which makes it easy for new users to deploy HTCondor pools in Google Cloud. Downes describes that the tutorial “provides the basic elements of an HTCondor pool: a central manager, an access point, and a pool of execute points that scale in size to work through the job queue.”</p>
+
+<p>The tutorial by Google describes how to:</p>
+<ul>
+  <li>Use terraform to deploy an HTCondor cluster in the Google Cloud</li>
+  <li>Run a multi-node quantum computing simulation using HTCondor</li>
+  <li>Query cluster information and monitor running jobs in HTCondor</li>
+  <li>Use terraform to destroy the cluster</li>
+</ul>
+
+<p>Please visit <a href="https://blog.google/technology/research/our-new-quantum-virtual-machine-will-accelerate-research-and-help-people-learn-quantum-computing/">this website</a> for more information about the Quantum Virtual Machine and <a href="https://quantumai.google/qsim/tutorials/multinode">how researchers can use HTCondor for multinode quantum simulations</a>.</p>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</main>
+<footer id="footer" class="mt-auto pt-2">
+  <div class="bg-primary">
+    <div class="container-xxl">
+      <div class="row justify-content-center py-2">
+        <div class="col-auto me-4 d-none d-md-flex">
+          <a class="my-auto" href="/"><img style="height:5rem" src="/images/logo/Logo_Round_Med.png" alt="PATh logo"></a>
+        </div>
+        <div class="col-12 col-md-8 col-lg-8">
+          <div class="row justify-content-between my-2">
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Researchers</th></tr>
+                
+                <tr><td><a class="text-white" href="/facility/#accessing-the-path-facility">PATh Compute Credits</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org">OSG Portal</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Organizations</th></tr>
+                
+                <tr><td><a class="text-white" href="/#path-for-organizations">PATh for Organizations</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/software/">Software</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Documentation</th></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.path-cc.io/documentation">PATh Facility</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org/documentation">OSPool User</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Engagement</th></tr>
+                
+                <tr><td><a class="text-white" href="/news">News</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/events/">Events</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/contact/">Contact</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/branding/">Branding</a></td></tr>
+                
+              </table>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <div class="social">
+              <a href="https://www.nsf.gov/oac">
+                  <img alt="NSF Logo" height="70px" width="70px" src="/images/logo/nsf-logo.svg">
+              </a>
+          </div>
+          <div class="copyright">
+              This project is supported by National Science Foundation under Cooperative Agreement
+              <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030508">OAC-2030508</a>.
+              Any opinions, findings, conclusions or recommendations expressed in this material are those of the
+              authors and do not necessarily reflect the views of the National Science Foundation.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/assets/js/scripts.js"></script>
+
+    
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0CCSDQV212"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-0CCSDQV212');
+    </script>
+    
+
+
+
+</body>
+</html>

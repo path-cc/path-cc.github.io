@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>HTCondor Annex - Scalability and Stability</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/images/logo/Logo_Round_32x32.png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    
+    <meta property="og:title" content="Partnership to Advance Throughput Computing" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://path-cc.io" />
+    <meta property="og:image" content="https://path-cc.io/images/logo/Logo_Primary_Acronym.png" />
+    <meta property="og:description" content="PATh brings together the Center for High Throughput Computing and the Open Science Grid in order to advance the nation’s campuses and science communities through the use of distributed High Throughput Computing." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="PATh" />
+    <meta name="twitter:creator" content="" />
+    <meta name="twitter:image" content="images/logo/Logo_Round_Med.png" />
+    <meta name="google-site-verification" content="ZmoYUNawmA-Tr3VNrpFqNBEMCBeldJxpgFwOAaa0TNw" />
+
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>HTCondor Annex - Scalability and Stability | PATh</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="HTCondor Annex - Scalability and Stability" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="One challenge for High-throughput computing (HTC) is integrating with the computational cloud or other clusters to provide more computational power. HTCondor Annex can create working nodes on clusters using schedulers such as HTCondor, Slurm, and others." />
+<meta property="og:description" content="One challenge for High-throughput computing (HTC) is integrating with the computational cloud or other clusters to provide more computational power. HTCondor Annex can create working nodes on clusters using schedulers such as HTCondor, Slurm, and others." />
+<link rel="canonical" href="https://path-cc.io/GIL/HTCondor_Annex-Scalability_and_Stability/" />
+<meta property="og:url" content="https://path-cc.io/GIL/HTCondor_Annex-Scalability_and_Stability/" />
+<meta property="og:site_name" content="PATh" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-01-31T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="HTCondor Annex - Scalability and Stability" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-01-31T00:00:00+00:00","datePublished":"2024-01-31T00:00:00+00:00","description":"One challenge for High-throughput computing (HTC) is integrating with the computational cloud or other clusters to provide more computational power. HTCondor Annex can create working nodes on clusters using schedulers such as HTCondor, Slurm, and others.","headline":"HTCondor Annex - Scalability and Stability","mainEntityOfPage":{"@type":"WebPage","@id":"https://path-cc.io/GIL/HTCondor_Annex-Scalability_and_Stability/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://path-cc.io/images/logo/Logo_Round_Med.png"}},"url":"https://path-cc.io/GIL/HTCondor_Annex-Scalability_and_Stability/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</head>
+<body class='page '>
+
+
+
+<div>
+  <div class="container-xxl">
+    <nav class="navbar navbar-expand-lg navbar-light ps-0 pe-0">
+
+      <a class="navbar-brand" href="/">
+        <img height="70" src="/images/logo/Logo_Round_Med.png" alt="PATh"/>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarNavDropdown" class="collapse navbar-collapse justify-content-between">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="about-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              About
+            </a>
+            <div class="dropdown-menu" aria-labelledby="about-nav">
+              <a class="dropdown-item" href="/about">PATh</a>
+              <a class="dropdown-item" href="/team">Team</a>
+              <a class="dropdown-item" href="/glossary">Glossary</a>
+              <a class="dropdown-item" href="/contact">Contact</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="facility-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Facility
+            </a>
+            <div class="dropdown-menu" aria-labelledby="facility-nav">
+              <a class="dropdown-item" href="/facility/index.html">About</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/overview/account_setup/registration/">Registration</a>
+              <a class="dropdown-item" href="https://portal.path-cc.io/documentation/">Documentation</a>
+              <a class="dropdown-item" href="/facility/citations.html">Citing PATh</a>
+            </div>
+          </li>
+          
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/services/">Services</a>
+          </li>
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/software">Software</a>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="community-nav" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Community
+            </a>
+            <div class="dropdown-menu" aria-labelledby="community-nav">
+              <a class="dropdown-item" href="/spotlights">Spotlights</a>
+              <a class="dropdown-item" href="/events">Events</a>
+              <a class="dropdown-item" href="/news">News</a>
+            </div>
+          </li>
+        </ul>
+        <div class="social-media d-none d-lg-block">
+          <a class="text-decoration-none" href="https://www.youtube.com/channel/UCd1UBXmZIgB4p85t2tu-gLw">
+            <img alt="Youtube Icon" src="/images/icons/youtube.svg"/>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<main>
+  <div class="container-xxl pb-5">
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="pt-3 pb-2">
+            <h1 class="title my-3">HTCondor Annex - Scalability and Stability</h1>
+
+
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <p>By Fabio Andrijauskas - UCSD</p>
+        <p>
+            One challenge for High-throughput computing (HTC) is integrating with the
+            computational cloud or other clusters to provide more computational power. HTCondor
+            Annex can create working nodes on clusters using schedulers such as HTCondor, Slurm,
+            and others.
+        </p>
+        <h2>Executive summary</h2>
+        <p>
+            The HTCondor Annex creates a way to provide more computational power using the
+            same structure as a standard HTCondor environment. About the HTCondor Annex and the
+            test environment:
+        </p>
+        <ul>
+            <li>All the tests were in the ap40.uw.osg-htc.org and ap1.facility.path-cc.io as an
+                HTCondor Annex target.</li>
+            <li>The methodology was based on the absolute number of worker daemons, the absolute
+                number of worker daemons, peaks execute daemon termination, the external killing
+                of executed daemons when the system is loaded, and the long-term stability of an
+                extensive system.</li>
+            <li>We ran jobs for three months, more than 250k jobs, and more than 100k Annex.</li>
+            <li>The HTCondor Annex creation process frequency could be increased; the results
+                show the Annex creation frequency decreases while the number of annexes increases.</li>
+            <li>The annex can only be created if you create fewer jobs (50k jobs). The appendix
+                shows the output of the attempt to create the Annex after the job creation.</li>
+            <li>Integrating clusters besides the one already coded on the HTCondor Annex is
+                impossible.</li>
+            <li>The job removal doesn’t always work to remove the HTCondor Annexes from the
+                target host. SSH sessions toward the target are also sometimes left behind.</li>
+        </ul>
+        <h2>Recommendations</h2>
+        <p>
+            The recommendations are ordered related to the user impact.
+        </p>
+        <ol>
+            <li>Improve the checks when an Annex or job is interrupted; there are cases where the
+                jobs stay on target.</li>
+            <li>Fix orphaned SSH connections toward target after the Annexes have terminated.</li>
+            <li>Create multiple jobs in the same scripts (“queue X”) using HTCondor Annex.</li>
+            <li>Show the options for shared connection before the Annex starts the process. This
+                could be very useful to prevent problems with the 2-step or CILogon authentication
+                style. Figure 4 shows the output of a command to create an Annex and the CILogon
+                authentication request.</li>
+            <li>It is required to create all the jobs first and the Annexes afterward. It is interesting
+                to be able to create the annex and the jobs or vice versa.</li>
+            <li>Integrate or warn about the fact that condor_store_cred needs to start the Annexes.</li>
+            <li>Adding other targets using configuration files in the HTCondor Annex is essential;
+                now, it is only possible to use a “coded set” of targets.</li>
+            <li>Give feedback about the SSH timeout command; it helps debug firewall issues.</li>
+            <li>Consider an alternative for opening port 9618 for security reasons and
+                administration issues.</li>
+            <li>Create a command to check the status of the target jobs.</li>
+        </ol>
+        <h2>Methodology</h2>
+        <p>
+            The methodology applied to test the HTCondor Annex has a few goals to cover
+            scalability, stability, and performance:
+        </p>
+        <ol>
+            <li>
+                Absolute number of worker daemons
+                <ol type="a">
+                    <li>Peaks execute daemon provisioning to show that we can start many execute
+                        daemons within a short amount of time and have jobs start on them.</li>
+                </ol>
+            </li>
+            <li>Peaks execute daemon termination.
+                <ol type="a">
+                    <li>After having many execute daemons running, set up either job termination or
+                        Annex auto-termination to happen as closely as possible together.</li>
+                </ol>
+            </li>
+            <li>The external killing of executed daemons when the system is loaded (e.g., over 20k
+                already)
+                <ol type="a">
+                    <li>Measure the success/error rates of the daemons de-registering from the
+                        negotiator, clean up after themselves, and adequately reflect termination in
+                        Annex commands.</li>
+                </ol>
+            </li>
+            <li>Long-term stability of an extensive system
+                <ol type="a">
+                    <li>After bringing the system to a large baseline (e.g., 20k), check if it is possible
+                        to sustain that.</li>
+                </ol>
+            </li>
+        </ol>
+        <h2>Tests HTCondor Annex</h2>
+        <p>
+            Table 1 shows the tests run using the HTCondor Annex, using the ap40.uw.osg-
+            htc.org (HTCondor Annex) and ap1.facility.path-cc.io (worker target). The results are
+            positive, negative, and neutral. Positive results mean the tests ran without error messages
+            or other problems; a neutral result means the test was executed successfully. Still, some
+            aspects must be analyzed, and a negative result means the test could not run.
+        </p>
+    </div>
+    <div class="col-12 col-xl-9 col-lg-10 col-md-12 py-3">
+        <figure>
+            <div class="table-responsive">
+                <table class="table table-border">
+                    <tr>
+                        <th>
+                            Test
+                        </th>
+
+                        <th>
+                            Results
+                        </th>
+
+                        <th>
+                            Comments
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Create a working node using OSG AP
+                        </td>
+
+                        <td>
+                            Positive
+                        </td>
+
+                        <td>
+                            It was required to run:
+                            echo | condor_store_cred
+                            add-oauth -i - -s
+                            scitokens and echo |
+                            condor_store_cred query-
+                            oauth.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Running job using Annex
+                        </td>
+
+                        <td>
+                            Positive
+                        </td>
+
+                        <td>
+                            It is possible to create the Jobs and
+                            run the Annex.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Run jobs using X Annex and
+                            Y jobs
+                        </td>
+
+                        <td>
+                            Neutral
+                        </td>
+
+                        <td>
+                            Figure 1 and Figure 2 shows the
+                            results.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Run 50k jobs and use one
+                            Annex
+                        </td>
+
+                        <td>
+                            Negative
+                        </td>
+
+                        <td>
+                            It was not possible to create the
+                            Annex, the Appendices show more
+                            details about it.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Run 50k Jobs and ran one
+                            Annex
+                        </td>
+
+                        <td>
+                            Negative
+                        </td>
+
+                        <td>
+                            It was not possible to create the
+                            Annex, the Appendices show more
+                            details about it.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Kill an Annex while the job
+                            is running.
+                        </td>
+
+                        <td>
+                            Positive
+                        </td>
+
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Kill a job while an Annex is
+                            running
+                        </td>
+
+                        <td>
+                            Neutral
+                        </td>
+
+                        <td>
+                            Kill the annex, and sometimes it is
+                            got stuck on the target.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Long Run Annex – 1 month
+                        </td>
+
+                        <td>
+                            Positive
+                        </td>
+
+                        <td>
+                            Close to 100k jobs and 100k Annex
+                            in a one month.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Create jobs to run on the
+                            Annex using: queue X
+                        </td>
+
+                        <td>
+                            Negative
+                        </td>
+
+                        <td>
+                            It is not possible to run multiple jobs
+                            using one script.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Delete all Annex and all the
+                            jobs using condor_rm
+                        </td>
+
+                        <td>
+                            Negative
+                        </td>
+
+                        <td>
+                            There is some Annex got stuck on
+                            the target.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <figcaption class="text-primary">Table 1: Tests using HTCondor Annex.</figcaption>
+        </figure>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10 py-3">
+        <p>
+            Figure 1 shows tests executed using HTCondor Annex using the ap40.uw.osg-htc.org
+            (HTCondor Annex) and ap1.facility.path-cc.io (worker target). On the left vertical axis is the time
+            to start the job (simple job with a sleep one command), and the right vertical is the jobs executed
+            per second; on the horizontal axis, on the first line is the number of Annex, and on the second line
+            if the number of Jobs. Using 1 to 10 Annex, the performance of jobs per second is increasing.
+            Adding more Annex, the job per second rate starts to decrease.
+        </p>
+        <figure class="py-3">
+            <img src="/images/GIL/HTCondor_annex_scalability_and_stability/figure1gilannex.png" alt="Figure1" width="100%" height="400px">
+            <figcaption class="text-primary">Figure 1: Number of Annex and jobs related to time and Jobs per second.</figcaption>
+        </figure>
+        <p>
+            Figure 2 shows the same results as Figure 1. However, 3D visualization makes it
+            possible to check the points where the performance starts to decrease; the bar color
+            represents the jobs per second.
+        </p>
+        <figure class="py-3">
+            <img src="/images/GIL/HTCondor_annex_scalability_and_stability/figure2gilannex.png" alt="Figure2" width="100%" height="400px">
+            <figcaption class="text-primary">Figure 2: Number of Annex and jobs related to time and Jobs per second in 3D.</figcaption>
+        </figure>
+        
+        <h2>Appendix</h2>
+        <p>
+            The tests used two hosts, ap40.uw.osg-htc.org, to create jobs and Annexes, ap1.facility.pathcc.io, to run the Annexes:
+        </p>
+        <ul>
+            <li>On ap40.uw.osg-htc.org:</li>
+            <ul>
+                <li>502GB RAM.</li>
+                <li>AMD EPYC 7763 64-Core Processor.</li>
+                <li>CentOS Stream release 8.</li>
+                <li>CondorVersion: 23.3.0 2023-12-15 BuildID: 695193
+                    PackageID: 23.3.0-0.695193 RC - CondorPlatform:
+                    x86_64_AlmaLinux8 </li>
+            </ul>
+            <li>ap1.facility.path-cc.io:</li>
+            <ul>
+                <li>502GB RAM.</li>
+                <li>AMD EPYC 7763 64-Core Processor</li>
+                <li>CentOS Stream release 8</li>
+                <li>CondorVersion: 23.3.0 2023-12-15 BuildID: 695193
+                    PackageID: 23.3.0-0.695193 RC - CondorPlatform:
+                    x86_64_AlmaLinux8</li>
+            </ul>
+        </ul>
+        <p>
+            Figure 3 shows the error when 50k jobs are created, and an attempt is made to create an
+            Annex for those jobs.
+        </p>
+        <figure class="py-3">
+            <pre class="p-2 mb-0 bg-light"><code>#include &lt;arpa/inet.h&gt;
+fabio.andrijauskas ID: 633223 12/14 15:31 _ _ 1 1
+633223.0
+fabio.andrijauskas ID: 633224 12/14 15:31 _ _ 1 1
+633224.0
+fabio.andrijauskas ID: 633225 12/14 15:31 _ _ 1 1
+633225.0
+fabio.andrijauskas ID: 633226 12/14 15:31 _ _ 1 1
+633226.0
+fabio.andrijauskas ID: 633227 12/14 15:31 _ _ 1 1
+633227.0
+fabio.andrijauskas ID: 633228 12/14 15:31 _ _ 1 1
+633228.0
+fabio.andrijauskas ID: 633229 12/14 15:31 _ _ 1 1
+633229.0
+fabio.andrijauskas ID: 633230 12/14 15:31 _ _ 1 1
+633230.0
+fabio.andrijauskas ID: 633231 12/14 15:31 _ _ 1 1
+633231.0
+fabio.andrijauskas ID: 633232 12/14 15:31 _ _ 1 1
+633232.0
+Total for query: 50000 jobs; 0 completed, 0 removed, 50000 idle, 0 running,
+0 held, 0 suspended
+Total for fabio.andrijauskas: 50000 jobs; 0 completed, 0 removed, 50000
+idle, 0 running, 0 held, 0 suspended
+Total for all users: 52321 jobs; 0 completed, 2 removed, 50028 idle, 45
+running, 2246 held, 0 suspended
+
+fabio.andrijauskas@ospool-ap2040:~/job$ htcondor job submit 1.sh --annexname path13^C
+fabio.andrijauskas@ospool-ap2040:~/job$ htcondor -v annex create path12
+cpu@path-facility --login-name fabio.andrijauskas --cpus 1
+Attempting to run annex create with options {'annex_name': 'path12',
+'queue_at_system': 'cpu@path-facility', 'nodes': 1, 'lifetime': 3600,
+'allocation': None, 'owners': 'fabio.andrijauskas', 'collector':
+'ap40.uw.osg-htc.org:9618?sock=ap_collector', 'token_file': None,
+'password_file': PosixPath('~/.condor/annex_password_file'), 'control_path':
+PosixPath('~/.hpc-annex'), 'cpus': 1, 'mem_mb': None, 'login_name':
+'fabio.andrijauskas', 'login_host': None, 'startd_noclaim_shutdown': 300,
+'gpus': None, 'gpu_type': None, 'test': None}
+Creating annex token...
+..done.
+Found 50000 annex jobs matching 'TargetAnnexName == "path12".
+No sif files found, continuing...
+This will (as the default project) request 1 CPUs for 1.00 hours for an
+annex named 'path12' from the queue named 'cpu' on the system named 'PATh
+Facility'. To change the project, use --project. To change the resources
+requested, use either --nodes or one or more of --cpus and --mem_mb. To
+change how long the resources are reqested for, use --lifetime (in seconds).
+
+This command will access the system named 'PATh Facility' via SSH. To
+proceed, follow the prompts from that system below; to cancel, hit CTRL-C.
+ (You can run 'ssh -o ControlPersist="5m" -o ControlMaster="auto" -o
+ControlPath="/home/fabio.andrijauskas/.hpc-annex/master-%C"
+fabio.andrijauskas@ap1.facility.path-cc.io' to use the shared connection.)
+Thank you.
+Making remote temporary directory...
+... made remote temporary directory /home/fabio.andrijauskas/.hpcannex/scratch/remote_script.jE2VR4cC ...
+Populating annex temporary directory... done.
+Submitting state-tracking job...
+
+universe = local
+ requirements = hpc_annex_start_time =?= undefined
+ executable = /usr/libexec/condor/annex/annex-local-universe.py
+ cron_minute = */5
+ on_exit_remove = PeriodicRemove =?= true
+ periodic_remove = hpc_annex_start_time + 3600 + 3600 < time()
+ environment = PYTHONPATH=
+ MY.arguments = strcat( "$(CLUSTER).0 hpc_annex_request_id ", GlobalJobID,
+" ap40.uw.osg-htc.org:9618?sock=ap_collector")
+ jobbatchname = path12 [HPC Annex]
+ MY.hpc_annex_request_id = GlobalJobID
+ MY.hpc_annex_name = "path12"
+ MY.hpc_annex_queue_name = "cpu"
+ MY.hpc_annex_collector = "ap40.uw.osg-htc.org:9618?sock=ap_collector"
+ MY.hpc_annex_lifetime = "3600"
+ MY.hpc_annex_owners = "fabio.andrijauskas"
+ MY.hpc_annex_nodes = "1"
+ MY.hpc_annex_cpus = "1"
+ MY.hpc_annex_mem_mb = undefined
+ MY.hpc_annex_allocation = undefined
+ MY.hpc_annex_remote_script_dir = "/home/fabio.andrijauskas/.hpcannex/scratch/remote_script.jE2VR4cC"
+
+Caught exception while running in verbose mode:
+Traceback (most recent call last):
+ File "/usr/lib64/python3.6/site-packages/htcondor_cli/annex_create.py",
+line 872, in annex_inner_func
+ submit_result = schedd.submit(submit_description)
+ File "/usr/lib64/python3.6/site-packages/htcondor/_lock.py", line 70, in
+wrapper
+ rv = func(*args, **kwargs)
+htcondor.HTCondorIOError: Failed to create new proc ID.
+
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+ File "/usr/lib64/python3.6/site-packages/htcondor_cli/cli.py", line 131,
+in main
+ verb_cls(logger=verb_logger, **options)
+ File "/usr/lib64/python3.6/site-packages/htcondor_cli/annex.py", line 137,
+in __init__
+ annex_create(logger, **options)
+ File "/usr/lib64/python3.6/site-packages/htcondor_cli/annex_create.py",
+line 985, in annex_create
+ return annex_inner_func(logger, annex_name, **others)
+ File "/usr/lib64/python3.6/site-packages/htcondor_cli/annex_create.py",
+line 874, in annex_inner_func
+ raise RuntimeError(f"Failed to submit state-tracking job, aborting.")
+RuntimeError: Failed to submit state-tracking job, aborting.
+Error while trying to run annex create:
+Failed to submit state-tracking job, aborting.
+Cleaning up remote temporary directory...
+</code></pre>
+<figcaption class="text-primary">Figure 3: Error when 50k jobs</figcaption>
+</figure>
+    <p>Figure 4 shows the output of the Annex Creation, where an action about a 2-step
+        authentication is requested.
+    </p>
+<figure class="py-3">
+    <pre class="p-2 mb-0 bg-light"><code>#include &lt;arpa/inet.h&gt;
+htcondor -v annex create path15 cpu@path-facility --login-name
+fabio.andrijauskas --cpus 1
+Attempting to run annex create with options {'annex_name': 'path15',
+'queue_at_system': 'cpu@path-facility', 'nodes': 1, 'lifetime': 3600,
+'allocation': None, 'owners': 'fabio.andrijauskas', 'collector':
+'ap40.uw.osg-htc.org:9618?sock=ap_collector', 'token_file': None,
+'password_file': PosixPath('~/.condor/annex_password_file'), 'control_path':
+PosixPath('~/.hpc-annex'), 'cpus': 1, 'mem_mb': None, 'login_name':
+'fabio.andrijauskas', 'login_host': None, 'startd_noclaim_shutdown': 300,
+'gpus': None, 'gpu_type': None, 'test': None}
+Creating annex token...
+..done.
+Found 1 annex jobs matching 'TargetAnnexName == "path15".
+No sif files found, continuing...
+This will (as the default project) request 1 CPUs for 1.00 hours for an annex
+named 'path15' from the queue named 'cpu' on the system named 'PATh Facility'.
+To change the project, use --project. To change the resources requested, use
+either --nodes or one or more of --cpus and --mem_mb. To change how long the
+resources are reqested for, use --lifetime (in seconds).
+This command will access the system named 'PATh Facility' via SSH. To proceed,
+follow the prompts from that system below; to cancel, hit CTRL-C.
+ (You can run 'ssh -o ControlPersist="5m" -o ControlMaster="auto" -o
+ControlPath="/home/fabio.andrijauskas/.hpc-annex/master-%C"
+fabio.andrijauskas@ap1.facility.path-cc.io' to use the shared connection.)
+Authenticate at
+-----------------
+https://cilogon.org/device/?user_code=R3D-CP4-LC4
+-----------------
+Hit enter when the website tells you to return to your device
+</code></pre>
+<figcaption class="text-primary">Figure 4: Output of the Annex Creation</figcaption>
+</figure>
+</div>
+</div>
+
+</main>
+<footer id="footer" class="mt-auto pt-2">
+  <div class="bg-primary">
+    <div class="container-xxl">
+      <div class="row justify-content-center py-2">
+        <div class="col-auto me-4 d-none d-md-flex">
+          <a class="my-auto" href="/"><img style="height:5rem" src="/images/logo/Logo_Round_Med.png" alt="PATh logo"></a>
+        </div>
+        <div class="col-12 col-md-8 col-lg-8">
+          <div class="row justify-content-between my-2">
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Researchers</th></tr>
+                
+                <tr><td><a class="text-white" href="/facility/#accessing-the-path-facility">PATh Compute Credits</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org">OSG Portal</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Organizations</th></tr>
+                
+                <tr><td><a class="text-white" href="/#path-for-organizations">PATh for Organizations</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/software/">Software</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Documentation</th></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.path-cc.io/documentation">PATh Facility</a></td></tr>
+                
+                <tr><td><a class="text-white" href="https://portal.osg-htc.org/documentation">OSPool User</a></td></tr>
+                
+              </table>
+            </div>
+            
+            <div class="col-6 col-lg-4 col-xl-3 my-2">
+              <table>
+                <tr><th class="text-light">Engagement</th></tr>
+                
+                <tr><td><a class="text-white" href="/news">News</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/events/">Events</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/contact/">Contact</a></td></tr>
+                
+                <tr><td><a class="text-white" href="/branding/">Branding</a></td></tr>
+                
+              </table>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <div class="social">
+              <a href="https://www.nsf.gov/oac">
+                  <img alt="NSF Logo" height="70px" width="70px" src="/images/logo/nsf-logo.svg">
+              </a>
+          </div>
+          <div class="copyright">
+              This project is supported by National Science Foundation under Cooperative Agreement
+              <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030508">OAC-2030508</a>.
+              Any opinions, findings, conclusions or recommendations expressed in this material are those of the
+              authors and do not necessarily reflect the views of the National Science Foundation.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/assets/js/scripts.js"></script>
+
+    
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0CCSDQV212"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-0CCSDQV212');
+    </script>
+    
+
+
+
+</body>
+</html>
