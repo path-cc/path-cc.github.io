@@ -13,7 +13,7 @@ bodyClass: page-events-list
             <div class="article-content">
                 {% if event.header_image %}
                     <a href="{{ event.url | relative_url }}" class="d-block">
-                        <img class="w-100 image-card-cap rounded mb-3" src="{{ event.header_image | relative_url }}">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.header_image | relative_url }}">
                     </a>
                 {% endif %}
                 <h2 class="article-title">
@@ -43,7 +43,7 @@ bodyClass: page-events-list
             <div class="article-content">
                 {% if event.header_image %}
                     <a href="{{ event.url | relative_url }}" class="d-block">
-                        <img class="w-100 image-card-cap rounded mb-3" src="{{ event.header_image | relative_url }}">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.header_image | relative_url }}">
                     </a>
                 {% endif %}
                 <h2 class="article-title">
