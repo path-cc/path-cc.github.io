@@ -21,7 +21,7 @@ header_image: "/images/events/throughput-2024-banners.png"
 
 **Don't miss this opportunity to connect with the High Throughput Computing community.** 
 
-You are invited to the second annual Throughput Computing event (HTC 24) from July 8-12 to be held at in beautiful Madison, Wisconsin. HTC 24 brings together researchers, campuses, science collaborations, facilitators, administrators, government representatives and professionals interested in high throughput computing to:
+You are invited to the second annual Throughput Computing event (HTC 24) from July 8-12 to be held at in beautiful Madison, Wisconsin. HTC 24 brings together researchers, campuses, science collaborations, facilitators, administrators, government representatives, and professionals interested in high throughput computing to:
 
 - Engage with the throughput computing community, including the [OSG Consortium](https://osg-htc.org/) and the [PATh](https://path-cc.io/) and [Pelican](https://pelicanplatform.org/) teams and many others contributing to HTC
 - Be inspired by presentations and conversations with community leaders and contributors sharing common interests
@@ -63,7 +63,7 @@ Monday, July 8 through Friday, July 12, 2024.
 
 ### Who
 
-Researchers, campuses, scientific collaborations, facilitators, administrators and professionals interested in the [HTCondor Software Suite](https://htcondor.org) and high throughput computing or the [OSG Consortium](https://osg-htc.org/) resources or services (including the [OSPool](https://osg-htc.org/services/open_science_pool.html), the [Open Science Data Federation](https://osg-htc.org/services/osdf.html), the [Pelican Platform](https://pelicanplatform.org/), or the [PATh Facility](https://path-cc.io/facility/).)
+Researchers, campuses, scientific collaborations, facilitators, administrators, and professionals interested in the [HTCondor Software Suite](https://htcondor.org) and high throughput computing or the [OSG Consortium](https://osg-htc.org/) resources or services (including the [OSPool](https://osg-htc.org/services/open_science_pool.html), the [Open Science Data Federation](https://osg-htc.org/services/osdf.html), the [Pelican Platform](https://pelicanplatform.org/), or the [PATh Facility](https://path-cc.io/facility/).)
 
 ### Where
 
