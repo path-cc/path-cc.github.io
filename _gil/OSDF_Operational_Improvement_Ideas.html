@@ -1,0 +1,1749 @@
+---
+title: OSDF Operational Improvement Ideas
+date: 2024-3-27
+layout: container-default
+excerpt: |
+    The Open Science Data Federation (OSDF) is an OSG service designed to support the sharing of files staged in 
+    autonomous “origins” for efficient access to those files from anywhere in the world via a global namespace 
+    and network of caches. The OSDF may be used either standalone - allowing data to be downloaded via HTTPS - 
+    or with HTCondor managing data transfer for compute jobs running on one of the many resource pools supported
+    by OSG. 
+---
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="pt-3 pb-2">
+            {% include layout/subpage-header.html %}
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <p>By Fabio Andrijauskas - UCSD</p>
+        <p>
+            The Open Science Data Federation (OSDF) is an OSG service designed to support the sharing of files staged in 
+            autonomous “origins” for efficient access to those files from anywhere in the world via a global namespace 
+            and network of caches. The OSDF may be used either standalone - allowing data to be downloaded via HTTPS - 
+            or with HTCondor managing data transfer for compute jobs running on one of the many resource pools supported
+            by OSG.
+        </p>
+        <p>
+            During the OSDF operations, GIL testing, and information from sysadmins, large users, and user facilitators, it 
+            was possible to check some items requiring attention. Each item has an impact (1 to 5) and complexity (1 to 5) 
+            to be completed. The impact is related to improving the service availability, security, new features, user 
+            experience, etc.
+        </p>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>1</th>
+                    <th>Add support to chkmount for origins and cache.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD, docker image.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Using Kubernetes or docker sometimes the pod starts without the main volume for 
+                        Origins or Caches, causing the XrootD using the base directory directly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        This option checks the existence of a specific file on a XrootD volume; if the file 
+                        is not present, the XrootD won't start. It was tested using this option: <code>oss.space
+                        public $(rootdir) chkmount thisfileshoulbeheretoxrootdststart
+                         -https://xrootd.slac.stanford.edu/doc/dev54/ofs_config.htm#_Toc89982406.</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        WIP - Tracked as issue <a href="https://github.com/PelicanPlatform/pelican/issues/995">#995</a>. PR is <a href="https://github.com/PelicanPlatform/pelican/pull/1003">#1003</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>2</th>
+                    <th>Ability to fix a site or OSDF cache position on demand.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF client, Pelican director.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        It is required to wait three weeks or more to fix a 
+                        position on the GeoIP system for caches; it would be interesting 
+                        to be able to fix the positions on the spot.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        OSDF uses the GeoIP system provided for CVMFS GeoIP 
+                        services. It is possible to add this feature to the Pelican director.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE. Delivered in Pelican 7.4.0.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>3</th>
+                    <th>Support public reading and scitoken-authenticated writing.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        A user case requests to write files using sci-tokens and read the file publicly. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        It is required to add this functionality on the OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE. Can be configured in 7.4.0 but is “first class” in 7.5.0. Would 
+                        appreciate testing/eval.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>4</th>
+                    <th>Add Perfsonar testing on the OSDF Docker images.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF docker image.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        To debug network problem, it is interesting to have a MaDDash grid with all the origins and caches. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Add the scripts used for NRP OSDF host to the OSDF docker image. 
+                        Those scripts can test the transfer rate between a cache and origins using multiple concurrent tests.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>5</th>
+                    <th>File eviction on OSDF caches.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF cache.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        On the XrootD 5.5.6, it is possible to evict a file from the cache. 
+                        With this, it’s feasible to monitor if the cache can access the origin.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Add to OSDF docker image an environment variable to define the file path 
+                        to be evicted and a crontab forcing the eviction every 30 minutes. 
+                        CheckMk will request this file for each cache, testing the OSDF cache, 
+                        origin and director, <i>be sure to remove the test files.</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned. Cache testing is built in using a different mechanism.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>6</th>
+                    <th>OSDF Probe.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        HTCondor and OSDF client.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We need to check the performance between a site and the OSDF caches.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        The idea is to create software to submit several jobs to the OSG sites 
+                        to check if the sites use the proper cache and its performance (transfer 
+                        rate, latency, and others). Using this probe, create a data visualization 
+                        matrix showing sites, caches and origins using transfer rate, server load, 
+                        IO wait, and other information. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        SCHEDULED. We’ve identified a summer student to work on this project; starting in June 2024.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>7</th>
+                    <th>OSDF transfer rate classAds.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        HTCondor and OSDF client.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We need to check the performance between a site and the OSDF caches using jobs.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Add the transfer rate and other information to the classes to the job classAds.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE. Needs input and evaluation on whether all metrics we capture are useful 
+                        and to help identify missing ones.  Feature of HTCSS 23.5.0 and Pelican 7.5.0 (needs both).
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>8</th>
+                    <th>Make the redirector line in the cache config customizable.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF docker image.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We need to check the performance between a site and the OSDF caches using jobs.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        With the new Pelican redirector, changing the cache redirector on the OSDF cache is helpful.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE (obsolete). This line is auto generated in Pelican.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>9</th>
+                    <th>Multiple namespaces on OSDF origin for docker.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Several origins need to have several exports namespaces, now it is 
+                        requiring using ConfigMap in Kubernetes. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Use the env vars to create a list of namespaces to be exported.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE.  Feature for 7.6.0 (March 2024).
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>10</th>
+                    <th>The topology endpoint (scitokens.conf) should not contain duplicate issuer sections. </th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        XrootD behaves poorly with duplicate section names in the sci-tokens. conf.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Change OSG topology or pelican component to be sure there is not duplicate section.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE.  The Pelican process generates the scitokens.cfg and merges appropriately.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>11</th>
+                    <th>Automatically report discrepancies between OASIS, CVMFS repo, and OSDF.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        CVMFS repository configuration, OSG topology and OASIS configuration. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        To add a new cache to OSDF, it must be added to the OSG topology, 
+                        CVMFS configuration and OASIS configuration. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        A script to check if all caches are in OSG topology and the CVMS config. 
+                        Considering if the cache is public or private.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned.  CVMFS config will always be separate.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>12</th>
+                    <th>Use cache connections to validate the site positions.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF cache
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        It is required to check if the site using a cache should be using that exactly cache.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        The software will use the connections between the cache and the site 
+                        to create a map reporting which site is using which cache. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned.  Could be useful for a summer student?
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>13</th>
+                    <th>Create a backup GeoIP system.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        CVMFS config.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        The idea is to use another GeoIP system as a backup or confirmation about the OSDF and host positions.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        The software will use the connections between the cache and the site to create a map reporting which site 
+                        is using which cache.  The idea is work with a student to do this.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>14</th>
+                    <th>Load new configuration and certificates to XrootD without restarting the service.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XRootD.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Changing the certificate and configurations without restarting the OSDF cache or Origin would be interesting.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Change XrootD code to load configuration and certificates automatically.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE/PARTIAL.  Parts of the configuration will automatically reload for both XRootD and Pelican. 
+                        Certificates, Authfile, and scitokens.cfg, for example, are already there.  We should enumerate what we’d like to be able to change at runtime.
+                        <br>
+                        When a configuration is changed via the web interface, the service will auto-restart.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>15</th>
+                    <th>Stop using certificates.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We need a certificate for each OSDF host.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Use tokens for everything.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned for caches.  DONE for origins (but requires most caches to be upgraded to Pelican to use this functionality).
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>16</th>
+                    <th>Create a software to upload files.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Each user needs to create a tool to upload files, it is requiring a tool to upload the file and check if the file is ok. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a script to write a file in the origin and check if the file is intact or create a plugin to rsync to upload file to OSDF.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        DONE.  Part of the “pelican object upload” toolset.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>17</th>
+                    <th>Create a helm chart to OSDF caches.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG topology.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        All the deployment for the NRP OSDF hosts is in Tiger repo using flux to deploy to NRP.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a helm chart to OSDF caches, with this is possible to migrate all the caches and use a standard deployment. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not planned in the near future.  May be a topic for Year 2
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>18</th>
+                    <th>Index all the OSDF logs.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSG docker image.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        There are no central logs for OSDF, and it is interesting to have a central indexing service to 
+                        debug problem or even create a dashboard with errors and warning for the OSDF hosts. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create on NRP or on tiger a service to gather all the logs from OSDF hosts, create on the Docker image a environment variable to configure the logs location.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>19</th>
+                    <th>Create a dashboard using the OSDF logs.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        Grafana
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We would like to detect operational problems before the user analyzing the logs and frequency for some error could help do detect problems. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a dashboard using the OSDF logs. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope. Pelican can help provide additional inputs to the dashboard as needed (either via XRootD monitoring or Pelican itself)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>20</th>
+                    <th>OSDF catalog.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF hosts
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        There is not catalog for the OSDF, each origin is indexed in different ways. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a catalog integrating all the OSDF origins.  
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope.  In discussions with NDP.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>21</th>
+                    <th>OSDF NRP Dashboard.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF hosts
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        There is not dashboard for the OSDF hosts on NRP, the idea is to monitor the system load for the caches and origins.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a Dashboard to monitor and alert when a OSDF host has system load variation. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>22</th>
+                    <th>Ability to handling of overloaded or failed origins, avoiding bad caches.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        OSDF hosts
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Some caches get overload and the now the only way solve these creating downtimes and removing the caches from the CVMFS configuration repo. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create an interface able to show the load, transfer rate and other cache and origins information. 
+                        In this interface, should be possible to remove or pause a cache from the OSDF. Besides that, improve the load balance on the XrootD. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Goal is to have some basic functionality by June 2024.  Will report load metrics and take them into account into the cache selection.  
+                        Will allow the cache to report overloads back to the client (to better distinguish from an unresponsive cache).
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>23</th>
+                    <th>Group the XrootD logs.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        The XrootD log has all the information about each transfer, however, there is no logical or id information showing each transfer step. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create an ID for each transaction, including it in the XrootD logs.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Willing to discuss.  Note: XRootD developers are strongly against structured logging; we may have to do this through a plugin that will never be accepted upstream.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>24</th>
+                    <th>Include job information in the XrootD logs.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD and HTCondor.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        It is not possible to track in a formal way which file was used from OSDF.  
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Include in the XrootD logs the HTCondor Job ID.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Project IDs are recorded as part of the user agent.  We can add job IDs in as well.  Opened as issue <a href="https://github.com/PelicanPlatform/pelican/issues/996">#996</a>.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>25</th>
+                    <th>Improve the XrootD error and warning messages. </th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Some XrootD error and warning messages do not include a comprehensive message or any hints what the problem could be.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Include in the XrootD logs a comprehensive message in the warning and error providing hints what could be the problem what to do solve. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope but in-scope for the IRIS-HEP OSG-LHC activities.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>26</th>
+                    <th>Simple cache coherence.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        We don’t any cache coherence in the OSDF, sometimes the users change the files and there is no way to flush or sync it.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Include a function using the XrootD evict to remove a file from all the OSDF caches. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope.  However, Pelican is making it easier for users to generate unique filenames as a HTCSS plugin; this 
+                        effectively does a “cache eviction” when input files change.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>27</th>
+                    <th>Create a OSDF file indexer.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Each dataset is indexed his own way, there is no standard or recommendation. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a OSDF indexer, a software to process a dataset and create an indexing scheme or create a recommendation how to do it.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican scope. Could be a joint project with NDP.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>28</th>
+                    <th>Create a OSDF data challenge.</th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        XrootD.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        Each OSDF host has different hardware and network configuration, there is no information about the capacity or a base line transfer rate. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Create a set of tests to explorer each cache and origin to create a base line transfer rate. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not in the Pelican plans; could be a good PATh or Pelican summer student activity.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="table-responsive">
+            <table class="table table-border">
+                <tr>
+                    <th>29</th>
+                    <th>Create alerts using the base transfer rate. </th>
+                </tr>
+                <tr>
+                    <td>
+                        Impact:
+                    </td>
+                    <td>
+                        4
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Complexity:
+                    </td>
+                    <td>
+                        5
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Related components:
+                    </td>
+                    <td>
+                        checkmk
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Problem:
+                    </td>
+                    <td>
+                        It is not possible to measure if a cache or origin has a problem with a transfer rate or other network related problem. 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Solution:
+                    </td>
+                    <td>
+                        Using the base line transfer, create a set of alerts to show if a cache or origin could have a network problem.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pelican status:
+                    </td>
+                    <td>
+                        Not clearly in the Pelican scope; could be done operationally within PATh.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
