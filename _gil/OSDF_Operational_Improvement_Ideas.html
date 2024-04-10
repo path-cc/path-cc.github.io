@@ -25,14 +25,16 @@ excerpt: |
             autonomous “origins” for efficient access to those files from anywhere in the world via a global namespace 
             and network of caches. The OSDF may be used either standalone - allowing data to be downloaded via HTTPS - 
             or with HTCondor managing data transfer for compute jobs running on one of the many resource pools supported
-            by OSG. <br>
+            by OSG.
+        </p>
+        <p>
             During the OSDF operations, GIL testing, and information from sysadmins, large users, and user facilitators, it 
             was possible to check some items requiring attention. Each item has an impact (1 to 5) and complexity (1 to 5) 
             to be completed. The impact is related to improving the service availability, security, new features, user 
             experience, etc.
         </p>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -78,9 +80,9 @@ excerpt: |
                     </td>
                     <td>
                         This option checks the existence of a specific file on a XrootD volume; if the file 
-                        is not present, the XrootD won't start. It was tested using this option: oss.space 
+                        is not present, the XrootD won't start. It was tested using this option: <code>oss.space
                         public $(rootdir) chkmount thisfileshoulbeheretoxrootdststart
-                         -https://xrootd.slac.stanford.edu/doc/dev54/ofs_config.htm#_Toc89982406.
+                         -https://xrootd.slac.stanford.edu/doc/dev54/ofs_config.htm#_Toc89982406.</code>
                     </td>
                 </tr>
                 <tr>
@@ -88,13 +90,13 @@ excerpt: |
                         Pelican status:
                     </td>
                     <td>
-                        WIP - Tracked as issue #995. PR is #1003
+                        WIP - Tracked as issue <a href="https://github.com/PelicanPlatform/pelican/issues/995">#995</a>. PR is <a href="https://github.com/PelicanPlatform/pelican/pull/1003">#1003</a>
                     </td>
                 </tr>
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -155,7 +157,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -214,7 +216,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -273,7 +275,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -321,7 +323,7 @@ excerpt: |
                         Add to OSDF docker image an environment variable to define the file path 
                         to be evicted and a crontab forcing the eviction every 30 minutes. 
                         CheckMk will request this file for each cache, testing the OSDF cache, 
-                        origin and director, be sure to remove the test files.
+                        origin and director, <i>be sure to remove the test files.</a>
                     </td>
                 </tr>
                 <tr>
@@ -335,7 +337,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -397,7 +399,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -456,7 +458,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -514,7 +516,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -573,7 +575,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -631,7 +633,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -691,7 +693,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -750,7 +752,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -809,7 +811,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -870,7 +872,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -928,7 +930,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -986,7 +988,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1044,7 +1046,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1103,7 +1105,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1161,7 +1163,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1219,7 +1221,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1277,7 +1279,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1337,7 +1339,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1395,7 +1397,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1447,13 +1449,13 @@ excerpt: |
                         Pelican status:
                     </td>
                     <td>
-                        Project IDs are recorded as part of the user agent.  We can add job IDs in as well.  Opened as issue #996.
+                        Project IDs are recorded as part of the user agent.  We can add job IDs in as well.  Opened as issue <a href="https://github.com/PelicanPlatform/pelican/issues/996">#996</a>.
                     </td>
                 </tr>
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1511,7 +1513,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1570,7 +1572,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1628,7 +1630,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
@@ -1686,7 +1688,7 @@ excerpt: |
             </table>
         </div>
     </div>
-    <div class="col-12 col-xl-9 col-lg-10 col-md-12">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <div class="table-responsive">
             <table class="table table-border">
                 <tr>
