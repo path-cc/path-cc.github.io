@@ -8,51 +8,52 @@ intro_image_hide_on_mobile: false
 ---
 {% include get/team.liquid %}
 <div class="row pb-5">
+    {% assign base_image_path = "/staff-list/" %}
     {% assign promoted_teams = team | where: "promoted", true | sort: "weight" %}
-    {% for team in promoted_teams %}
+    {% for member in promoted_teams %}
     <div class="col-12 col-md-6 mb-2">
         <div class="h-100 team team-summary team-summary-large">
-            {% if team.image %}
+            {% if member.image %}
             <div class="team-image">
-                <img alt="{{ team.name }}" class="img-fluid mb-2" src="{{ team.image | relative_url }}" />
+                <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
             </div>
             {% endif %}
             <div class="team-meta">
-                {% if team.website %}
-                <a href="{{ team.website }}">
+                {% if member.website %}
+                <a href="{{ member.website }}">
                 {% endif %}
-                <h2 class="team-name">{{ team.name }}</h2>
-                {% if team.website %}
+                <h2 class="team-name">{{ member.name }}</h2>
+                {% if member.website %}
                 </a>
                 {% endif %}
-                <p class="team-institution">{{ team.institution }}</p>
-                <p class="team-description">{{ team.title }}</p>
+                <p class="team-institution">{{ member.institution }}</p>
+                <p class="team-description">{{ member.path.title | default: member.title }}</p>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
 <div class="row px-2">
-    {% assign teams = team | sort: "weight" | sort: "name" %}
-    {% for team in teams %}
-    {% if team.promoted == nil %}
+    {% assign team = team | sort: "weight" | sort: "name" %}
+    {% for member in team %}
+    {% if member.promoted == nil %}
     <div class="col-12 col-sm-6 col-lg-4 mb-3 px-1">
         <div class="ps-5 ps-sm-0 team team-summary my-2">
-            {% if team.image %}
+            {% if member.image %}
             <div class="team-image">
-                <img alt="{{ team.name }}" class="img-fluid mb-2" src="{{ team.image | relative_url }}" />
+                <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
             </div>
             {% endif %}
             <div class="team-meta">
-                {% if team.website %}
-                <a href="{{ team.website }}">
+                {% if member.website %}
+                <a href="{{ member.website }}">
                 {% endif %}
-                <h3 class="team-name m-0">{{ team.name }}</h3>
-                {% if team.website %}
+                <h3 class="team-name m-0">{{ member.name }}</h3>
+                {% if member.website %}
                 </a>
                 {% endif %}
-                <p>{{ team.title }}</p>
-                <p class="team-institution"><small>{{ team.institution }}</small></p>
+                <p>{{ member.path.title | default: member.title }}</p>
+                <p class="team-institution"><small>{{ member.institution }}</small></p>
             </div>
         </div>
     </div>
