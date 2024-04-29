@@ -10,5 +10,3 @@
         {% assign future_events = future_events | push: event %}
     {% endif %}
 {% endfor %}
-
-{% assign future_events = future_events | sort: "end_date" %}
