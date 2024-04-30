@@ -31,10 +31,8 @@ jobs:
           # Build the production version of website
           JEKYLL_ENV=production bundle exec jekyll build
 
-          # Commit the build then use 'git subtree' to create a branch with just the _site contents
-          git add _site -f
-          git commit -m "Build Production Website"
-          git checkout -b gh-pages `git subtree split --prefix _site master`
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./_site # The folder the action should deploy.
 
-          # Push to Production
-          git push --set-upstream origin gh-pages --force
