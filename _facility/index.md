@@ -41,10 +41,8 @@ Common examples of HTC workloads include parameter sweeps, Monte-Carlo simulatio
 
 Users of the facility will receive [credit accounts](/services/credit-accounts/) directly from the NSF which they can utilize to run high throughput computing workflows.  The NSF is making credits available through a number of mechanisms, including:
 
-- **Solicitations**: The 2021 [CSSI solicitation](https://www.nsf.gov/pubs/2021/nsf21617/nsf21617.pdf) included a mechanism to request credits as part of the project proposal. 
+- **Solicitations**: The [CSSI solicitation](https://www.nsf.gov/pubs/2021/nsf21617/nsf21617.pdf) included a mechanism to request credits as part of the project proposal. 
 {: #solicitations}
-- **Pilot for the Allocation of High-Throughput Computing Resources (HTC)**: The NSF provides a mechanism where existing PIs can apply for credits as a supplement to an existing award or as part of a new award.  See the [Dear Colleague Letter 22-051](https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp) for more information on the pilot.
-{: #dear-colleague-letter}
 
 The PATh team is here to help!  As part of the consulting services offered to any researcher, our team can help you decompose your workload to ensembles of jobs and generate resource estimates for the various tasks in the ensemble.  Please reach out to [credit-accounts@path-cc.io](mailto:credit-accounts@path-cc.io) to initiate your consult.
 

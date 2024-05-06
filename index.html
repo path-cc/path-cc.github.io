@@ -25,14 +25,13 @@ intro_image_hide_on_mobile: true
                             <div class="col-12 col-sm-6">
                                 <div class="p-2 border-end d-flex flex-column">
                                     <h3 class="fw-normal pb-2 text-center">If you are a <b>Researcher</b></h3>
-                                    <h5 class="mx-auto"><a class="btn  btn-outline-primary text-decoration-none" href="https://portal.osg-htc.org/application">Sign up for OSPool Capacity</a></h5>
-                                    <h5 class="mx-auto"><span class="d-none d-md-inline">or</span> <a href="/facility#accessing-the-path-facility" class="btn btn-outline-primary text-decoration-none">Apply for PATh Compute Credits</a></h5>
+                                    <h5 class="mx-auto"><a class="btn  btn-outline-primary text-decoration-none" href="#path-for-researchers">Apply now for Compute Capacity</a></h5>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">
                                 <div class="p-2">
                                     <h3 class="fw-normal text-center pb-2">If you are an <b>Organization</b></h3>
-                                    <h5 class="text-center pt-sm-4"><a href="#path-for-organizations" class="btn btn-outline-primary text-decoration-none">Join us at PATh for Organizations</a></h5>
+                                    <h5 class="text-center"><a href="#path-for-organizations" class="btn btn-outline-primary text-decoration-none">Build or Share HTC Capacity</a></h5>
                                 </div>
                             </div>
                         </div>
@@ -52,8 +51,9 @@ intro_image_hide_on_mobile: true
         </h5>
         <div class="row justify-content-center">
             <div class="col-12 col-lg-7">
+
                 {% assign now = "now" | date: "%s" %}
-                {% if now < "1729036799" %}
+                {% if now < "1729036799" and now > "1726444799"%}
                 <div class="p-3 my-4 bg-white-offset rounded shadow">
                     <h3 class="mt-0 fw-bold text-center">We are here to help with your <a href="https://new.nsf.gov/funding/opportunities/campus-cyberinfrastructure-cc/nsf24-530/solicitation">CC* Proposal (NSF 24-530)!</a></h3>
                     <p class="text-center">
@@ -69,6 +69,17 @@ intro_image_hide_on_mobile: true
                     </p>
                 </div>
                 {% endif %}
+
+                <div class="p-3 my-4 bg-white-offset rounded shadow">
+                    <h3 class="mt-0 fw-bold text-center text-primary">Apply for Compute Credits</h3>
+                    <p class="text-center">
+                        The PATh facility has compute credits available for researchers! Apply now to access the PATh facility and run HTC workloads on purpose built hardware.
+                    </p>
+                    <p class="mb-0 d-flex justify-content-center pt-2">
+                        <a class="btn btn-outline-dark ms-1" href="https://portal.path-cc.io/application">Apply Now</a>
+                    </p>
+                </div>
+
             </div>
         </div>
 
@@ -85,16 +96,13 @@ intro_image_hide_on_mobile: true
                         For Researchers
                     </h3>
                     <p class="fs-5">
-                        <b>New!</b> The <a href="/facility/#using-path-facilities">PATh facility</a> provides
+                        The <a href="/facility/#using-path-facilities">PATh facility</a> provides
                         compute capacity made available for researchers by the NSF through request. The dedicated capacity
                         allows researchers to run HTC workloads on purpose built hardware from the convenience of a
                         dedicated Access Point.
                         <div class="row gx-1">
                             <div class="col-auto">
                                 <a class="btn btn-outline-primary text-decoration-none" href="https://www.nsf.gov/pubs/2022/nsf22051/nsf22051.jsp">Apply for Compute Credits</a>
-                            </div>
-                            <div class="col-auto">
-                                <a class="btn btn-outline-primary text-decoration-none" href="https://portal.path-cc.io/documentation/">View Documentation</a>
                             </div>
                         </div>
 
