@@ -1,6 +1,6 @@
 ---
 short_title: "Save The Date: 2024 European HTCondor Workshop" 
-title: "Save The Date for the European HTCondor Workshop, September 24-27"
+title: "Registration is open for the European HTCondor Workshop, September 24-27"
 
 layout: events
 published: true
@@ -32,9 +32,12 @@ encouraged to propose a short presentation.
 There will also time and space for short, maybe spontaneous interactive participation ("show us your toolbox sessions") 
 which proved to be very popular in previous meetings. 
 
-Registration and abstract submission will be opened in due course. 
+Registration is now open! Find more information on the [event page.](https://indico.cern.ch/event/1386170/) 
 
 To ease travel, the workshop will begin Tuesday morning and end around Friday lunchtime. 
+
+Want more information? Sign up to be on the HTCondor-World [mailing list.](https://lists.cs.wisc.edu/mailman/listinfo/htcondor-world) Email us at [HTCondor-world@cs.wisc.edu](HTCondor-world@cs.wisc.edu) for further questions
+
 {% endcapture %}
 
 {% capture subsection %}
@@ -49,7 +52,7 @@ NIKHEF-Amsterdam. Amsterdam, Netherlands
 
 ## Registration
 
-Registration for this workshop is currently not open, but will open in due time. 
+Registration for this workshop is open! Register [here!](https://indico.cern.ch/event/1386170/) 
 {% endcapture %}
 
 {% capture endblock %}
