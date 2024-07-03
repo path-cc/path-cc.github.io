@@ -1,0 +1,23 @@
+---
+    layout: sub-page
+    title: HTC24 Participants
+---
+
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Institution</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for registrant in site.data.throughput-computing.2024.participants %}
+        <tr>
+            <td style="text-transform: capitalize">{{ registrant.Name | downcase }}</td>
+            <td style="text-transform: capitalize">{{ registrant.Institution }}</td>
+            <td style="text-transform: capitalize">{{ registrant.State }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
