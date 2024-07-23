@@ -19,7 +19,7 @@ excerpt: |
     <div class="col-12 col-xl-7 col-lg-8 col-md-10">
         <p>By: Immanuel Bareket, UCSB</p>
         <p>In collaboration with Igor Sfiligoi, UCSD/SDSC</p>
-        <h2>Summary</h2>
+        <h2 class="pt-3">Summary</h2>
         <p>The ShadowLog provides a detailed description of a job as it moves through the condor
             system from when it is submitted until it terminates. For a typical job, the logs are relatively
             concise and understandable. However, the logs for a job that isn’t processed regularly
@@ -27,17 +27,18 @@ excerpt: |
             user errors, system errors, and irregular log messages that are not errors at all. There is
             also no documentation on the expected state transitions for a typical job, and what that
             should look like in the logs. All of these are necessary to better recognize error patterns
-            and make progress in error characterization.<br>
+            and make progress in error characterization.</p>
+            <p>
             We thus propose that documentation is added to the HTCondor website outlining the
             typical states a job should go through, and the corresponding log messages.</p>
-        <h2>Condor State Transitions</h2>
+        <h2 class="pt-3">Condor State Transitions</h2>
         <img src="/images/GIL/understanding-htcondor-logs/htcondor-logs.png" alt="HTCondor Log Map">
-        <h3>Example ShadowLog for regular job:</h3>
+        <h3 class="pt-4">Example ShadowLog for regular job:</h3>
         <img src="/images/GIL/understanding-htcondor-logs/shadow-log-regular.png" alt="Regular ShadowLog">
-        <h3>Example ShadowLog for bad job:</h3>
+        <h3 class="pt-4">Example ShadowLog for bad job:</h3>
         <p>(Note that logs for bad jobs can vary greatly depending on error)</p>
         <img src="/images/GIL/understanding-htcondor-logs/shadow-log-bad.png" alt="Bad ShadowLog">
-        <h2>Additional observations</h2>
+        <h2 class="pt-3">Additional observations</h2>
         <ul>
             <li>Fatal vs Non-fatal errors
                 <ul>
@@ -55,11 +56,11 @@ excerpt: |
                 </ul>
             </li>
         </ul>
-        <h2>Parsing ShadowLog manually</h2>
+        <h2 class="pt-3">Parsing ShadowLog manually</h2>
         <img src="/images/GIL/understanding-htcondor-logs/parsing-logs.png" alt="Parsing ShadowLog">
-        <h2>Parsing ShadowLog with python</h2>
+        <h2 class="pt-3">Parsing ShadowLog with python</h2>
         <a href="https://github.com/emanbareket/HTCondor_Immanuel/tree/main">https://github.com/emanbareket/HTCondor_Immanuel/tree/main</a>
-        <h2>Possibilities for future advancement:</h2>
+        <h2 class="pt-3">Possibilities for future advancement:</h2>
         <ol>
             <li>Looking deeper into the “Associated information”:
                 <ol type="a">
