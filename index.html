@@ -8,6 +8,7 @@ intro_image_absolute: true
 intro_image_hide_on_mobile: true
 ---
 
+
 <div class="py-1 mb-1 bg-primary">
     <div class="container-lg py-1">
         <a href="https://portal.path-cc.io/application" class="text-decoration-none border border-1 bg-light rounded py-1 p-2 me-2">Sign-up Now</a><span class="text-light">Compute credits available to researchers, apply now to access the <a class="text-light text-decoration-underline" href="https://portal.path-cc.io/application">PATh facility</a></span>
@@ -15,12 +16,16 @@ intro_image_hide_on_mobile: true
 </div>
 {% include layout/header.html logo=layout.logo header_class=page.header_class %}
 <main>
-    <div class="bg-primary py-2">
-        <div class="container-xxl">
-            <span class="text-white">CHTC is hiring! View the new Research Cyberinfrastructure Specialist position on the jobs page and apply by August 1st.</a>
-            <a class="btn btn-light px-1 ms-2 py-0" href="https://chtc.cs.wisc.edu/jobs.html#full-time-positions">View Job Posting</a>
+    {% assign date = "now" | date: "%s" %}
+    {% assign enddate = "2024-08-11" | date: "%s" %}
+    {% if date < enddate %}
+        <div class="bg-primary py-2">
+            <div class="container-xxl">
+                <span class="text-white">CHTC is hiring! View the new Research Cyberinfrastructure Specialist position on the jobs page and apply by August 1st.</a>
+                <a class="btn btn-light px-1 ms-2 py-0" href="https://chtc.cs.wisc.edu/jobs.html#full-time-positions">View Job Posting</a>
+            </div>
         </div>
-    </div>
+    {% endif %}
     <div id="hero" class="">
         <div class="container-lg py-4">
             <div class="row justify-content-center mb-6">
