@@ -1,0 +1,79 @@
+---
+title: Understanding HTCondor Logs 
+date: 2024-6-30
+layout: container-default
+excerpt: |
+    The ShadowLog provides a detailed description of a job as it moves through the condor
+    system from when it is submitted until it terminates. For a typical job, the logs are relatively
+    concise and understandable.
+---
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <div class="pt-3 pb-2">
+            {% include layout/subpage-header.html %}
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-7 col-lg-8 col-md-10">
+        <p>By: Immanuel Bareket, UCSB</p>
+        <p>In collaboration with Igor Sfiligoi, UCSD/SDSC</p>
+        <h2>Summary</h2>
+        <p>The ShadowLog provides a detailed description of a job as it moves through the condor
+            system from when it is submitted until it terminates. For a typical job, the logs are relatively
+            concise and understandable. However, the logs for a job that isn’t processed regularly
+            are long, and difficult to understand. There is no consistent way to differentiate between
+            user errors, system errors, and irregular log messages that are not errors at all. There is
+            also no documentation on the expected state transitions for a typical job, and what that
+            should look like in the logs. All of these are necessary to better recognize error patterns
+            and make progress in error characterization.<br>
+            We thus propose that documentation is added to the HTCondor website outlining the
+            typical states a job should go through, and the corresponding log messages.</p>
+        <h2>Condor State Transitions</h2>
+        <img src="/images/GIL/understanding-htcondor-logs/htcondor-logs.png" alt="HTCondor Log Map">
+        <h3>Example ShadowLog for regular job:</h3>
+        <img src="/images/GIL/understanding-htcondor-logs/shadow-log-regular.png" alt="Regular ShadowLog">
+        <h3>Example ShadowLog for bad job:</h3>
+        <p>(Note that logs for bad jobs can vary greatly depending on error)</p>
+        <img src="/images/GIL/understanding-htcondor-logs/shadow-log-bad.png" alt="Bad ShadowLog">
+        <h2>Additional observations</h2>
+        <ul>
+            <li>Fatal vs Non-fatal errors
+                <ul>
+                    <li>A “bad” job can experience a fatal error and terminate with a non-zero exit status or it can recover and terminate with exit status 0.
+                        <ul>
+                            <li>Common non-fatal errors include but are not limited to: refused requests to run on a slot, file transfer failures, holds.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>User vs System errors
+                <ul>
+                    <li>Hold codes, reasons for eviction/disconnect, and other descriptive features can make it easy to determine whether an error is the fault of the user or the system.</li>
+                    <li>In errors that lack descriptions, it can be much more difficult. e.g. File transfer failures, unknown reasons for eviction/disconnect</li>
+                </ul>
+            </li>
+        </ul>
+        <h2>Parsing ShadowLog manually</h2>
+        <img src="/images/GIL/understanding-htcondor-logs/parsing-logs.png" alt="Parsing ShadowLog">
+        <h2>Parsing ShadowLog with python</h2>
+        <a href="https://github.com/emanbareket/HTCondor_Immanuel/tree/main">https://github.com/emanbareket/HTCondor_Immanuel/tree/main</a>
+        <h2>Possibilities for future advancement:</h2>
+        <ol>
+            <li>Looking deeper into the “Associated information”:
+                <ol type="a">
+                    <li>This information can be tracked at each transition and used to predict whether errors are user or system related.</li>
+                    <li>This predictive logic can then be used to improve condorErrorTracker.py, or any other future script, allowing it to filter out and focus only on system errors.</li>
+                    <li>Patterns in this information could also allow us to pinpoint specific causes of errors, and potentially be used to fix errors faster, or even prevent them.</li>
+                </ol>
+            </li>
+            <li>Predicting whether jobs will recover:
+                <ol type="a">
+                    <li>As of now, it is very difficult to predict whether or not a job will recover from an error, as you usually only know the error is fatal when the job terminates, and there is seemingly always a chance for it to recover before then.</li>
+                    <li>We could track the percentage of jobs that recover after experiencing every type of error, and use this to directly calculate the recovery probability for each error.</li>
+                    <li>We could also simply keep track of errors that are always fatal, though they may be scarce or not even exist.</li>
+                    <li>Machine learning can be used to find less visible/obvious patterns and make even better predictions.</li>
+                </ol>
+            </li>
+        </ol>
