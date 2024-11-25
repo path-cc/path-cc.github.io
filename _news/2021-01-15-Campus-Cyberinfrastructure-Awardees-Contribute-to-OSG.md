@@ -12,7 +12,7 @@ Campus Cyberinfrastructure Award Recipients Power the OSG
 
 OSG partners with campuses across the US, including [Campus Cyberinfrastructure (CC\*)](https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748) awardees, to help them share their resources at a regional and national level.  The campuses actively contributing CC*-funded resources are shown in the map below; every month, we are working to help more awardees contribute:
 
-<iframe width="100%" height="500px" frameBorder="0" style="margin-bottom:1em; margin-top:1em" src="https://map.opensciencegrid.org/map/iframe?view=CCStar#38.61687,-97.86621|4|hybrid"></iframe>
+<iframe width="100%" height="500px" frameBorder="0" style="margin-bottom:1em; margin-top:1em" src="https://map.osg-htc.org/map/iframe?view=CCStar#38.61687,-97.86621|4|hybrid"></iframe>
 
 <h2>349 Million Core Hours Contributed by CC* Campuses</h2>
 
@@ -59,7 +59,7 @@ The OSG team actively works with campuses to integrate them smoothly into the OS
 
 <h2>Contributing to the Open Science Pool</h2>
 
-Many other schools, in addition to CC* awardees, contribute resources to the Open Science Pool. <a href="https://map.opensciencegrid.org/map/iframe?view=EduvsOther#29.22889,-90.08789|4|terrain" target="_blank">View them here.</a> CC* awardees are a subset of the overall contributions by educational institutions. In fact, many campuses have used their OSG Pool contributions to aid in the success of their subsequent CC* award application to NSF. 
+Many other schools, in addition to CC* awardees, contribute resources to the Open Science Pool. <a href="https://map.osg-htc.org/map/iframe?view=EduvsOther#29.22889,-90.08789|4|terrain" target="_blank">View them here.</a> CC* awardees are a subset of the overall contributions by educational institutions. In fact, many campuses have used their OSG Pool contributions to aid in the success of their subsequent CC* award application to NSF. 
 
 <h2>Open Science is Open to You!</h2>
 These campuses are contributing to an <a href="https://research.cs.wisc.edu/htcondor/" target="_blank">HTCondor pool</a> that OSG users access via the access points operated by the OSG. OSG is operating an HTCondor pool in support of Open Science. Any researcher in the US can use the services of the OSG access points to harness the capacity of the pool. All the researcher needs to do is go to <a href="https://connect.osg-htc.org/" target="_blank">OSG Connect and get an OSG Account</a>. (It's free!) The researcher does not have to belong to a collaboration (big or small) nor to a campus (big or small).  
