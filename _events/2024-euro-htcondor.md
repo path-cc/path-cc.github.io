@@ -17,7 +17,7 @@ header_image: "/images/events/HTCondorEurope.jpeg"
 {% capture main %}
 
 This year’s European HTCondor Workshop will be held from September 24 to 27th hosted by NIKHEF-Amsterdam, the Dutch 
-National Institute for Subatomic Physics, in the beautiful Dutch capital city of Amsterdam.
+National Institute for Subatomic Physics, in the beautiful Dutch capital city of Amsterdam. __bold__
 
 The workshop will be an excellent occasion for learning from the sources (the developers!) about HTCondor, exchanging 
 with your colleagues about experiences and plans and providing your feedback to the experts. The HTCondor Compute Entry 
