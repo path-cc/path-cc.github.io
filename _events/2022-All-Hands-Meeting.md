@@ -31,7 +31,7 @@ Online participation will continue to be free, but registration is required. To 
 
 For further details, visit: [https://opensciencegrid.org/all-hands/2022/](https://opensciencegrid.org/all-hands/2022/)
 
-For questions, please see the contacts on the page linked above or, as always, write to <events@opensciencegrid.org>.
+For questions, please see the contacts on the page linked above or, as always, write to <events@osg-htc.org>.
 
 {% endcapture %}
 
@@ -64,7 +64,7 @@ Registration is required. Visit the [All-Hands Website](https://opensciencegrid.
 
 ### Questions?
 
-For questions, write to <events@opensciencegrid.org>.
+For questions, write to <events@osg-htc.org>.
 {% endcapture %}
 
 {% capture endblock %}

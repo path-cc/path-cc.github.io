@@ -53,7 +53,7 @@ Please [register here.](https://docs.google.com/forms/d/e/1FAIpQLSdnvnv3uFdKN5Mi
 
 ### Questions?
 
-Contact us at <events@opensciencegrid.org>. 
+Contact us at <events@osg-htc.org>. 
 
 {% endcapture %}
 

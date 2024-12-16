@@ -113,7 +113,7 @@ is **May 23, 2022**.
 
 ### Questions?
 
-For questions, write to <events@opensciencegrid.org>.
+For questions, write to <events@osg-htc.org>.
 {% endcapture %}
 
 {% capture endblock %}
