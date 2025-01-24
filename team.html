@@ -36,7 +36,35 @@ intro_image_hide_on_mobile: false
 <div class="row px-2">
     {% assign team = team | sort: "weight" | sort: "name" %}
     {% for member in team %}
-    {% if member.promoted == nil %}
+    {% if member.promoted == nil and member.status != "Past" %}
+    <div class="col-12 col-sm-6 col-lg-4 mb-3 px-1">
+        <div class="ps-5 ps-sm-0 team team-summary my-2">
+            {% if member.image %}
+            <div class="team-image">
+                <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
+            </div>
+            {% endif %}
+            <div class="team-meta">
+                {% if member.website %}
+                <a href="{{ member.website }}">
+                {% endif %}
+                <h3 class="team-name m-0">{{ member.name }}</h3>
+                {% if member.website %}
+                </a>
+                {% endif %}
+                <p>{{ member.path.title | default: member.title }}</p>
+                <p class="team-institution"><small>{{ member.institution }}</small></p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+<h2 class="py-4">Past Team Members</h2>
+<div class="row px-2">
+    {% assign team = team | sort: "weight" | sort: "name" %}
+    {% for member in team %}
+    {% if member.promoted == nil and member.status == "Past" %}
     <div class="col-12 col-sm-6 col-lg-4 mb-3 px-1">
         <div class="ps-5 ps-sm-0 team team-summary my-2">
             {% if member.image %}
