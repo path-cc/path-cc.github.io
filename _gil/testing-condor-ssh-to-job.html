@@ -1,0 +1,2905 @@
+---
+title: Testing condor_ssh_to_job
+date: 2024-12-23
+layout: markdown
+excerpt: |
+---
+
+<p>
+    Author: Fabio Andrijauskas - University of California San Diego<br>
+    Date: 12/23/2024
+</p>
+
+<p class=MsoNormal><span ><span class=SpellE>HTCondor</span>
+allows users to establish an interactive session with any running job they own.
+This is equivalent to creating an SSH section that connects to the job, where
+the user can inspect the job logs, intermediate results and other files. The
+command involved is called <span class=SpellE><b><i>condor_ssh_to_job</i></b></span>.
+The objective of this activity was to document how reliable is this
+functionality on the <span class=SpellE>OSPool</span>.<b><o:p></o:p></b></span></p>
+
+
+
+<h1><span >Executive summary<o:p></o:p></span></h1>
+
+<p class=MsoNormal><span >Our tests show that only 30 out of
+the 56 tested sites available through <span class=SpellE><span class=GramE>OSPool</span></span><span
+class=GramE><span style='mso-spacerun:yes'>  </span>provided</span> full <span
+class=SpellE><b><i>condor_ssh_to_job</i></b></span> functionality. Another 20
+provided partial functionality. Only 6 sites provided no <span class=SpellE><b><i>condor_ssh_to_job</i></b></span>
+functionality. We did not see any difference between vanilla and container-based
+jobs.<o:p></o:p></span></p>
+
+<p><span style='mso-fareast-font-family:
+Arial'>The error reported in <span class=GramE>the vast majority of</span>
+failed attempts was <b>“</b>Can't <span class=SpellE>setns</span> to user
+namespace: Invalid argument”. This seems to be fatal for fully interactive <span
+class=GramE>access, but</span> is considered only a warning for scripted
+access.<o:p></o:p></span></p>
+
+<h1><span >Recommendations<o:p></o:p></span></h1>
+
+<p><span style='mso-fareast-font-family:
+Arial'>We recommend that the <span class=SpellE>HTCondor</span> team graciously
+deals with the reported namespace-<span class=SpellE>realted</span> failure
+mode, as it does not seem to be essential for the functionality of <span
+class=SpellE><b><i>condor_ssh_to_job</i></b></span><b><i>.</i></b><o:p></o:p></span></p>
+
+
+
+<h1><span >Further details<o:p></o:p></span></h1>
+
+
+
+<p class=MsoNormal><span >The tests were performed using
+ap21.uc.osg-htc.org and looked for all available sites in the <span
+class=SpellE>OSPool</span> using </span><span class=SpellE><span
+style='font-family:"Courier New";mso-fareast-font-family:Arial'>condor_status</span></span><span
+style='font-family:"Courier New";mso-fareast-font-family:Arial'> -pool
+factory-1.osg-htc.org -any -const '<span class=SpellE>MyType</span>==&quot;glide
+factory&quot;' -<span class=SpellE>af</span> <span class=SpellE>GLIDEIN_Site</span></span><span
+>. Each site was tested 10 times using one
+script running: </span><span class=SpellE><span style='font-family:"Courier New";
+mso-fareast-font-family:Arial'>condor_ssh_to_job</span></span><span
+style='font-family:"Courier New";mso-fareast-font-family:Arial'> <span
+class=SpellE>jobid</span> 'hostname' </span><span style='mso-fareast-font-family:
+Arial'>and</span><span style='font-family:"Courier New";mso-fareast-font-family:
+Arial'> <span class=SpellE>condor_ssh_to_job</span> <span class=SpellE>jobid</span></span><span
+>; the methodology was based on checking
+if it is possible to log into the job, list files, and change to any directory
+using Vanilla and Containers jobs. We do not see any difference between vanilla
+and container jobs; interactive logins, however, failed significantly more
+often than command invocations through <span class=SpellE>condor_ssh_to_job</span>.
+All the tests were executed during 11/15/24 to 12/10/24.<o:p></o:p></span></p>
+
+<p><span style='mso-fareast-font-family:
+Arial'>Tables 1a and 1b show the results: 56 sites were reached, and 30 sites
+provided an SSH session, file listing, and directory change. Regarding issues, 26
+sites could not provide an SSH session. More details about each site can be
+found in the appendix (</span><a
+href="https://drive.google.com/file/d/17ASdER6tz5D8_kVwgIR42uWlAKWZrpFR/view?usp=sharing"><span
+>https://drive.google.com/file/d/17ASdER6tz5D8_kVwgIR42uWlAKWZrpFR/view?usp=sharing</span></a><span
+>). The nodes showing <b>“</b>Can't <span
+class=SpellE>setns</span> to user namespace: Invalid argument” could not
+provide shell sessions. However, it was possible to run commands. <o:p></o:p></span></p>
+
+
+
+<p class=MsoNormal align=center style='text-align:center'><span
+>Table 1a: Numbers about sites where
+interactive ssh-to-job works. <o:p></o:p></span></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;mso-yfti-tbllook:1184'>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td valign=top style='border:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >Status</span></b><span
+  ><o:p></o:p></span></p>
+  </td>
+  <td width=3 valign=top style='width:2.5pt;border:solid black 1.0pt;
+  border-left:none;mso-border-left-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >Quantity<o:p></o:p></span></b></p>
+  </td>
+  <td width=492 valign=top style='width:369.0pt;border:solid black 1.0pt;
+  border-left:none;mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >Comments</span></b><span
+  ><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td valign=top style='border:solid black 1.0pt;border-top:none;mso-border-top-alt:
+  solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  >Works<o:p></o:p></span></p>
+  </td>
+  <td width=3 valign=top style='width:2.5pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black 1.0pt;mso-border-left-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >30<o:p></o:p></span></b></p>
+  </td>
+  <td width=492 valign=top style='width:369.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black 1.0pt;mso-border-left-alt:solid black 1.0pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  >3<b> </b>Slow SSH – <span class=SpellE><b>NotreDame</b></span><b>
+  - UConn-HP - UIUC-TGI-RAILS</b><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
+  <td valign=top style='border:solid black 1.0pt;border-top:none;mso-border-top-alt:
+  solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  >Broken<o:p></o:p></span></p>
+  </td>
+  <td width=3 valign=top style='width:2.5pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black 1.0pt;mso-border-left-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >26<o:p></o:p></span></b></p>
+  </td>
+  <td width=492 valign=top style='width:369.0pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black 1.0pt;mso-border-left-alt:solid black 1.0pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><b><span >21 sites: “</span></b><span
+  >Can't <span class=SpellE>setns</span>
+  to user namespace: Invalid argument”<o:p></o:p></span></p>
+  <p class=MsoNormal><b><span >1 site:</span></b><span
+  > “‘$<span class=SpellE>GahpVersion</span>:
+  1.8.0 Mar 31 2008 INFN\ <span class=SpellE>blahpd</span>\ (<span
+  class=SpellE><span class=GramE>poly,new</span>_esc_format</span>) $”<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+
+
+<p class=MsoNormal align=center style='text-align:center'><span
+><span style='mso-tab-count:1'>            </span><o:p></o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+>Table 1b: Numbers about sites where ‘command
+only’ for the ssh-to-job works<o:p></o:p></span></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=640
+ style='width:480.35pt;border-collapse:collapse;mso-yfti-tbllook:1184'>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td valign=top style='border:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><b><span >Status<o:p></o:p></span></b></p>
+  </td>
+  <td valign=top style='border:solid black 1.0pt;border-left:none;mso-border-left-alt:
+  solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><b><span >Qtd</span></b><span
+  ><o:p></o:p></span></p>
+  </td>
+  <td valign=top style='border:solid black 1.0pt;border-left:none;mso-border-left-alt:
+  solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><b><span >Comments</span></b><span
+  ><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td valign=top style='border:solid black 1.0pt;border-top:none;mso-border-top-alt:
+  solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span >Works<o:p></o:p></span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;
+  border-right:solid black 1.0pt;mso-border-top-alt:solid black 1.0pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >50<o:p></o:p></span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;
+  border-right:solid black 1.0pt;mso-border-top-alt:solid black 1.0pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><b><span >21 sites: warning
+  for SSH commands “</span></b><span >Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument”<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
+  <td valign=top style='border:solid black 1.0pt;border-top:none;mso-border-top-alt:
+  solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span >Broken<o:p></o:p></span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;
+  border-right:solid black 1.0pt;mso-border-top-alt:solid black 1.0pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >6<o:p></o:p></span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;
+  border-right:solid black 1.0pt;mso-border-top-alt:solid black 1.0pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=left style='text-align:left'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>1 site:</span></b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'> “/<span
+  class=SpellE>usr</span>/bin/ssh-keygen: No such file or directory<o:p></o:p></span></p>
+  <p class=MsoNormal align=left style='text-align:left'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>1
+  site:</span></b><span style='mso-fareast-font-family:Arial;color:black;
+  mso-themecolor:text1'> “Failed, because <span class=SpellE>sshd</span> not
+  correctly configured (SSH_TO_JOB_SSHD=/<span class=SpellE>usr</span>/<span
+  class=SpellE>sbin</span>/<span class=SpellE>sshd</span>): No such file or
+  directory”<o:p></o:p></span></p>
+  <p class=MsoNormal align=left style='text-align:left'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>1
+  site:</span></b><span style='mso-fareast-font-family:Arial;color:black;
+  mso-themecolor:text1'> “Connection to
+  condor-job.node827.dcs.ligo-wa.caltech.edu closed by remote host.”<o:p></o:p></span></p>
+  <p class=MsoNormal align=left style='text-align:left'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>1
+  site:</span></b><span style='mso-fareast-font-family:Arial;color:black;
+  mso-themecolor:text1'> “/bin/bash: Permission denied”<o:p></o:p></span></p>
+  <p class=MsoNormal><b><span style='mso-fareast-font-family:Arial;color:black;
+  mso-themecolor:text1'>1 site:</span></b><span style='mso-fareast-font-family:
+  Arial;color:black;mso-themecolor:text1'> “Connection closed by UNKNOWN port
+  65535”<o:p></o:p></span></p>
+  <p class=MsoNormal><b><span >1 site:</span></b><span
+  > “‘$<span class=SpellE>GahpVersion</span>:
+  1.8.0 Mar 31 2008 INFN\ <span class=SpellE>blahpd</span>\ (<span
+  class=SpellE><span class=GramE>poly,new</span>_esc_format</span>) $”<b><o:p></o:p></b></span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman",serif;mso-fareast-font-family:
+Arial;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:
+AR-SA'><br clear=all style='mso-special-character:line-break;page-break-before:
+always'>
+</span>
+
+<p><span
+><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=left style='text-align:left;text-indent:.5in;
+line-height:normal'><span >Table 2 shows
+the percentage of successes and failures for each site. Most sites were
+homogenous, but a few showed errors in some of the nodes. <o:p></o:p></span></p>
+
+<p class=MsoNormal align=left style='text-align:left;text-indent:.5in;
+line-height:normal'><span ><o:p></o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+>Table 2: Percentage of successes and
+failures for each site.<o:p></o:p></span></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=706
+ style='width:529.55pt;border-collapse:collapse;border:none;mso-border-alt:
+ solid black 1.0pt;mso-yfti-tbllook:1184;mso-border-insideh:.75pt solid black;
+ mso-border-insidev:.75pt solid black'>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;height:1.0pt'>
+  <td width=190 rowspan=2 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  mso-border-top-alt:1.0pt;mso-border-left-alt:1.0pt;mso-border-bottom-alt:
+  .75pt;mso-border-right-alt:.75pt;mso-border-color-alt:black;mso-border-style-alt:
+  solid;padding:5.0pt 5.0pt 5.0pt 5.0pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  >Sites</span></b><span style='mso-fareast-font-family:
+  Arial'><o:p></o:p></span></p>
+  </td>
+  <td width=111 colspan=2 valign=top style='width:83.1pt;border:solid black 1.0pt;
+  border-left:none;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-top-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>Command
+  only<o:p></o:p></span></b></p>
+  </td>
+  <td width=127 colspan=2 valign=top style='width:95.05pt;border:solid black 1.0pt;
+  border-left:none;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-top-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>Interactive
+  session.<o:p></o:p></span></b></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border:solid black 1.0pt;
+  border-left:none;mso-border-left-alt:solid black .75pt;mso-border-top-alt:
+  1.0pt;mso-border-left-alt:.75pt;mso-border-bottom-alt:.75pt;mso-border-right-alt:
+  1.0pt;mso-border-color-alt:black;mso-border-style-alt:solid;padding:.75pt .75pt .75pt .75pt;
+  height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'>Status</span></b><b><span
+  style='mso-fareast-font-family:Arial;color:red'><o:p></o:p></span></b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1;height:1.0pt'>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>Success<o:p></o:p></span></b></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:red'>Failure<o:p></o:p></span></b></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>Success</span></b><b><span style='mso-fareast-font-family:
+  Arial;color:red'><o:p></o:p></span></b></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:.75pt .75pt .75pt .75pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:red'>Failure<o:p></o:p></span></b></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt;height:1.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b><span
+  style='mso-fareast-font-family:Arial;color:black;mso-themecolor:text1'><o:p>&nbsp;</o:p></span></b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >AMNH<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Alabama-CHPC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>90%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>10%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >BEOCAT-SLATE<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘$<span
+  class=SpellE>GahpVersion</span>: 1.8.0 Mar 31 2008 INFN\ <span class=SpellE>blahpd</span>\
+  (<span class=SpellE><span class=GramE>poly,new</span>_esc_format</span>) $’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >CHTC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument<span
+  class=GramE>’<span style='mso-spacerun:yes'>  </span>and</span> ‘memory usage
+  exceeded <span class=SpellE>request_memory</span>’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:6'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >CHTC-Spark<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:7'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Clemson-Palmetto<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:8'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Colorado<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:9'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Duke-<span
+  class=SpellE>NCShare</span><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:10'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >ELSA<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:11'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >FANDM-ITS<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:12'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >FNAL<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘/<span
+  class=SpellE>usr</span>/bin/ssh-keygen: No such file or directory’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:13'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+  Arial'>FNAL_GPGrid</span></span><span ><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Failed,
+  because <span class=SpellE>sshd</span> not correctly configured
+  (SSH_TO_JOB_SSHD=/<span class=SpellE>usr</span>/<span class=SpellE>sbin</span>/<span
+  class=SpellE>sshd</span>): No such file or directory’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:14'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+  Arial'>GATech</span></span><span ><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:15'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >GRID_ce2<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:16'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >GSU-ACIDS<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:17'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Hawaii-Koa<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>slow<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:18'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >LIGO-WA<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Connection
+  to condor-job.node827.dcs.ligo-wa.caltech.edu closed by remote host.’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:19'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Lehigh - Hawk<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:20'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Langston-Lion<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:21'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Lafayette-Firebird<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:22'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >LSU-<span
+  class=SpellE>Deep_Bayou</span><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:23'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >LSUHSC-Tigerfish<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:24'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >MI-HORUS<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘/bin/bash:
+  Permission denied’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:25'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >MSU-<span
+  class=SpellE>DataMachine</span><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to <span class=SpellE>pid</span> namespace:
+  Operation not permitted’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:26'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+  Arial'>MTState</span></span><span >-Tempest<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:27'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >New Mexico
+  State Discovery<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:28'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >NCSU-OSG<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:29'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+  Arial'>NotreDame</span></span><span ><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:30'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >ORU-Titan<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:31'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >OSG_US_FSU_HNPGRID<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>slow<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:32'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >PSU-LIGO<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:33'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Purdue-Anvil<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:34'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+  Arial'>PuertoRico</span></span><span ><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:35'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >PDX-<span
+  class=SpellE>Coeus</span><o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:36'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >SIUE-CC-production<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:37'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >SPRACE<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:38'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >SU-ITS<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:39'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Swarthmore-Firebird<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:40'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >ODU-Ubuntu<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to <span class=SpellE>pid</span> namespace:
+  Operation not permitted’ or timeout<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:41'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UAH-Voyager<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:42'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UC-Denver<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:43'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UWEC-BOSE<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:44'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UChicago<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>60%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>40%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>60%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>40%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Connection
+  closed by UNKNOWN port 65535’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:45'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UConn<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:46'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UConn-HPC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:47'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UCR-HPCC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:48'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UIUC-TGI-RAILS<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>slow<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:49'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UMT-Hellgate<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:50'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UNR-CC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:51'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UUCHPC<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:52'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UND-Talon<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:53'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UWM-Mortimer<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'>‘Can't
+  <span class=SpellE>setns</span> to user namespace: Invalid argument’<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:54'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-left-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >UW-IT<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-right-alt:solid black 1.0pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><o:p>&nbsp;</o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:55;mso-yfti-lastrow:yes'>
+  <td width=190 valign=top style='width:142.7pt;border:solid black 1.0pt;
+  border-top:none;mso-border-top-alt:solid black .75pt;mso-border-top-alt:.75pt;
+  mso-border-left-alt:1.0pt;mso-border-bottom-alt:1.0pt;mso-border-right-alt:
+  .75pt;mso-border-color-alt:black;mso-border-style-alt:solid;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal><span >Wisconsin<o:p></o:p></span></p>
+  </td>
+  <td width=55 valign=top style='width:41.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-bottom-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=56 valign=top style='width:42.0pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-bottom-alt:solid black 1.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%</span><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'><o:p></o:p></span></p>
+  </td>
+  <td width=67 valign=top style='width:50.1pt;border-top:none;border-left:none;
+  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
+  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
+  mso-border-bottom-alt:solid black 1.0pt;padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:#538135;mso-themecolor:accent6;
+  mso-themeshade:191'>100%<o:p></o:p></span></p>
+  </td>
+  <td width=60 valign=top style='width:44.95pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  mso-border-alt:solid black .75pt;mso-border-bottom-alt:solid black 1.0pt;
+  padding:5.0pt 5.0pt 5.0pt 5.0pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='mso-fareast-font-family:Arial;color:red'>0%<o:p></o:p></span></p>
+  </td>
+  <td width=278 valign=top style='width:208.7pt;border-top:none;border-left:
+  none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
+  mso-border-top-alt:solid black .75pt;mso-border-left-alt:solid black .75pt;
+  padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal><span style='mso-fareast-font-family:Arial;color:red'><span
+  style='mso-spacerun:yes'>   </span><o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+
+
+<p class=MsoNormal><span style='font-family:"Courier New";mso-fareast-font-family:
+Arial'><o:p>&nbsp;</o:p></span></p>
