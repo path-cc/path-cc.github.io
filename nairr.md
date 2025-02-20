@@ -52,7 +52,7 @@ PATh services are designed to address throughput-oriented workloads that consist
 -   The [OSPool](https://osg-htc.org/ospool)
 -   or another ACCESS/NAIRR allocation owned by the PI
 
-All  PATh services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
+All PATh services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
 
 > In the past 12 months, PATh Access Points completed more than **200M jobs** that consumed more than **449K GPU hours** and **250M core hours.** OSDF delivered more than **112M objects** for a total of **53 PB**.
 
@@ -70,7 +70,7 @@ The PATh Facility includes dedicated access to:
 
 ## Recommended Use of PATh Services
 
-In relation to NAIRR, PATh services are ideal for workloads organized into ensembles of many tasks, including training data generation, data pre-processing for training, hyperparameter tuning, and inference. These services make the greatest impact when users need to leverage workload automation or have a workload that can be expressed as a large number of individual jobs.
+For AI, PATh services are ideal for workloads organized into ensembles of many tasks, including training data generation, data pre-processing for training, hyperparameter tuning, and inference. These services make the greatest impact when users need to leverage workload automation or have a workload that can be expressed as a large number of individual jobs.
 
 ## What is NAIRR?
 
@@ -82,7 +82,7 @@ NAIRR is a [National Science Foundation (NSF)](https://www.nsf.gov/focus-areas/a
 
 ## What is PATh?
 
-[PATh](https://path-cc.io/) is funded by the NSF to advance High Throughput Computing (HTC) and its impact on research. PATh brings together two entities with a strong history of supporting dHTC-enabled research: CHTC and the OSG Consortium to address the needs of the rapidly growing community of faculty and students who are embracing these technologies and services to advance their research.
+[PATh](https://path-cc.io/) is funded by the NSF to advance high throughput computing (HTC) and its impact on research. PATh brings together two entities with a strong history of supporting dHTC-enabled research: [The Center for High Throughput Computing](https://chtc.cs.wisc.edu/) (CHTC) and the [OSG Consortium](https://osg-htc.org/) to address the needs of the rapidly growing community of faculty and students who are embracing these technologies and services to advance their research.
 
 [Learn more about PATh resources.](https://path-cc.io/about/)
 
