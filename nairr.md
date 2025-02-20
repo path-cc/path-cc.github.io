@@ -46,7 +46,7 @@ Contact PATh at [nairr@path-cc.io](mailto:nairr@path-cc.io) and provide your nam
 PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of Access Points (https://osg-htc.org/services/access-point) and can connect to capacity at
 
 -   The purpose-built [PATh facility](https://path-cc.io/facility/index.html)
--   The [OSPool](https://osg-htc.org/ospool))
+-   The [OSPool](https://osg-htc.org/ospool)
 -   or another ACCESS/NAIRR allocation owned by the PI
 
 All  PATh services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
