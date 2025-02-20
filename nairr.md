@@ -8,7 +8,7 @@ title: PATh Becomes NAIRR Service Provider for AI Workloads
 <div class="container-lg pb-5">
 <div class="row justify-content-center">
 <div class="col-12 col-sm-10 col-md-9  col-xxl-8">
-<div class="pt-3">
+<div class="">
 {% include layout/subpage-header.html %}
 </div>
 </div>
