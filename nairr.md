@@ -20,7 +20,7 @@ title: PATh Becomes NAIRR Service Provider for AI Workloads
 <div class="rounded p-3 mb-4 border fst-italic" markdown="1">
 
 <p markdown="1">
-As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io/) project is now a listed service provider for the [National Artificial Intelligence Research Resource (NAIRR)](https://NAIRRpilot.org/) pilot project. The PATh project provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.
+As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io/) project is a listed service provider for the [National Artificial Intelligence Research Resource (NAIRR)](https://NAIRRpilot.org/) pilot project.  PATh provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.
 </p>
 
 <p markdown="1">
@@ -42,11 +42,11 @@ To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto
 
 ## The Role of the PATh
 
-As of February 20th, 2025, [PATh](https://path-cc.io/) is now a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related infrastructure.
+As of February 20, 2025, [PATh](https://path-cc.io/) is a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related workloads.
 
 ## PATh Resources and Services
 
-PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of Access Points (https://osg-htc.org/services/access-point) and can connect to capacity at
+PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of [Access Points](https://osg-htc.org/services/access-point) and can connect to capacity at
 
 -   The purpose-built [PATh facility](https://path-cc.io/facility/index.html)
 -   The [OSPool](https://osg-htc.org/ospool)
