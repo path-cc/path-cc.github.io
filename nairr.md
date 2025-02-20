@@ -17,11 +17,10 @@ title: PATh Provides Computing for AI Workloads via the NAIRR Pilot
 <div class="col-12 col-sm-10 col-md-9  col-xxl-8">
 <div markdown="1">
 
+<div class="rounded p-3 mb-4 border fst-italic" markdown="1">
 
+{: .mb-0 }
 As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io/) project is now a listed service provider for the [National Artificial Intelligence Research Resource (NAIRR)](https://NAIRRpilot.org/) pilot project. The PATh project provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.
-
-<div class="d-flex pb-3">
-<a class="btn btn-primary mx-auto" href="https://portal.path-cc.io/application">Access PATh provided NAIRR Resources</a>
 </div>
 
 ## Who can access NAIRR Resources via PATh?
@@ -32,7 +31,15 @@ As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](ht
 
 ## The Role of the PATh
 
-As of February 20th, 2025 [PATh](https://path-cc.io/) is now a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related infrastructure.
+As of February 20th, 2025 [PATh](https://path-cc.io/) is now a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related infrastructure.
+
+## How to Request Access to PATh-provided NAIRR Resources?
+
+Contact PATh at [nairr@path-cc.io](mailto:nairr@path-cc.io) and provide your name, institution, a very brief description of your research and anticipated AI workload needs.
+
+<div class="d-flex pb-3">
+<a class="btn btn-primary mx-auto" href="mailto:nairr@path-cc.io">Get Started With PATh Facility</a>
+</div>
 
 ## PATh Resources and Services
 
