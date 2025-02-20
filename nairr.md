@@ -42,7 +42,7 @@ PATh services are designed to address throughput-oriented workloads that consist
 -   The [OSPool](https://osg-htc.org/ospool))
 -   or another ACCESS/NAIRR allocation owned by the PI
 
-All services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
+All  PATh services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
 
 > In the past 12 months, PATh Access Points completed more than **200M jobs** that consumed more than **449K GPU hours** and **250M core hours.** OSDF delivered more than **112M objects** for a total of **53 PB**.
 
