@@ -24,7 +24,7 @@ As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](ht
 </p>
 
 <p markdown="1">
-To access PATh provided NAIRR resourced contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io) and provide your name, institution, a very brief description of your research and anticipated AI workload needs.
+To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io) and provide your name, institution, a brief description of your research and anticipated AI workload needs.
 </p>
 
 <div class="d-flex">
