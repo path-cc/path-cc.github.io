@@ -39,7 +39,6 @@ Need help preparing a NAIRR allocation proposal to use PATh services? Talk to us
 -   US-based researchers, students, and educators
 -   US-based institutions including academic institutions, non-profits, federal agencies or federally funded R&D centers, state, local, or tribal agencies, startups and small businesses with federal grants
 -   Read more on [NAIRR Pilot Website](https://nairrpilot.org/opportunities/allocations#:~:text=For%20NAIRR%20Classroom%20projects%2C%20educators,equipped%20with%20TPUs%20and%20GPUs.)
--   US-based researchers, students, and educators
   
 ## The Role of the PATh 
 
