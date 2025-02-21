@@ -24,11 +24,11 @@ As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](ht
 </p>
 
 <p markdown="1">
-To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io) and share your name, institution, a brief description of your research and AI workload needs. 
+Need help preparing a NAIRR allocation proposal to use PATh services? Talk to us! Contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io). 
 </p>
 
 <div class="d-flex">
-<a class="btn btn-primary mx-auto" href="mailto:nairr@path-cc.io">Request Access</a>
+<a class="btn btn-primary mx-auto" href="mailto:nairr@path-cc.io">Talk to Us</a>
 </div>
 </div>
 
@@ -47,7 +47,7 @@ As of February 20, 2025, [PATh](https://path-cc.io/) is a listed service provide
 
 ## PATh Resources and Services
 
-For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [talk to us](mailto:nairr@path-cc.io) We have dedicated facilitators supporting researchers using AI.
+For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [talk to us](mailto:nairr@path-cc.io) We have dedicated facilitators and staff supporting researchers using AI.
  
 PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of [Access Points](https://osg-htc.org/services/access-point) and can connect to capacity at
 
