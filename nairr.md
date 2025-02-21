@@ -46,7 +46,7 @@ As of February 20, 2025, [PATh](https://path-cc.io/) is a listed service provide
 
 ## PATh Resources and Services
 
-For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [talk to us](mailto:nairr@path-cc.io) We have dedicated facilitators and staff supporting researchers using AI.
+For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [reach out](mailto:nairr@path-cc.io). We have dedicated facilitators and staff supporting researchers using AI.
  
 PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of [Access Points](https://osg-htc.org/services/access-point) and can connect to capacity at
 
