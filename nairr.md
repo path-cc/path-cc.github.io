@@ -24,7 +24,7 @@ As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](ht
 </p>
 
 <p markdown="1">
-To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io) and provide your name, institution, a brief description of your research and anticipated AI workload needs.
+To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto:nairr@path-cc.io) and share your name, institution, a brief description of your research and AI workload needs. 
 </p>
 
 <div class="d-flex">
@@ -39,13 +39,16 @@ To access PATh provided NAIRR resources, contact us at [nairr@path-cc.io](mailto
 -   US-based researchers, students, and educators
 -   US-based institutions including academic institutions, non-profits, federal agencies or federally funded R&D centers, state, local, or tribal agencies, startups and small businesses with federal grants
 -   Read more on [NAIRR Pilot Website](https://nairrpilot.org/opportunities/allocations#:~:text=For%20NAIRR%20Classroom%20projects%2C%20educators,equipped%20with%20TPUs%20and%20GPUs.)
-
-## The Role of the PATh
+-   US-based researchers, students, and educators
+  
+## The Role of the PATh 
 
 As of February 20, 2025, [PATh](https://path-cc.io/) is a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related workloads.
 
 ## PATh Resources and Services
 
+For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [talk to us](mailto:nairr@path-cc.io) We have dedicated facilitators supporting researchers using AI.
+ 
 PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of [Access Points](https://osg-htc.org/services/access-point) and can connect to capacity at
 
 -   The purpose-built [PATh facility](https://path-cc.io/facility/index.html)
