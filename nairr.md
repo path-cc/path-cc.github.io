@@ -1,6 +1,6 @@
 ---
 layout: main
-title: PATh Becomes NAIRR Service Provider for AI Workloads
+title: PATh Becomes NAIRR Pilot Resource Provider for AI Workloads
 ---
 
 <img src="/images/nairr.jpg" alt="Description of image" style="width: 100%; height: auto; display: block; max-height: 200px; object-fit: cover">
