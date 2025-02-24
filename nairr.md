@@ -20,7 +20,7 @@ title: PATh Becomes NAIRR Pilot Resource Provider for AI Workloads
 <div class="rounded p-3 mb-4 border fst-italic" markdown="1">
 
 <p markdown="1">
-As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io/) project is a listed service provider for the [National Artificial Intelligence Research Resource (NAIRR)](https://NAIRRpilot.org/) pilot project.  PATh provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.
+As of February 20th, the [Partnership to Advance Throughput Computing (PATh)](https://path-cc.io/) project is a listed resource provider for the [National Artificial Intelligence Research Resource (NAIRR)](https://NAIRRpilot.org/) pilot project.  PATh provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.
 </p>
 
 <p markdown="1">
@@ -40,13 +40,11 @@ Need help preparing a NAIRR allocation proposal to use PATh services? Talk to us
 -   US-based institutions including academic institutions, non-profits, federal agencies or federally funded R&D centers, state, local, or tribal agencies, startups and small businesses with federal grants
 -   Read more on [NAIRR Pilot Website](https://nairrpilot.org/opportunities/allocations#:~:text=For%20NAIRR%20Classroom%20projects%2C%20educators,equipped%20with%20TPUs%20and%20GPUs.)
   
-## The Role of the PATh 
+## The Role of PATh 
 
-As of February 20, 2025, [PATh](https://path-cc.io/) is a listed service provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related workloads.
+As of February 20, 2025, [PATh](https://path-cc.io/) is a listed resource provider for the [(NAIRR) pilot project](https://nairrpilot.org/). Meaning, that PATh is now a partner that furthers NAIRR's purposes of spurring innovation, developing workforce talent, improving capacity, and advancing safe, secure, and trustworthy AI in research and society. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related workloads.
 
 ## PATh Resources and Services
-
-For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [reach out](mailto:nairr@path-cc.io). We have dedicated facilitators and staff supporting researchers using AI.
  
 PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of [Access Points](https://osg-htc.org/services/access-point) and can connect to capacity at
 
@@ -57,6 +55,8 @@ PATh services are designed to address throughput-oriented workloads that consist
 All PATh services are fully integrated with the [OSDF](https://osg-htc.org/osdf) – a national-scale object delivery system.
 
 > In the past 12 months, PATh Access Points completed more than **200M jobs** that consumed more than **449K GPU hours** and **250M core hours.** OSDF delivered more than **112M objects** for a total of **53 PB**.
+>
+> For questions about accessing NAIRR resources via PATh services, organizing AI workloads, or other questions, please [reach out](mailto:nairr@path-cc.io). We have dedicated facilitators and staff supporting researchers using AI.
 
 ## PATh Facility for AI Workloads
 
