@@ -1,0 +1,12 @@
+<div class="news news-summary">
+    <div class="article-content">
+        {% if article.image.path %}
+            <a href="{{ article.url | relative_url }}" class="d-block">
+                <img class="w-100 image-card-cap rounded mb-1" alt="{{ article.image.alt }}" src="{{ article.image.path | relative_url }}">
+            </a>
+        {% endif %}
+        <h6 class="article-title">
+            <a style="font-size: .8rem;" href="{{ article.url | relative_url }}">{{ article.title }}</a>
+        </h6>
+    </div>
+</div>

@@ -185,6 +185,64 @@ main {
   box-shadow: 0 .5rem 1rem rgba($black, .15) !important;
 }
 
+.big-text {
+  font-size: 6rem;
+}
+
+#nairr {
+  position: relative;
+  background: url({{ '/images/nairr.jpg' | relative_url }}) no-repeat center;
+  background-color: #e61c4e;
+  background-blend-mode: soft-light;
+  background-size: cover;
+  height: 300px;
+  width: 100%;
+}
+
+@include media-breakpoint-up(xs) {
+  #nairr {
+    height: 338px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  #nairr {
+    height: 317px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+
+  #nairr {
+    height: 313px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+
+  #nairr {
+    height: 222px;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+
+  #nairr {
+    height: 251px;
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+
+  .big-text {
+    font-size: 7rem;
+  }
+
+  #nairr {
+    height: 225px;
+  }
+}
+
 #hero {
   position: relative;
 }

@@ -8,27 +8,11 @@ intro_image_absolute: true
 intro_image_hide_on_mobile: true
 ---
 
-
-<div class="py-1 mb-1 bg-primary">
-    <div class="container-lg py-1">
-        <a href="/nairr" class="text-decoration-none border border-1 bg-light rounded py-1 p-2 me-2">Get Access</a><span class="text-light">Announcing PATh as a NAIRR Pilot Service Provider for AI Research</span>
-    </div>
-</div>
 {% include layout/header.html logo=layout.logo header_class=page.header_class %}
 <main>
-    {% assign date = "now" | date: "%s" %}
-    {% assign enddate = "2024-08-15" | date: "%s" %}
-    {% if date < enddate %}
-        <div class="bg-primary py-2">
-            <div class="container-xxl">
-                <span class="text-white">CHTC is hiring! View the new Research Cyberinfrastructure Specialist position on the jobs page and apply by August 15th.</a>
-                <a class="btn btn-light px-1 ms-2 py-0" href="https://chtc.cs.wisc.edu/jobs.html#full-time-positions">View Job Posting</a>
-            </div>
-        </div>
-    {% endif %}
     <div id="hero" class="">
         <div class="container-lg py-4">
-            <div class="row justify-content-center mb-6">
+            <div class="row justify-content-center mb-4">
                 <div class="col-12 col-md-12 col-lg-10 col-xxl-8">
                     <div class="p-2">
                         <h1 class="text-center fw-normal pb-4">Bring the power of throughput<br> computing to your science with <img height="32px" class="mb-2 mt-2 mt-sm-0" src="images/logo/PATh_Logo_Primary_Color_Just_PATh.png"></h1>
@@ -54,8 +38,26 @@ intro_image_hide_on_mobile: true
             </div>
         </div>
     </div>
+    <div id="nairr" class="">
+        <div class=py-3>
+            <div class="container-lg">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-4 big-text d-flex">
+                        <div class="my-auto text-white">NAIRR</div>
+                    </div>
+                    <div class="col-12 col-lg-8 text-white d-flex">
+                        <div class="my-auto">
+                            <h4><b>PATh Becomes NAIRR Pilot Resource Provider for AI Workloads</b></h2>
+                            <p>PATh provides allocatable services to support the entire life cycle of AI workloads–training data generation, training data cleaning, model training, and inference (prediction) using AI models.</p>
+                            <a class="btn btn-dark" href="mailto:nairr@path-cc.io?subject=Learn more about using PATh Facility">Get Access</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div class="container-xxl">
+    <div class="container-xxl pt-4">
         <h1 id="active-nsf-proposals" class="text-center pt-3 pt-lg-0">Active Opportunities</h1>
         <h5 class="text-center">
             The PATh team is here to help with the following opportunities.

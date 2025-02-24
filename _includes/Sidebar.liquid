@@ -1,0 +1,15 @@
+<div style="position: sticky; top: 0;">
+    <div class="mt-6 pt-2">
+        <h5>News</h5>
+        {% include get/news.liquid %}
+        {% for article in news limit:3 %}
+            {% include SmallNews.liquid %}
+        {% endfor %}
+    </div>
+    <hr>
+    <div>
+        <a class="btn btn-primary" href="mailto:support@path-cc.io">
+            Contact Us
+        </a>
+    </div>
+</div>
