@@ -1,6 +1,9 @@
 ---
 layout: main
 title: PATh Becomes NAIRR Service Provider for AI Workloads
+permalink: /nairr.html
+excerpt: |
+  The Partnership to Advance Throughput Computing (PATh) project is service provider for the National Artificial Intelligence Research (NAIRR) pilot project, providing allocatable services to support the entire life cycle of AI workloads. PATh addresses researcher needs by providing computational resources needed to access, run, and test AI-related infrastructure.
 ---
 
 <img src="/images/nairr.jpg" alt="Description of image" style="width: 100%; height: auto; display: block; max-height: 200px; object-fit: cover">

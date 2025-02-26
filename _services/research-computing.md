@@ -2,6 +2,10 @@
 title: PATh’s Support for Research Computing and the CC* Program
 date: 2021-08-12 12:00:00 -0600
 categories: NSF Campus Cyberinfrastructure (CC*)
+excerpt: |
+  The National Science Foundation Campus Cyberinfrastructure (CC*) program (NSF 24-530) invests in coordinated campus and regional-level cyberinfrastructure improvements and innovation.
+
+  PATh has experience offering consulting to CC* projects during the proposal phase for various aspects of the proposed project.
 layout: table-of-contents
 table_of_contents:
   - name: 2024 CC* Proposals
