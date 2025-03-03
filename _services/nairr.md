@@ -28,7 +28,7 @@ excerpt: |
                     </div>
                 </div>
 
-                     <h2>PATh Resources and Services</h2>
+                     <h2>PATh Services FOR AI</h2>
                 <p>
                     PATh services are designed to address throughput-oriented workloads that consist of ensembles of jobs (such as hyperparameter optimization workloads). The ensembles are managed by a network of Access Points (<a href="https://osg-htc.org/services/access-point">https://osg-htc.org/services/access-point</a>) and can connect to capacity at:
                 </p>
