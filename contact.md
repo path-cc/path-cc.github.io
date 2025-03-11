@@ -3,7 +3,8 @@ title: Talk to Us
 layout: sub-page
 ---
 
-<p>We want to hear from you! Get in touch via this form:</p>
+We want to hear from you! Get in touch via this form and our staff will reach out to you within 1 business day.
+
 <iframe id="portal-frame" src="https://osg-portal.osgdev.chtc.io/contact" width="100%" frameborder="0"></iframe>
 
 ## Specific Questions?
