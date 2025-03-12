@@ -289,3 +289,20 @@ main {
 main {
   min-height: 60vh;
 }
+
+@include media-breakpoint-down(lg) {
+  #portal-frame {
+    height: 546px
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  #portal-frame {
+    height: 580px;
+  }
+}
+@include media-breakpoint-up(xl) {
+  #portal-frame {
+    height: 620px;
+  }
+}
