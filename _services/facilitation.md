@@ -8,6 +8,8 @@ weight: 2
 
 {{ page.excerpt }}
 
+<h3><a href="/facilitation-team.html">Meet the PATh Facilitation Team</a></h3>
+
 Drawing upon the principles of Research Computing Facilitation (RCF) pioneered
 by UW-Madison’s Center for High Throughput Computing, the Facilitation Services
 team work to expand the impact of dHTC and dHTC Facilitation across various PATh
