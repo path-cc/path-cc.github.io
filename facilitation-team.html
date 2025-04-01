@@ -15,15 +15,13 @@ table_of_contents:
 {% include get/team.liquid %}
 <div class="row pb-5">
     {% assign base_image_path = "/staff-list/" %}
-    {% assign promoted_teams = team | where: "is_facilitator", 1 | sort: "weight" | reverse %}
+    {% assign promoted_teams = team | where: "is_facilitator", 1 | sort: "weight" %}
     {% for member in promoted_teams %}
     <div class="col-12 col-md-6 mb-2">
         <div class="h-100 team team-summary team-summary-large">
-            {% if member.image %}
             <div class="team-image">
                 <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
             </div>
-            {% endif %}
             <div class="team-meta">
                 {% if member.website %}
                 <a href="{{ member.website }}">
