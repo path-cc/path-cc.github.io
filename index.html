@@ -62,26 +62,7 @@ intro_image_hide_on_mobile: true
             The PATh team is here to help with the following opportunities.
         </h5>
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-7">
-
-                {% assign now = "now" | date: "%s" %}
-                {% if now < "1729036799" and now > "1726444799"%}
-                <div class="p-3 my-4 bg-white-offset rounded shadow">
-                    <h3 class="mt-0 fw-bold text-center">We are here to help with your <a href="https://new.nsf.gov/funding/opportunities/campus-cyberinfrastructure-cc/nsf24-530/solicitation">CC* Proposal (NSF 24-530)!</a></h3>
-                    <p class="text-center">
-                        Campuses with awards from the
-                        <a href="https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504748">NSF Campus Cyberinfrastructure (CC*)</a>
-                        Program play an important role in supporting Open Science. To date, 37 CC* campuses contribute to the processing and storage capacity of the
-                        <a href="https://osg-htc.org/services/open_science_pool">Open Science Pool (OSPool)</a> that is
-                        harnessed weekly by more than 3M jobs.
-                    </p>
-                    <p class="mb-0 d-flex justify-content-center pt-3">
-                        <a class="btn btn-outline-dark" href="mailto:cc-star-proposals@osg-htc.org">Contact Us</a>
-                        <a class="btn btn-outline-dark ms-1" href="/services/research-computing/#let-the-path-team-help-with-your-proposal">How We Can Help</a>
-                    </p>
-                </div>
-                {% endif %}
-
+            <div class="col-12 col-lg-6">
                 <div class="p-3 my-4 bg-white-offset rounded shadow">
                     <h3 class="mt-0 fw-bold text-center text-primary">Apply for Compute Credits</h3>
                     <p class="text-center">
@@ -91,7 +72,17 @@ intro_image_hide_on_mobile: true
                         <a class="btn btn-outline-dark ms-1" href="https://portal.path-cc.io/application">Apply Now</a>
                     </p>
                 </div>
-
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="p-3 my-4 bg-white-offset rounded shadow">
+                    <h3 class="mt-0 fw-bold text-center text-primary">Request Storage Space</h3>
+                    <p class="text-center">
+                        The OSDF service connects storage made available at US institutions for hosting copies of scientific datasets. Request now to make your dataset accessible for sharing or processing.
+                    </p>
+                    <p class="mb-0 d-flex justify-content-center pt-2">
+                        <a class="btn btn-outline-dark ms-1" href="mailto:support@osg-htc.org?subject=Contact%20OSDF%20Support%20via%20PATh%20Homepage">Contact OSDF Support Staff</a>
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -99,8 +90,8 @@ intro_image_hide_on_mobile: true
 
     <div class="container-lg my-5">
         <div id="path-for-researchers" class="row my-3">
-            <div class="col-12 col-md-4 col-xxl-4">
-                <img class="d-none d-md-block img-fluid" src="{{ 'images/PATh_Researchers.svg' | relative_url}}"/>
+            <div class="col-12 col-md-4 col-xxl-4 d-flex">
+                <img class="d-none d-md-block img-fluid my-auto" src="{{ 'images/PATh_Researchers.svg' | relative_url}}"/>
             </div>
             <div class="col-12 col-md-8 col-xxl-8 d-flex">
                 <div class="my-auto d-flex flex-column">
@@ -124,7 +115,17 @@ intro_image_hide_on_mobile: true
                         <a href="https://opensciencegrid.org/about/open_science_pool/">Open Science Pool</a>. Sign up now
                         and join the hundreds of <a href="https://osg-htc.org/projects">projects</a> using the OSPool!
                         <div>
-                            <a class="btn  btn-outline-primary text-decoration-none" href="https://portal.osg-htc.org">Sign up on the OSG Portal</a>
+                            <a class="btn  btn-outline-primary text-decoration-none" href="https://portal.osg-htc.org/application">Request an OSPool Account</a>
+                        </div>
+                    </p>
+                    <p class="fs-5">
+                        US-affiliated researchers can use the <a href="https://osg-htc.org/osdf">OSDF</a> to make their datasets available for sharing or
+                        processing on the OSPool.  The OSPool can be used to analyze the data via the OSDF.
+                        Existing repositories can be connected to the OSDF or researchers can request storage
+                        space funded through the NSF's CC* program.
+                        <div>
+                            <a class="btn btn-outline-primary text-decoration-none" href="mailto:support@osg-htc.org?subject=Contact%20OSDF%20Support%20via%20PATh%20Homepage">Contact OSDF Support Staff</a>
+                            <a class="btn btn-outline-primary text-decoration-none" href="https://portal.osg-htc.org/application">Request an OSPool Account</a>
                         </div>
                     </p>
                 </div>
