@@ -1,0 +1,71 @@
+---
+title: We want to hear from you
+layout: container-default
+---
+
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="pt-3">
+            {% include layout/subpage-header.html %}
+        </div>
+    </div>
+    <div class="col-8">
+
+        <p>
+            Get in touch via this form or <a href="mailto:support@path-cc.io">email us</a> and a member of our <a href="/facilitation-team.html">Research Computing Facilitation team</a>
+             will do their best to reach out to you within 1 business day.
+        </p>
+
+        <p>
+            We would love to help you with the following, or answer any questions you might have.
+            <ol>
+                <li>Using HTC resources such as the PATh Facility and OSPool</li>
+                <li>Serving your data via the OSDF</li>
+                <li>Contributing storage and compute resources</li>
+            </ol>
+        </p>
+
+
+        <iframe id="portal-frame" src="https://osg-portal.osgdev.chtc.io/contact" width="100%" frameborder="0"></iframe>
+
+        <h2>Specific Questions?</h2>
+
+        <p>PATh is a unique partnership between the Center for High Throughput Computing (CHTC) and the OSG Consortium.</p>
+
+        <ul>
+          <li>For enquiries about the <em>PATh project</em>, please contact the <a href="mailto:leadership@path-cc.io">PATh leadership</a>.</li>
+          <li>For help with <em>CHTC technologies</em> such as the HTCondor Software Suite (HTCSS), contact <a href="mailto:chtc@cs.wisc.edu">chtc@cs.wisc.edu</a>.</li>
+          <li><em>Campuses</em> interested in providing resources to the <a href="https://osg-htc.org/about/open_science_pool/">Open Science Pool (OSPool)</a> can contact <a href="mailto:support@opensciencegrid.org">support@osg-htc.org</a>.</li>
+          <li><em>Users</em> interested in using an Access Point to leverage resource like the OSPool can contact <a href="mailto:support@osg-htc.org">support@osg-htc.org</a>.</li>
+          <li><em>PIs</em> interested in getting credit accounts on PATh-managed hardware should visit the <a href="https://path-cc.io/services/credit-accounts/">dedicated page</a>.</li>
+        </ul>
+    </div>
+    <div class="col-4">
+        {% include get/team.liquid %}
+        {% assign base_image_path = "/staff-list/" %}
+        {% assign promoted_teams = team | where: "is_facilitator", 1 | sort: "weight" %}
+        {% for member in promoted_teams %}
+        <div class="mb-2">
+            <div class="h-100 team team-summary team-summary-large">
+                <div class="team-image">
+                    <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
+                </div>
+                <div class="team-meta">
+                    {% if member.website %}
+                    <a href="{{ member.website }}">
+                    {% endif %}
+                    <h2 class="team-name">{{ member.name }}</h2>
+                    {% if member.website %}
+                    </a>
+                    {% endif %}
+                    <p class="team-institution">{{ member.institution }}</p>
+                    <!--<p class="team-description">{{ member.path.title | default: member.title }}</p>-->
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <hr/>
+        <h6 class="text-center">Facilitation Team</h6>
+    </div>
+</div>
