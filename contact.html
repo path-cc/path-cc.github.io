@@ -10,7 +10,7 @@ layout: container-default
             {% include layout/subpage-header.html %}
         </div>
     </div>
-    <div class="col-8">
+    <div class="col-12 col-lg-8">
 
         <p>
             Get in touch via this form or <a href="mailto:support@path-cc.io">email us</a> and a member of our <a href="/facilitation-team.html">Research Computing Facilitation team</a>
@@ -41,7 +41,7 @@ layout: container-default
           <li><em>PIs</em> interested in getting credit accounts on PATh-managed hardware should visit the <a href="https://path-cc.io/services/credit-accounts/">dedicated page</a>.</li>
         </ul>
     </div>
-    <div class="col-4">
+    <div class="col-12 col-lg-4 d-none d-lg-block">
         {% include get/team.liquid %}
         {% assign base_image_path = "/staff-list/" %}
         {% assign promoted_teams = team | where: "is_facilitator", 1 | sort: "weight" %}
