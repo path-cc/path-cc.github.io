@@ -40,8 +40,8 @@ table_of_contents:
                     </div>
                 </div>
             </div>
-            {% if member.path.description %}
-                <p class="team-description text-muted mt-3 mb-0">{{ member.path.description }}</p>
+            {% if member.description or member.path.description %}
+                <p class="team-description text-muted mt-3 mb-0">{{ member.path.description | default: member.description }}</p>
             {% endif %}
         </div>
     </div>
