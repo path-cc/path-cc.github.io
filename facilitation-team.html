@@ -17,22 +17,32 @@ table_of_contents:
     {% assign base_image_path = "/staff-list/" %}
     {% assign promoted_teams = team | where: "is_facilitator", 1 | sort: "weight" %}
     {% for member in promoted_teams %}
-    <div class="col-12 col-md-6 mb-2">
+    <div class="col-12 mb-2">
         <div class="h-100 team team-summary team-summary-large">
-            <div class="team-image">
-                <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
+            <div class="row justify-content-between flex-grow-1">
+                <div class="col-auto d-flex">
+                    <div class="team-meta d-flex flex-grow-1">
+                        <div class=mt-auto>
+                            {% if member.website %}
+                            <a href="{{ member.website }}">
+                            {% endif %}
+                            <h2 class="team-name">{{ member.name }}</h2>
+                            {% if member.website %}
+                            </a>
+                            {% endif %}
+                            <p class="team-institution">{{ member.institution }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="team-image">
+                        <img alt="{{ member.name }}" class="img-fluid mb-2" src="{{ base_image_path | append: member.image | relative_url }}" />
+                    </div>
+                </div>
             </div>
-            <div class="team-meta">
-                {% if member.website %}
-                <a href="{{ member.website }}">
-                {% endif %}
-                <h2 class="team-name">{{ member.name }}</h2>
-                {% if member.website %}
-                </a>
-                {% endif %}
-                <p class="team-institution">{{ member.institution }}</p>
-                <!--<p class="team-description">{{ member.path.title | default: member.title }}</p>-->
-            </div>
+            {% if member.path.description %}
+                <p class="team-description text-muted mt-3 mb-0">{{ member.path.description }}</p>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
