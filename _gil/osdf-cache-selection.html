@@ -1,0 +1,2324 @@
+---
+title: OSDF Cache Selection
+date: 2025-03-04
+layout: markdown
+---
+
+<p>April 4th, 2025</p>
+
+<p>
+    Fabio Andrijauskas - University of California San Diego
+</p>
+
+<p>The OSPool leverages the Open Science Data
+Federation (OSDF) to efficiently provide data access for computing jobs and
+software efficiently, ensuring seamless and reliable data transfers. One of its
+most outstanding features is its ability to dynamically locate the closest
+cache for each data transfer, minimizing latency and improving overall
+performance. By optimizing data movement, the OSPool enhances accessibility to
+large datasets, reduces network congestion, and accelerates computational
+workflows. This distributed approach ensures that researchers and scientists
+can efficiently access the data they need, regardless of their physical
+location, enabling faster and more effective scientific discoveries.</p>
+
+<h2>Executive summary</h2>
+
+<p>This document presents the results
+of testing the OSDF cache selection mechanism, which was exercised by
+repeatedly requesting files from most of the geographic locations that serve
+the OSPool. Most of the tests were positive, delivering data from the expected
+cache location, but the OSDF cache selection did pick a suboptimal cache at a
+couple of geographical locations. The behavior was consistent in both low-load
+and in stress test setups.</p>
+
+
+
+<h2>Recommendations</h2>
+
+
+
+<p>There is one recommendation for
+the Pelican Platform Team:</p>
+
+<p class=MsoListParagraph style='margin-left:.75in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>
+</span></span>Create a tool to check the site and the selected cache
+periodically. This tool can be used to measure the transfer rate from sites and
+caches. </p>
+
+<p>Next, the recommendations for the
+OSDF operations are:</p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-left:.75in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>
+</span></span>Check why the Pelican Platform can’t reach the proper cache in
+very few cases.</p>
+
+<p class=MsoListParagraphCxSpLast style='margin-left:.75in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>
+</span></span>Check the GeoIP positions for the sites that got the wrong
+closest cache.</p>
+
+<p> Finally, the recommendations for the OSPool operations
+are:</p>
+
+<p class=MsoListParagraph style='margin-left:.75in;text-indent:-.25in'><span
+style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>
+</span></span>Create a pattern for OSPool site and node names (<i><span
+style='font-family:"Courier New"'>e.g.,
+Country_State_City_baseInternetDomain_Project</span></i>).</p>
+
+<h2>Detailed explanation</h2>
+
+
+
+<p>The tests were performed using
+ap21.uc.osg-htc.org and requested a list for all available sites in the OSPool
+using
+</p>
+<p>
+    <code>condor_status -pool
+    gfactory-1.osg-htc.org -any -const 'MyType==&quot;glidefactory&quot;' -af
+    GLIDEIN_Supported_VOs GLIDEIN_Site | grep OSGVO | sort -u | awk {'print $2'} |
+    uniq > sites</code>
+    </p>
+<p>
+ and sites from the K6 testing tool. Each site was tested
+15 times using one script using HTTP requests to the OSDF director and using
+the pelican client; the methodology was based on checking the site location and
+cache selected by the OSDF Director. Table 1 shows the name, location, and the
+location of the cache for the easy test. Furthermore, a stress test was
+executed on each site, requesting 100 files in parallel and checking the
+location. </p>
+
+
+<ul>
+  <li>Sixty-eight sites were used in the test; only four sites informed a wrong closest cache. Considering only OSG sites, only two sites showed the wrong location.</li>
+  <li>Two sites informed different positions using the Pelican client and the HTTP request.</li>
+  <li>The stress test did not show any wrong locations for the transfers.</li>
+  <li>A different cache was reported whenever the closest cache location was wrong.</li>
+</ul>
+
+
+<p align=center style='text-align:center'></p>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman",serif'><br
+clear=all style='page-break-before:always'>
+</span>
+
+<p align=left style='text-align:left;line-height:normal'></p>
+
+<p align=center style='text-align:center'>Table 1: Site name,
+cache selected, and actual site location. The ‘k6 site’ is a host used for the
+K6 load testing tool; they use Amazon Cloud hosts.</p>
+
+<div align=center>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=726
+ style='border-collapse:collapse;border:none'>
+ <tr style='height:41.8pt'>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt;height:41.8pt'>
+  <p align=center style='text-align:center'><b><span
+  style='font-size:10.0pt;line-height:150%'>Site name</span></b></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:41.8pt'>
+  <p align=center style='text-align:center'><b><span
+  style='font-size:10.0pt;line-height:150%'>Selected Cache and Location/State</span></b></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:41.8pt'>
+  <p align=center style='text-align:center'><b><span
+  style='font-size:10.0pt;line-height:150%'>Site Location/State</span></b></p>
+  </td>
+  <td width=114 valign=top style='width:85.5pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:41.8pt'>
+  <p align=center style='text-align:center'><b><span
+  style='font-size:10.0pt;line-height:150%'>Closest location -Pelican director</span></b></p>
+  </td>
+  <td width=114 valign=top style='width:85.5pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0in 5.4pt 0in 5.4pt;height:41.8pt'>
+  <p align=center style='text-align:center'><b><span
+  style='font-size:10.0pt;line-height:150%'>Closest location -pelican client</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>singapore
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>singapore.nationalresearchplatform.org
+  - Singapore</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Singapore</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>brazil k6
+  site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-cache.sprace.org.br - Brazil</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Brazil</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>tiger-osg-backfill-prod</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-uw-cache.svc.osg-htc.org - Wisconsin</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;line-height:150%'>Wisconsin</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>clemson.edu</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.cinc.nrp.internet2.edu - Ohio</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>South Carolina</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>empest-epyc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>MT</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>lp126.lonepeak.peaks</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>mortimer.hpc.uwm.edu</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Wisconsin</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>chpc.utah.edu</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>int.chpc.utah.edu</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>arkansas
+  state university</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Arkansas</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:us:columbus
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Ohio</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:ca:montreal
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>mghpcc-cache.nationalresearchplatform.org
+  - Massachusetts</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Montreal -Canada</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:de:frankfurt
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>amst-fiona.nationalresearchplatform.org
+  – Amestrdan - Netherlands</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Frankfurt - Germany</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:gb:london
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>lond-osdf-xcache01.es.net – London
+  - UK</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>London - England</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:fr:paris
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>lond-osdf-xcache01.es.net– London -
+  UK</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Paris - France</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:us:palo
+  alto k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.cinc.nrp.internet2.edu – Ohio
+  | dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;line-height:150%'>California</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:us:portland
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-chicago-stashcache.nrp.internet2.edu
+  – Chicago | mghpcc-cache.nationalresearchplatform.org – Massachusetts</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Portland</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amazon:us:ashburn
+  k6 site</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Virginia</span></p>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'></span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>-</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>alabama-chpc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.jack.nrp.internet2.edu -
+  Florida</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Alabama</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>amnh</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>New York</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>asu-sol</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>fdp-d3d-cache.nationalresearchplatform.org
+  - California</span></p>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>ncar-cache.nationalresearchplatform.org
+  Colorado</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Arizona</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>beocat-slate</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  -Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Kansas</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>cameron
+  university</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org</span>
+  <span style='font-size:10.0pt;line-height:150%'>-Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Oklahoma</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>center for
+  advanced research computing</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;line-height:150%'>fdp-d3d-cache.nationalresearchplatform.org
+  - California</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>California</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>chtc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-uw-cache.svc.osg-htc.org - Winscosin</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Winscosin</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>chtc-spark</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-uw-cache.svc.osg-htc.org - Winscosin</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Winscosin</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>colorado</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  director. – New York<br>
+  osg-houston-stashcache.nrp.internet2.edu pelican - Texas</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Colorado</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>duke-ncshare</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.cinc.nrp.internet2.edu - Ohio</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>North Calorina</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>elsa</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>New Jersey</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>fandm-its</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%;color:#262626;background:white'>Philadelphia</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>fnal</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York <br>
+  fdp-d3d-cache.nationalresearchplatform.org – California</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Illinois</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>fnal_gpgrid</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu
+  director - Idaho<br>
+  ncar-cache.nationalresearchplatform.org pelican – Colorado </span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Illinois</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>gatech</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.jack.nrp.internet2.edu -
+  Florida</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Gerogia</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>grid_ce2</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-chicago-stashcache.nrp.internet2.edu
+  - Michigan</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Michigan</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>gsu-acids</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.jack.nrp.internet2.edu -
+  Florida</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Georgia</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>hawaii-koa</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-sunnyvale-stashcache.nrp.internet2.edu
+  - California</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Hawaii</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>iitisi</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-uw-cache.svc.osg-htc.org - Winscosin</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Michigan</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>langston-lion</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-houston-stashcache.nrp.internet2.edu
+  - Texas</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Oklahoma</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>lsuhsc-tigerfish</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.hous.nrp.internet2.edu -
+  Texas</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Louisiana</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>maine-acgmaine-penobscot</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>mghpcc-cache.nationalresearchplatform.org
+  – Massachusetts</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Maine</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>michigan</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-chicago-stashcache.nrp.internet2.edu
+  - Illinois</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Michigan</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>mi-horus</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Missouri</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>missouri-hellbender</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-chicago-stashcache.nrp.internet2.edu
+  - Illinois</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Missouri</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>mtstate-tempest</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Montana</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>numepodu-ubuntuoru-titan</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Oklahoma</span></p>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'></span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>osg_us_fsu_hnpgrid</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.jack.nrp.internet2.edu -
+  Florida</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Florida</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>pdx-coeus</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Portland</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>psu-ligo</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New York</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>PA</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>puertorico</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.jack.nrp.internet2.edu -
+  Florida</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Puerto Rico</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>purdue-anvil</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu - Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Purdue</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>rhodes-hpc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.cinc.nrp.internet2.edu - Ohio</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Tenesse</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>siue-cc-production</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-chicago-stashcache.nrp.internet2.edu
+  - Illinois</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Illinios</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>swan</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Nebraska</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>swarthmore-firebird:</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-new-york-stashcache.nrp.internet2.edu
+  – New Work</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;line-height:150%'>Pennsylvania</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>tntech-warp1</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.cinc.nrp.internet2.edu -
+  Ohio</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Tenesse</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>denveruchicago</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.denv.nrp.internet2.edu -
+  Colorador</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Denver</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>ucmerced-pinnacles</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-sunnyvale-stashcache.nrp.internet2.edu
+  - California</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>California</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>uconn</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>mghpcc-cache.nationalresearchplatform.org
+  - Massachusetts</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>New York</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>uconn-hpc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>mghpcc-cache.nationalresearchplatform.org
+  - Massachusetts</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>New York</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>unespunr-cc</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osg-sunnyvale-stashcache.nrp.internet2.edu
+  - California</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Brazil</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>no</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>usd-lawrence</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebrasja</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>South Dakota</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>utah-granite</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu -
+  Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>utah-kingspeak</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu -
+  Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>utah-lonepeak</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu -
+  Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>utah-notchpeak</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>dtn-pas.bois.nrp.internet2.edu -
+  Idaho</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Utah</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>uw-it</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>UW</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>uwm-mortimer</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>osdf-uw-cache.svc.osg-htc.org - Wisconsin</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Wisconsin</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=120 valign=top style='width:1.25in;border:solid windowtext 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='margin-left:.5in;text-align:center;
+  text-indent:-.5in'><span style='font-size:10.0pt;line-height:150%'>emporia
+  state university</span></p>
+  </td>
+  <td width=276 valign=top style='width:207.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>unl-cache.nationalresearchplatform.org
+  - Nebraska</span></p>
+  </td>
+  <td width=102 valign=top style='width:76.5pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>Kansas</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+  <td width=114 valign=top style='width:85.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p align=center style='text-align:center'><span
+  style='font-size:10.0pt;line-height:150%'>yes</span></p>
+  </td>
+ </tr>
+</table>
