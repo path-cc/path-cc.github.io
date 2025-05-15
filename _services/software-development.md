@@ -4,11 +4,11 @@ date: 2018-11-28T15:14:39+10:00
 featured: true
 weight: 4
 excerpt: |
-    The Software Development Team supports, sustains, and enhances the HTCondor
-    Software Suite (HTCSS) to enable the potential of distributed High Throughput
+    The Software Development Team supports, sustains, and enhances the [HTCondor
+    Software Suite (HTCSS)](https://htcondor.org) to enable the potential of distributed High Throughput
     Computing. This suite of software tools includes HTCondor, components to build
-    both on-premise HTCondor compute clusters for use by independent academic,
-    commercial, and government campuses, and components to support the federation of
+    both on-premise HTCondor compute clusters for use by [independent academic,
+    commercial, and government campuses](https://htcondor.org/about), and components to support the federation of
     processing and data resources across the OSG.
 ---
 
