@@ -11,9 +11,9 @@ bodyClass: page-events-list
     <div class="col-12 col-md-6 mb-3">
         <div class="news news-summary">
             <div class="article-content">
-                {% if event.header_image %}
-                    <a href="{{ event.url | relative_url }}" class="d-block">
-                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.header_image | relative_url }}">
+                {% if event.banner %}
+                    <a href="{{ event.path | relative_url }}" class="d-block">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.banner.path | relative_url }}">
                     </a>
                 {% endif %}
                 <h2 class="article-title">
@@ -36,14 +36,14 @@ bodyClass: page-events-list
 </div>
 <div class="row">
     <div class="col-12"><h1 class="text-muted mb-4">Past Events</h1></div>
-    {% include get/past_events.html %}
+    {% include get/past_events.liquid %}
     {% for event in past_events %}
     <div class="col-12 col-md-6 mb-3">
         <div class="news news-summary">
             <div class="article-content">
-                {% if event.header_image %}
-                    <a href="{{ event.url | relative_url }}" class="d-block">
-                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.header_image | relative_url }}">
+                {% if event.banner %}
+                    <a href="{{ event.path | relative_url }}" class="d-block">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.banner.path | relative_url }}">
                     </a>
                 {% endif %}
                 <h2 class="article-title">
@@ -51,10 +51,10 @@ bodyClass: page-events-list
                 </h2>
                 <h2 class="article-title">
                     {% if event.start_date != event.end_date %}
-                    {% assign date = event.start_date | date: "%B %e" %}
-                    {% assign date = event.end_date | date: "-%e, %Y" | prepend: date %}
+                        {% assign date = event.start_date | date: "%B %e" %}
+                        {% assign date = event.end_date | date: "-%e, %Y" | prepend: date %}
                     {% else %}
-                    {% assign date = event.start_date | date: "%B %e, %Y" %}
+                        {% assign date = event.start_date | date: "%B %e, %Y" %}
                     {% endif %}
                     <small class="text-muted">{{ date }}</small>
                 </h2>
