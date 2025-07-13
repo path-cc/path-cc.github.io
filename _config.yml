@@ -77,13 +77,13 @@ defaults:
       layout: news
       bodyClass: page-news-single
   - scope:
-      type: events
+      type: events_legacy
     values:
       layout: events
   - scope:
-      type: events_legacy
+      type: events
     values:
-      layout: events_legacy
+      layout: events_modern
   - scope:
       path: 'images'
     values:
