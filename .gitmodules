@@ -5,5 +5,5 @@
 	path = staff-list
 	url = https://github.com/CHTC/staff-list.git
 [submodule "_events_external"]
-	path = _events_external
+	path = _events
 	url = https://github.com/CHTC/events
