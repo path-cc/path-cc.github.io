@@ -10,16 +10,16 @@ layout: container-default
             {{ content }}
         </div>
 
-        {{ if page.sidebar }}
+        {% if page.sidebar %}
         <div class="subsection col-12 col-md-4 order-2 order-md-2">
             {{ page.sidebar | markdownify }}
         </div>
-        {{ endif }}
+        {% endif %}
 
-        {{ if page.endblock }}
+        {% if page.endblock %}
         <div class="col-12">
             {{ page.endblock | markdownify }}
         </div>
-        {{ endif }}
+        {% endif %}
     </div>
 </div>
