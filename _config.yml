@@ -38,9 +38,12 @@ collections:
   news:
     output: true
     permalink: /news/:path/
-  events:
+  # events_legacy:
+  #   output: false
+  #   permalink: /events/:path/
+  events_external:
     output: true
-    permalink: /events/:path/
+    permalink: /events/:year/:month/:day/:path/
   gil:
     output: true
     permalink: /GIL/:path/
@@ -74,7 +77,7 @@ defaults:
       layout: news
       bodyClass: page-news-single
   - scope:
-      type: events
+      type: events_external
     values:
       layout: events
   - scope:

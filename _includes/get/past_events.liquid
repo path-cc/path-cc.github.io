@@ -1,6 +1,6 @@
 {% assign current_time = 'now' | date: '%Y-%m-%d' | date: '%s' | plus: 0 %}
 
-{% assign all_events = site.events | where_exp: "event", "event.publish_on contains site.key" %}
+{% assign all_events = site.events_external | where_exp: "event", "event.publish_on contains site.key" %}
 {% assign past_events = "" | split : "" %}
 
 {% for event in all_events %}

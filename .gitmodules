@@ -4,6 +4,6 @@
 [submodule "staff-list"]
 	path = staff-list
 	url = https://github.com/CHTC/staff-list.git
-[submodule "_events"]
-	path = _events
+[submodule "_events_external"]
+	path = _events_external
 	url = https://github.com/CHTC/events

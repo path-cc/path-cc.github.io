@@ -42,7 +42,7 @@ bodyClass: page-events-list
         <div class="news news-summary">
             <div class="article-content">
                 {% if event.banner %}
-                    <a href="{{ event.path | relative_url }}" class="d-block">
+                    <a href="{{ event.url | relative_url }}" class="d-block">
                         <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ event.banner.path | relative_url }}" alt="{{ event.banner.alt }}">
                     </a>
                 {% endif %}
