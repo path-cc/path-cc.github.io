@@ -4,6 +4,7 @@ permalink: pretty
 title: 'PATh'
 url: "https://path-cc.io"
 key: path
+future: true
 
 google_analytics_id: G-0CCSDQV212
 homepage:
@@ -38,9 +39,12 @@ collections:
   news:
     output: true
     permalink: /news/:path/
-  events:
+  events_legacy:
     output: true
     permalink: /events/:path/
+  events:
+    output: true
+    permalink: /events/:year/:month/:day/:title/
   gil:
     output: true
     permalink: /GIL/:path/
@@ -74,9 +78,13 @@ defaults:
       layout: news
       bodyClass: page-news-single
   - scope:
-      type: events
+      type: events_legacy # Legacy events use the `events` layout for compatibility
     values:
       layout: events
+  - scope:
+      type: events # New events use the `events_modern` layout
+    values:
+      layout: events_modern
   - scope:
       path: 'images'
     values:
