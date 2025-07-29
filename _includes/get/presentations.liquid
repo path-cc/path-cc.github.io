@@ -1,0 +1,1 @@
+{% assign presentations = site.presentations | where_exp: "presentation", "presentation.publish_on contains site.key" %}

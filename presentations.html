@@ -1,0 +1,38 @@
+---
+layout: sub-page
+bodyClass: page-presentations-list
+---
+
+<h1 class="mb-4">Presentations</h1>
+
+<div class="row mb-3">
+    {% include get/presentations.liquid %}
+    {% for presentation in presentations %}
+    <div class="col-12 col-md-6 mb-3">
+        <div class="news news-summary">
+            <div class="article-content">
+                {% if presentation.youtube_video_id %}
+                    {% assign presentation_image_path = "https://img.youtube.com/vi/" | append: presentation.youtube_video_id | append: "/hqdefault.jpg" %}
+                    {% assign presentation_image_alt = presentation.title | append: " presentation thumbnail" %}
+                {% elsif presentation.image %}
+                    {% assign presentation_image_path = presentation.image.path | relative_url %}
+                    {% assign presentation_image_alt = presentation.image.alt %}
+                {% endif %}
+                <a href="{{ presentation.url | relative_url }}" class="d-block">
+                    <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ presentation_image_path }}" alt="{{ presentation_image_alt }}">
+                </a>
+                <h2 class="article-title">
+                    <a href="{{ presentation.url | relative_url }}">{{ presentation.title }}</a>
+                </h2>
+
+                <div class="mb-3 d-flex flex-row justify-content-between">
+                    {% assign date = presentation.date | date: "%B %e" %}
+                    <h4 class="text-muted">{{ presentation.presenter }} at {{ presentation.event }}</h4>
+                    <h4 class="text-muted" style="flex-grow: 0; flex-shrink: 0;">{{ date }}</h4>
+                </div>
+                <p>{{ presentation.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
