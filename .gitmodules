@@ -7,3 +7,6 @@
 [submodule "_events_external"]
 	path = _events
 	url = https://github.com/CHTC/events
+[submodule "_presentations"]
+	path = _presentations
+	url = https://github.com/CHTC/Presentations.git

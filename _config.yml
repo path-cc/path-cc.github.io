@@ -60,6 +60,9 @@ collections:
   redirects:
     output: true
     permalink: /:path
+  presentations:
+    output: true
+    permalink: /presentations/:year/:month/:day/:title/
 
 defaults:
   - scope:
@@ -97,6 +100,10 @@ defaults:
       type: redirects
     values:
       layout: redirect
+  - scope:
+      type: presentations
+    values:
+      layout: presentation
 
 
 
