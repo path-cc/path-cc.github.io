@@ -166,7 +166,7 @@ intro_image_hide_on_mobile: true
         </div>
     </div>
     <div class="container-xxl">
-        {% include text-hr.html text="News & Events" %}
+        {% include text-hr.html text="News, Training, & Events" %}
         <div class="row">
             {% include get/articles.liquid %}
             <div class="col-12 col-md-6 col-lg-4">
@@ -184,18 +184,31 @@ intro_image_hide_on_mobile: true
             </div>
             {% include get/future_events.liquid %}
             <div class="col-12 col-md-6 col-lg-4 my-3 my-md-0">
+                <div class="col-12 col-md-6 col-lg-4 my-3 my-md-0">
+                    <h2 class="text-primary pb-1">Training</h2>
+                </div>
+                <div class="text-dark mb-3">
+                    Access comprehensive training materials covering OSPool basics, advanced workflows,
+                    and data management with Pelican and the OSDF. Our tutorials guide researchers
+                    through every aspect of high-throughput computing.
+                    <div class="mt-2">
+                        <a class="btn btn-outline-primary btn-sm" target="_blank" href="https://portal.osg-htc.org/documentation/support_and_training/training/materials/">
+                            View Training Materials
+                        </a>
+                    </div>
+                </div>
                 {% if future_events.size != 0  %}
                     <h2 class="text-primary pb-1">
                         Upcoming Events
                     </h2>
-                    {% for event in future_events limit:2 %}
+                    {% for event in future_events limit:1 %}
                         <div>
                             {% include event/event-card.html event=event %}
                         </div>
                     {% endfor %}
                 {% else %}
                     <div class="row pt-md-0 pt-3">
-                        {% for article in articles limit: 2 offset: continue %}
+                        {% for article in articles limit: 1 offset: continue %}
                         <div class="col-12">
                             {% include light-title-date-desc-card.html
                             date=article.date
