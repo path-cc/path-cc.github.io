@@ -1,5 +1,5 @@
 ---
-title: PATh’s Support for Research Computing and the CC* Program
+title: Support for the CC* Program
 date: 2021-08-12 12:00:00 -0600
 categories: NSF Campus Cyberinfrastructure (CC*)
 excerpt: |

@@ -6,9 +6,11 @@
             <small class="article-date text-muted">{{ include.date | date: '%B %d, %Y' }}</small>
             {% endif %}
         </h2>
-        <div class="mb-2">
-            <img style="object-fit: cover; aspect-ratio: 2;" class="w-100" src="{{ include.image }}" alt="{{ include.alt }}">
-        </div>
+        {% if include.image and include.image_link %}
+            <div class="mb-2">
+                <img style="object-fit: cover; aspect-ratio: 2;" class="w-100" src="{{ include.image }}" alt="{{ include.alt }}">
+            </div>
+        {% endif %}
         <div class="text-dark">
             {{ include.desc | markdownify | strip_html }}
         </div>
