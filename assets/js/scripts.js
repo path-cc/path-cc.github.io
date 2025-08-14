@@ -100,7 +100,7 @@ class PresentationFilterManager {
             
             // Check keyword filter
             if (this.selectedKeywords.size > 0) {
-                const cardKeywords = card.dataset.keywords ? card.dataset.keywords.split(' ') : [];
+                const cardKeywords = card.dataset.keywords ? card.dataset.keywords.split(',') : [];
                 
                 // Check if any selected keyword matches card keywords
                 const hasMatchingKeyword = Array.from(this.selectedKeywords).some(keyword => 
