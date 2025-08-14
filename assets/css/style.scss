@@ -306,3 +306,17 @@ main {
     height: 620px;
   }
 }
+
+.presentation-description {
+  max-height: 4.5rem;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.presentation-description > p {
+  margin-bottom: 0;
+}
+
+.presentation-description.expanded {
+  max-height: 1000px; /* Arbitrary large value to allow full expansion */
+}

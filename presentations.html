@@ -56,7 +56,7 @@ bodyClass: page-presentations-list
                 </h2>
 
                 <div class="d-flex flex-row justify-content-between">
-                    {% assign date = presentation.date | date: "%B %e" %}
+                    {% assign date = presentation.date | date: "%B %e, %Y" %}
                     <h4 class="text-muted mb-0">{{ presentation.presenter }} at {{ presentation.event }}</h4>
                     <h4 class="text-muted mb-0" style="flex-grow: 0; flex-shrink: 0;">{{ date }}</h4>
                 </div>
@@ -66,7 +66,10 @@ bodyClass: page-presentations-list
                     <span class="tag-badge badge">{{ tag }}</span>
                 {% endfor %}
                 </div>
-                <p>{{ presentation.description }}</p>
+
+                <div class="presentation-description collapsed" onclick="this.classList.toggle('expanded')" style="cursor:pointer;">
+                    {{ presentation.description | markdownify }}
+                </div>
             </div>
         </div>
     </div>
