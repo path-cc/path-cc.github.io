@@ -16,7 +16,7 @@ bodyClass: page-presentations-list
         <li><a class="button-filter-event-dropdown dropdown-item" href="#" data-event-selector="{{event}}">{{event}}</a></li>
         {% endfor %}
 
-        <li><a class="button-filter-event-dropdown dropdown-item" href="#" data-event-selector="Other">Other</a></li>
+        <!-- <li><a class="button-filter-event-dropdown dropdown-item" href="#" data-event-selector="Other">Other</a></li> -->
     </ul>
 
     <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -57,16 +57,12 @@ bodyClass: page-presentations-list
                     <a href="{{ presentation.url | relative_url }}">{{ presentation.title }}</a>
                 </h2>
 
-                <div class="d-flex flex-row justify-content-between">
-                    {% assign date = presentation.date | date: "%B %e, %Y" %}
-                    <h4 class="text-muted mb-0">
-                        {{ presentation.presenter }}
-                        {% if presentation.event %}
-                            at {{ presentation.event }}
-                        {% endif %}
-                    </h4>
-                    <h4 class="text-muted mb-0" style="flex-grow: 0; flex-shrink: 0;">{{ date }}</h4>
-                </div>
+                <h4 class="text-muted mb-0">
+                    {{ presentation.presenter }}
+                    {% if presentation.event %}
+                        at {{ presentation.event }}
+                    {% endif %}
+                </h4>
 
                 <div class="mb-3">
                 {% for tag in presentation.keywords %}
@@ -74,9 +70,14 @@ bodyClass: page-presentations-list
                 {% endfor %}
                 </div>
 
-                <div class="presentation-description" onclick="this.classList.toggle('expanded')" style="cursor:pointer;">
+                <div class="presentation-description collapsed">
                     {{ presentation.description | markdownify }}
+
+                    <div class="gradient-overlay"></div>
                 </div>
+
+                {% assign date = presentation.date | date: "%B %e, %Y" %}
+                <small class="text-muted mb-0" style="flex-grow: 0; flex-shrink: 0;">{{ date }}</small>
             </div>
         </div>
     </div>
