@@ -15,6 +15,8 @@ bodyClass: page-presentations-list
         {% for event in all_presentation_events %}
         <li><a class="button-filter-event-dropdown dropdown-item" href="#" data-event-selector="{{event}}">{{event}}</a></li>
         {% endfor %}
+
+        <li><a class="button-filter-event-dropdown dropdown-item" href="#" data-event-selector="Other">Other</a></li>
     </ul>
 
     <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -57,7 +59,12 @@ bodyClass: page-presentations-list
 
                 <div class="d-flex flex-row justify-content-between">
                     {% assign date = presentation.date | date: "%B %e, %Y" %}
-                    <h4 class="text-muted mb-0">{{ presentation.presenter }} at {{ presentation.event }}</h4>
+                    <h4 class="text-muted mb-0">
+                        {{ presentation.presenter }}
+                        {% if presentation.event %}
+                            at {{ presentation.event }}
+                        {% endif %}
+                    </h4>
                     <h4 class="text-muted mb-0" style="flex-grow: 0; flex-shrink: 0;">{{ date }}</h4>
                 </div>
 
