@@ -310,7 +310,7 @@ main {
 .presentation-description {
   max-height: 4.5rem;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  user-select: none;
 }
 
 .presentation-description > p {
