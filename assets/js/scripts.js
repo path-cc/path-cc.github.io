@@ -38,8 +38,6 @@ class PresentationFilterManager {
                 // Update button text to show selected event
                 this.buttonEventFilter.textContent = this.selectedEvent;
                 
-                console.log("Selected event:", this.selectedEvent);
-                
                 // Apply filters
                 this.filterPresentations();
             });
@@ -56,8 +54,6 @@ class PresentationFilterManager {
                 } else {
                     this.selectedKeywords.delete(keyword);
                 }
-                
-                console.log("Selected keywords:", Array.from(this.selectedKeywords));
                 
                 // Apply filters
                 this.filterPresentations();
@@ -143,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
         descriptions.forEach((description) => {
             // individual to each description
             const onDescriptionClick = () => {
-                console.log("toggling");
                 description.classList.toggle("collapsed");
                 // if expanded, remove click listener to prevent further toggling
                 description.removeEventListener("click", onDescriptionClick);
