@@ -46,13 +46,16 @@ bodyClass: page-presentations-list
                 {% if presentation.youtube_video_id %}
                     {% assign presentation_image_path = "https://img.youtube.com/vi/" | append: presentation.youtube_video_id | append: "/hqdefault.jpg" %}
                     {% assign presentation_image_alt = presentation.title | append: " presentation thumbnail" %}
+                    <a href="{{ presentation.url | relative_url }}" class="d-block">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ presentation_image_path }}" alt="{{ presentation_image_alt }}">
+                    </a>
                 {% elsif presentation.image %}
                     {% assign presentation_image_path = presentation.image.path | relative_url %}
                     {% assign presentation_image_alt = presentation.image.alt %}
+                    <a href="{{ presentation.url | relative_url }}" class="d-block">
+                        <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ presentation_image_path }}" alt="{{ presentation_image_alt }}">
+                    </a>
                 {% endif %}
-                <a href="{{ presentation.url | relative_url }}" class="d-block">
-                    <img class="w-100 image-card-cap rounded mb-3" style="aspect-ratio:3.5;" src="{{ presentation_image_path }}" alt="{{ presentation_image_alt }}">
-                </a>
                 <h2 class="article-title">
                     <a href="{{ presentation.url | relative_url }}">{{ presentation.title }}</a>
                 </h2>

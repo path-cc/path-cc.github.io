@@ -13,17 +13,19 @@ layout: container-default
                 </h1>
             </div>
 
-            <div class="row">
-                <div class="flex justify-content-center" style="display: flex;">
-                    <iframe
-                        src="https://www.youtube.com/embed/{{ page.youtube_video_id }}?origin=https://path-cc.io"
-                        width="640"
-                        height="360"
-                        frameborder="0"
-                        allowfullscreen
-                    ></iframe>
+            {% if page.youtube_video_id %}
+                <div class="row">
+                    <div class="flex justify-content-center" style="display: flex;">
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ page.youtube_video_id }}?origin=https://path-cc.io"
+                            width="640"
+                            height="360"
+                            frameborder="0"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
             <div class="mb-3 d-flex flex-row justify-content-between">
                 <h4 class="text-muted">
