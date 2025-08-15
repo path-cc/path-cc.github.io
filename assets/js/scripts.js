@@ -38,8 +38,6 @@ class PresentationFilterManager {
                 // Update button text to show selected event
                 this.buttonEventFilter.textContent = this.selectedEvent;
                 
-                console.log("Selected event:", this.selectedEvent);
-                
                 // Apply filters
                 this.filterPresentations();
             });
@@ -56,8 +54,6 @@ class PresentationFilterManager {
                 } else {
                     this.selectedKeywords.delete(keyword);
                 }
-                
-                console.log("Selected keywords:", Array.from(this.selectedKeywords));
                 
                 // Apply filters
                 this.filterPresentations();
@@ -100,7 +96,7 @@ class PresentationFilterManager {
             
             // Check keyword filter
             if (this.selectedKeywords.size > 0) {
-                const cardKeywords = card.dataset.keywords ? card.dataset.keywords.split(' ') : [];
+                const cardKeywords = card.dataset.keywords ? card.dataset.keywords.split(',') : [];
                 
                 // Check if any selected keyword matches card keywords
                 const hasMatchingKeyword = Array.from(this.selectedKeywords).some(keyword => 
@@ -133,6 +129,45 @@ class PresentationFilterManager {
 document.addEventListener("DOMContentLoaded", () => {
     // -- presentations page --
 
+    /**
+     * Setup click-to-expand for presentation descriptions that overflow
+     * their container.
+     */
+    function setupDescriptionExpansion() {
+        const descriptions = document.querySelectorAll(".presentation-description");
+
+        descriptions.forEach((description) => {
+            // individual to each description
+            const onDescriptionClick = () => {
+                description.classList.toggle("collapsed");
+                // if expanded, remove click listener to prevent further toggling
+                description.removeEventListener("click", onDescriptionClick);
+            };
+
+            // setup function that runs for each description, as well as on window resize
+            const setup = (desc) => {
+                desc.removeEventListener("click", onDescriptionClick);
+                desc.classList.add("collapsed"); // start collapsed
+
+                if (desc.scrollHeight <= desc.clientHeight) {
+                    // content fits, disable expansion
+                    desc.classList.remove("collapsed");
+                } else {
+                    // content overflows, enable expansion
+                    desc.addEventListener("click", onDescriptionClick);
+                }
+            }
+
+            // Initial setup
+            setup(description);
+            // Re-setup on window resize
+            window.addEventListener("resize", () => setup(description));
+        });
+    }
+
+    /**
+     * Fill in badge colors based on tag text.
+     */
     function fillBadgeColors() {
         const badges = document.querySelectorAll(".tag-badge");
         badges.forEach(badge => {
@@ -148,7 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fillBadgeColors();
-    // do presentation filtering only if on the presentations page
+    setupDescriptionExpansion();
+
+    // Initialize filter manager if on presentations page
     if (document.querySelector(".presentation-card")) {
         const filterManager = new PresentationFilterManager();
         filterManager.initialize();
