@@ -1,0 +1,68 @@
+---
+title: 'Dear CICI PI: A Letter from the OSDF'
+layout: main
+---
+
+<img src="/images/nairr.jpg" alt="Description of image" style="width: 100%; height: auto; display: block; max-height: 200px; object-fit: cover">
+
+<div class="container-lg pb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-9 col-xxl-8">
+            {% include layout/subpage-header.html %}
+            <p>
+                The NSF PATh Project would like to help you enhance the experiences of the authorized consumers of your data by bringing your dataset to a national-scale data fabric. The <a href="https://osg-htc.org/osdf">Open Science Data Federation (OSDF)</a> that we operate facilitates remote access to your data via a unified name space while managing the impact of this access on the storage hosting your data through a network of caches run across the nation and globe. We look forward to having your consumers join the growing <a href="https://osg-htc.org/services/osdf/projects">community of researchers</a> that are benefiting from the more than 100 transfers per second delivered by the OSDF.
+            </p>
+            <p>
+                Bringing your data to the OSDF is easy. We can help you copy the data to the NSF-funded OSStore storage operated by PATh or deploy a <a href="https://pelicanplatform.org">Pelican</a> origin that serves as a gateway to the storage that hosts your data. This “Object Store” can be local on your campus (a filesystem) or in the cloud (an AWS S3 bucket).
+            </p>
+            <p>
+                Once in the OSDF, your data can be seamlessly processed leveraging capacity provided by the <a href="https://osg-htc.org/services/ospool/">Open Science Pool (OSPool)</a> that we operate or through NSF-funded services like the <a href="https://nrp.ai/">National Research Platform (NRP)</a>.  The OSPool provides US researchers with compute capacity and automation. A large fraction of the more than 220M jobs served by the OSPool in the past year consumed objects provided by the OSDF. The high throughput computing (over .5M jobs/day) capacity offered by the OSPool is open to any US researcher. <b>Namely, no allocation is needed.</b>
+            </p>
+            <h2 class="mt-4">Connecting to the OSDF</h2>
+            <h5 class="mb-3">We offer two options to connect to the OSDF</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title"><strong>We host it</strong></h4>
+                            <p class="card-text">
+                                The OSDF team runs the “origin” service connecting the repository to the OSDF; you provide the S3 credentials or HTTP access to the immutable objects.<br>
+                                If your dataset is on a filesystem, the <a href="https://nrp.ai/">NRP</a> project hosts a Pelican origin in your DMZ.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title"><strong>You host it</strong></h4>
+                            <p class="card-text">
+                                You install & run the Pelican origin at your institution wherever the dataset is mounted.<br>
+                                This provides you control over the exported data and configuration of the authorization.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>
+                If neither of the above works, a copy of your dataset can be temporarily hosted at storage contributed by CC* awards through the PATh operated “OSStore” program.
+            </p>
+            <p>
+                You manage the access control policy of your data.  The Pelican software interfaces with existing systems over standard protocols (such as OAuth2) or you can leverage the capabilities of CILogon to enable federated SSO and group access.
+            </p>
+            <p>
+                We will help you combine your dataset with higher-level services, such as the <a href="https://nationaldataplatform.org/">National Data Platform (NDP)</a>, to facilitate data discovery.
+            </p>
+            <p>
+                The NSF-funded OSDF is a service operated by the PATh project (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030508">#2030508</a>) and powered by the Pelican platform (<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2331480">#2331480</a>).
+            </p>
+            <div class="d-flex justify-content-center my-4">
+                <img height="200" src="https://osg-htc.org/assets/images/logos/OSDF_OSPool_Logos.png" alt="OSDF Logo" />
+            </div>
+        </div>
+        <div class="col-3 col-xxl-2 d-none d-md-block">
+            {% include Sidebar.liquid %}
+        </div>
+    </div>
+</div>
+
