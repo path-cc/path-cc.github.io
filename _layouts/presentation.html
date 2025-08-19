@@ -13,6 +13,7 @@ layout: container-default
                 </h1>
             </div>
 
+            {% if page.youtube_video_id %}
             <div class="row">
                 <div class="flex justify-content-center" style="display: flex;">
                     <iframe
@@ -24,6 +25,7 @@ layout: container-default
                     ></iframe>
                 </div>
             </div>
+            {% endif %}
 
             <div class="mb-3 d-flex flex-row justify-content-between">
                 <h4 class="text-muted">
@@ -32,9 +34,7 @@ layout: container-default
                 <h4 class="text-muted">{{ date }}</h4>
             </div>
 
-            <p>
-                {{ page.description | markdownify }}
-            </p>
+            {{ page.description | markdownify }}
 
             <div>
             {% for tag in page.keywords %}
