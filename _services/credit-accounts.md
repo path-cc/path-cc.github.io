@@ -9,7 +9,7 @@ excerpt: |
     that ranges from Research Computing Facilitation to Access Points capable of
     managing distributed HTC workloads. PATh has added to its
     fabric of services support for capacity credit accounts.
-weight: 1
+weight: 2
 published: true
 ---
 

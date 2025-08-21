@@ -2,7 +2,7 @@
 title: "Software Development" 
 date: 2018-11-28T15:14:39+10:00 
 featured: true
-weight: 4
+weight: 5
 excerpt: |
     The Software Development Team supports, sustains, and enhances the [HTCondor
     Software Suite (HTCSS)](https://htcondor.org) to enable the potential of distributed High Throughput
