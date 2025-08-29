@@ -1,4 +1,4 @@
-name: Deploy production version of the Website on Current Repo
+name: Deploy Production
 
 on:
   push:
