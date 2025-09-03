@@ -66,7 +66,7 @@ layout: main
             {% for group in sorted_grouped_presentations %}
                 <h3 class="mt-4">{{ group.name | date: "%B %e, %Y" }}</h3>
                 <div class="row mb-3">
-                    {% assign sorted_presentations = group.items | sort: 'date' %}
+                    {% assign sorted_presentations = group.items | sort: 'date' | %}
                     {% for presentation in sorted_presentations %}
                         {% if presentation.event == "CICI Presentation Series" %}
                             <div class="presentation-card hover-shadow col-12 col-md-6 mb-3" data-event="{{ presentation.event }}" data-keywords="{{ presentation.keywords | join: ',' }}">
