@@ -179,14 +179,14 @@ own campus and for the entire country.
 #### Computing
 
 Campuses contribute core hours to researchers
-via the [OSPool](/services/open_science_pool.html), a compute resource accessible to any
+via the [OSPool](https://osg-htc.org/services/open_science_pool.html), a compute resource accessible to any
 researcher affiliated with a US academic institution. These contributions support more than 230
 research groups, campuses, multi-campus collaborations, and gateways, and in fields of
 study ranging from the medicine to economics, and from genomics to physics.
 
 #### Data Storage
 
-The [Open Science Data Federation](/services/osdf.html) integrates data origins, making data
+The [Open Science Data Federation](https://osg-htc/services/osdf.html) integrates data origins, making data
 accessible via caches, of which many are strategically located in the R&E network backbone.
 The CC* solicitation of 2024 (NSF 24-530) requires interoperability with a national and federated data sharing fabric such as PATh/OSDFs.
 
