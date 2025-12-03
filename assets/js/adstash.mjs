@@ -30,6 +30,11 @@ export const getInstitutionsOverview = async (startTime = DATE_RANGE['oneYearAgo
                                 lte: endTime
                             }
                         }
+                    },
+                    {
+                        exists: {
+                            field: "isNRP"
+                        }
                     }
                 ],
                 must_not: [
@@ -134,144 +139,149 @@ export const getInstitutionsOverview = async (startTime = DATE_RANGE['oneYearAgo
 
 	return {}
 }
-
-export const getInstitutions = async (startTime = DATE_RANGE['oneYearAgo'], endTime = DATE_RANGE['now']) => {
-	const elasticSearch = new ElasticSearchQuery(ADSTASH_SUMMARY_INDEX, ADSTASH_ENDPOINT)
-
-	let usageQueryResult = await elasticSearch.search({
-		size: 0,
-		query: {
-			bool: {
-				filter: [
-					{
-						range: {
-							Date: {
-								gte: startTime,
-								lte: endTime
-							}
-						}
-					}
-				],
-				must_not: [
-					{
-						term: {
-							"isNRP.keyword": "UNKNOWN"
-						}
-					}
-				]
-			}
-		},
-		"aggs": {
-			"bucket": {
-				"terms": {
-					"field": "ResourceInstitution.name.keyword",
-					"size": 10000
-				},
-				"aggs": {
-					"NumProjects": {
-						"terms": {
-							"field": "ProjectName.keyword",
-							"size": 10000
-						}
-					},
-					"NumMajorFieldOfScience": {
-						"terms": {
-							"field": "MajorFieldOfScience.keyword",
-							"size": 10000
-						}
-					},
-					"NumBroadFieldOfScience": {
-						"terms": {
-							"field": "BroadFieldOfScience.keyword",
-							"size": 10000
-						}
-					},
-					"NumDetailedFieldOfScience": {
-						"terms": {
-							"field": "DetailedFieldOfScience.keyword",
-							"size": 10000
-						}
-					},
-					"NumJobs": {
-						"sum": {
-							"field": "NumJobs"
-						}
-					},
-					"FileTransferCount": {
-						"sum": {
-							"field": "FileTransferCount"
-						}
-					},
-					"ByteTransferCount": {
-						"sum": {
-							"field": "ByteTransferCount"
-						}
-					},
-					"CpuHours": {
-						"sum": {
-							"field": "CpuHours"
-						}
-					},
-					"GpuHours": {
-						"sum": {
-							"field": "GpuHours"
-						}
-					},
-					"OSDFFileTransferCount": {
-						"sum": {
-							"field": "OSDFFileTransferCount"
-						}
-					},
-					"OSDFByteTransferCount": {
-						"sum": {
-							"field": "OSDFByteTransferCount"
-						}
-					},
-					"CommonFields": {
-						"top_hits": {
-							"_source": {
-								"includes": RESOURCE_COMMON_FIELDS
-							},
-							"size": 1
-						}
-					}
-				}
-			}
-		}
-	})
-
-	let buckets = usageQueryResult.aggregations.bucket.buckets
-
-	try {
-		// Simplify the data keys
-		return buckets.reduce((p, v) => {
-			p[v['key']] = {
-				institutionName: v['key'],
-				numJobs: v['NumJobs']['value'],
-				cpuHours: v['CpuHours']['value'],
-				gpuHours: v['GpuHours']['value'],
-				fileTransferCount: v['FileTransferCount']['value'],
-				byteTransferCount: v['ByteTransferCount']['value'],
-				osdfFileTransferCount: v['OSDFFileTransferCount']['value'],
-				osdfByteTransferCount: v['OSDFByteTransferCount']['value'],
-				numProjects: v['NumProjects']['buckets'].length,
-				numMajorFieldOfScience: v['NumMajorFieldOfScience']['buckets'].length,
-				numBroadFieldOfScience: v['NumBroadFieldOfScience']['buckets'].length,
-				numDetailedFieldOfScience: v['NumDetailedFieldOfScience']['buckets'].length,
-				institutionState: getFromCommonField(v, "ResourceInstitution", "state"),
-				institutionIpedsWebsiteAddress: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "website_address"),
-				institutionIpedsHistoricallyBlackCollegeOrUniversity: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "historically_black_college_or_university"),
-				institutionIpedsTribalCollegeOrUniversity: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "tribal_college_or_university"),
-				institutionCarnegieClassification2025: getFromCommonField(v, "ResourceInstitution", "carnegie_metadata", "classification2025"),
-			}
-			return p
-		}, {})
-	} catch(e){
-		console.log(e)
-	}
-
-	return {}
-}
+//
+// export const getInstitutions = async (startTime = DATE_RANGE['oneYearAgo'], endTime = DATE_RANGE['now']) => {
+// 	const elasticSearch = new ElasticSearchQuery(ADSTASH_SUMMARY_INDEX, ADSTASH_ENDPOINT)
+//
+// 	let usageQueryResult = await elasticSearch.search({
+// 		size: 0,
+// 		query: {
+// 			bool: {
+// 				filter: [
+// 					{
+// 						range: {
+// 							Date: {
+// 								gte: startTime,
+// 								lte: endTime
+// 							}
+// 						}
+// 					},
+// 					{
+// 						exists: {
+// 							field: "isNRP"
+// 						}
+// 					}
+// 				],
+// 				must_not: [
+// 					{
+// 						term: {
+// 							"isNRP.keyword": "UNKNOWN"
+// 						}
+// 					}
+// 				]
+// 			}
+// 		},
+// 		"aggs": {
+// 			"bucket": {
+// 				"terms": {
+// 					"field": "ResourceInstitution.name.keyword",
+// 					"size": 10000
+// 				},
+// 				"aggs": {
+// 					"NumProjects": {
+// 						"terms": {
+// 							"field": "ProjectName.keyword",
+// 							"size": 10000
+// 						}
+// 					},
+// 					"NumMajorFieldOfScience": {
+// 						"terms": {
+// 							"field": "MajorFieldOfScience.keyword",
+// 							"size": 10000
+// 						}
+// 					},
+// 					"NumBroadFieldOfScience": {
+// 						"terms": {
+// 							"field": "BroadFieldOfScience.keyword",
+// 							"size": 10000
+// 						}
+// 					},
+// 					"NumDetailedFieldOfScience": {
+// 						"terms": {
+// 							"field": "DetailedFieldOfScience.keyword",
+// 							"size": 10000
+// 						}
+// 					},
+// 					"NumJobs": {
+// 						"sum": {
+// 							"field": "NumJobs"
+// 						}
+// 					},
+// 					"FileTransferCount": {
+// 						"sum": {
+// 							"field": "FileTransferCount"
+// 						}
+// 					},
+// 					"ByteTransferCount": {
+// 						"sum": {
+// 							"field": "ByteTransferCount"
+// 						}
+// 					},
+// 					"CpuHours": {
+// 						"sum": {
+// 							"field": "CpuHours"
+// 						}
+// 					},
+// 					"GpuHours": {
+// 						"sum": {
+// 							"field": "GpuHours"
+// 						}
+// 					},
+// 					"OSDFFileTransferCount": {
+// 						"sum": {
+// 							"field": "OSDFFileTransferCount"
+// 						}
+// 					},
+// 					"OSDFByteTransferCount": {
+// 						"sum": {
+// 							"field": "OSDFByteTransferCount"
+// 						}
+// 					},
+// 					"CommonFields": {
+// 						"top_hits": {
+// 							"_source": {
+// 								"includes": RESOURCE_COMMON_FIELDS
+// 							},
+// 							"size": 1
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	})
+//
+// 	let buckets = usageQueryResult.aggregations.bucket.buckets
+//
+// 	try {
+// 		// Simplify the data keys
+// 		return buckets.reduce((p, v) => {
+// 			p[v['key']] = {
+// 				institutionName: v['key'],
+// 				numJobs: v['NumJobs']['value'],
+// 				cpuHours: v['CpuHours']['value'],
+// 				gpuHours: v['GpuHours']['value'],
+// 				fileTransferCount: v['FileTransferCount']['value'],
+// 				byteTransferCount: v['ByteTransferCount']['value'],
+// 				osdfFileTransferCount: v['OSDFFileTransferCount']['value'],
+// 				osdfByteTransferCount: v['OSDFByteTransferCount']['value'],
+// 				numProjects: v['NumProjects']['buckets'].length,
+// 				numMajorFieldOfScience: v['NumMajorFieldOfScience']['buckets'].length,
+// 				numBroadFieldOfScience: v['NumBroadFieldOfScience']['buckets'].length,
+// 				numDetailedFieldOfScience: v['NumDetailedFieldOfScience']['buckets'].length,
+// 				institutionState: getFromCommonField(v, "ResourceInstitution", "state"),
+// 				institutionIpedsWebsiteAddress: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "website_address"),
+// 				institutionIpedsHistoricallyBlackCollegeOrUniversity: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "historically_black_college_or_university"),
+// 				institutionIpedsTribalCollegeOrUniversity: getFromCommonField(v, "ResourceInstitution", "ipeds_metadata", "tribal_college_or_university"),
+// 				institutionCarnegieClassification2025: getFromCommonField(v, "ResourceInstitution", "carnegie_metadata", "classification2025"),
+// 			}
+// 			return p
+// 		}, {})
+// 	} catch(e){
+// 		console.log(e)
+// 	}
+//
+// 	return {}
+// }
 
 export const getProjects = async (startTime = DATE_RANGE['oneYearAgo'], endTime = DATE_RANGE['now']) => {
 	const elasticSearch = new ElasticSearchQuery(ADSTASH_SUMMARY_INDEX, ADSTASH_ENDPOINT)
@@ -287,6 +297,11 @@ export const getProjects = async (startTime = DATE_RANGE['oneYearAgo'], endTime 
                                 gte: startTime,
                                 lte: endTime
                             }
+                        }
+                    },
+                    {
+                        exists: {
+                            field: "isNRP"
                         }
                     }
                 ],
@@ -406,6 +421,11 @@ export const getInstitutionOverview = async (institutionName) => {
 						term: {
 							["ResourceInstitution.name.keyword"]: institutionName,
 						}
+					},
+					{
+						exists: {
+							field: "isNRP"
+						}
 					}
 				],
                 must_not: [
@@ -523,6 +543,11 @@ export const getProjectOverview = async (projectName) => {
 					{
 						term: {
 							["ProjectName.keyword"]: projectName,
+						}
+					},
+					{
+						exists: {
+							field: "isNRP"
 						}
 					}
 				],
