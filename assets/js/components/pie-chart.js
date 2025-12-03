@@ -113,7 +113,6 @@ const htmlLegendPlugin = {
 
 			// Text
 			const textContainer = document.createElement('p');
-			textContainer.style.color = "white";
 			textContainer.style.margin = 0;
 			textContainer.style.padding = 0;
 			textContainer.style.fontSize = ".8rem"

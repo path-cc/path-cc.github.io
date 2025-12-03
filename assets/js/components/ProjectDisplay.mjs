@@ -1,7 +1,7 @@
 import {PieChart} from "./pie-chart.js";
-import {getProjectOverview} from "../../../../osg-htc.github.io/assets/js/adstash.mjs";
-import Count from "../../../../osg-htc.github.io/assets/js/components/Count.mjs";
-import { fetchWithBackup } from "../../../../osg-htc.github.io/assets/js/backup.js";
+import {getProjectOverview} from "/assets/js/adstash.mjs";
+import Count from "/assets/js/components/Count.mjs";
+import { fetchWithBackup } from "/assets/js/backup.js";
 
 class ProjectDisplay{
 	constructor(parentNode) {

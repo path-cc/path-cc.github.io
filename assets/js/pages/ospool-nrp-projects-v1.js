@@ -1,12 +1,92 @@
----
-    layout: blank
----
+import { fetchForBackup, fetchWithBackup } from "/assets/js/backup.js";
+import {getProjects} from "/assets/js/adstash.mjs"
+import {locale_int_string_sort, string_sort} from "/assets/js/util.js";
+import {PieChart} from "/assets/js/components/pie-chart.js";
+import ProjectDisplay from "/assets/js/components/ProjectDisplay.mjs";
+import UpdateTextField from "/assets/js/components/UpdateTextField.mjs";
+import Search from "/assets/js/Search.mjs"
 
-import {getInstitutions, getInstitutionsOverview, getProjects} from "/assets/js/adstash.mjs";
-import {Grid, PluginPosition, BaseComponent, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
-import {GraccDisplay, locale_int_string_sort, string_sort, createNode} from "/assets/js/util.js";
-import InstitutionDisplay from "/assets/js/components/InstitutionDisplay.mjs";
-import { fetchWithBackup, fetchForBackup } from "/assets/js/backup.js";
+class Table {
+    constructor(wrapper, data_function, updateProjectDisplay){
+        this.grid = undefined
+        this.data_function = data_function
+        this.wrapper = wrapper
+        this.updateProjectDisplay = updateProjectDisplay
+        this.columns = [
+            {
+                id: 'numJobs',
+                name: 'Jobs Ran',
+                data: (row) => Math.floor(row.numJobs).toLocaleString(),
+                sort: { compare: locale_int_string_sort }
+            },
+            {
+                id: 'projectName',
+                name: 'Name',
+                sort: { compare: string_sort },
+                attributes: {
+                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                }
+            }, {
+                id: 'PIName',
+                name: 'PI Name',
+                sort: { compare: string_sort },
+                attributes: {
+                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                }
+            }, {
+                id: 'Organization',
+                name: 'Organization',
+                sort: { compare: string_sort },
+                attributes: {
+                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                }
+            }, {
+                id: 'detailedFieldOfScience',
+                name: 'Field Of Science',
+                sort: { compare: string_sort },
+                attributes: {
+                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                }
+            }
+        ]
+
+        let table = this;
+        this.grid =  new gridjs.Grid({
+            columns: table.columns,
+            sort: true,
+            className: {
+                container: "",
+                table: "table table-hover",
+                td: "pointer",
+                paginationButton: "mt-2 mt-sm-0"
+            },
+            data: async () => Object.values(await table.data_function()).sort((a, b) => b.jobs - a.jobs),
+            pagination: {
+                enabled: true,
+                limit: 5,
+                buttonsCount: 1
+            },
+            style: {
+                td: {
+                    'text-align': 'right'
+                }
+            }
+        }).render(table.wrapper);
+        this.grid.on('rowClick', this.row_click);
+    }
+    update = async () => {
+        let table = this
+        this.grid.updateConfig({
+            data: Object.values(await table.data_function()).sort((a, b) => b.numJobs - a.numJobs)
+        }).forceRender();
+    }
+    row_click = async (PointerEvent, e) => {
+        let data = await this.data_function()
+        let row_name = e["cells"][1].data
+        let project = data[row_name]
+        this.updateProjectDisplay({...project, FieldOfScience: project.detailedFieldOfScience})
+    }
+}
 
 class DataManager {
     constructor(filters, consumerToggles, errorNode) {
@@ -32,10 +112,8 @@ class DataManager {
 
     getData = async () => {
         if(!this.data) {
-            this.data = await this._getData()
+            this.data = this._getData()
         }
-        console.log(this.data)
-
         return this.data
     }
 
@@ -49,7 +127,28 @@ class DataManager {
     }
 
     _getData = async () => {
-        return (await fetchWithBackup(getInstitutions))['data']
+
+        let topologyData = [];
+        try {
+          topologyData = (await fetchWithBackup(fetchForBackup, "https://topology.opensciencegrid.org/miscproject/json"))['data']
+        } catch (e) {
+          this.error = "Error fetching topology data, learn more on the OSG status page: status.osg-htc.org"
+        }
+        let usageJson;
+        try {
+            usageJson = (await fetchWithBackup(getProjects))['data']
+        } catch(e) {
+            this.error = "Error fetching usage data, learn more on the OSG status page: status.osg-htc.org"
+        }
+
+        this.data = Object.entries(topologyData).reduce((p, [k,v]) => {
+            if(k in usageJson){
+                p[k] = {...v, ...usageJson[k]}
+            }
+            return p
+        }, {})
+
+        return this.data
     }
 
     /**
@@ -63,156 +162,144 @@ class DataManager {
         }
         return filteredData
     }
-}
 
-
-class Table {
-    constructor(wrapper, data_function, updateDisplay, tableOptions = {}, summaryData = {}) {
-        this.grid = undefined
-        this.data_function = data_function
-        this.wrapper = wrapper
-        this.updateDisplay = updateDisplay
-        this.tableOptions = tableOptions
-        this.columns = [
-            {
-                id: 'institutionName',
-                name: 'Name',
-                sort: { compare: string_sort },
-                attributes: {
-                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
-                }
-            }, {
-                id: 'numJobs',
-                name: 'Jobs Ran',
-                data: (row) => Math.floor(row.numJobs).toLocaleString(),
-                sort: { compare: locale_int_string_sort }
-            }, {
-                id: 'numDetailedFieldOfScience',
-                name: 'Impacted Fields of Science',
-                data: (row) => row.numDetailedFieldOfScience.toLocaleString(),
-                sort: { compare: locale_int_string_sort }
-            }, {
-                id: 'numProjects',
-                name: 'Impacted Research Projects',
-                data: (row) => row.numProjects.toLocaleString(),
-                sort: { compare: locale_int_string_sort }
+    reduceByKey = async (key, value) => {
+        let data = await this.getFilteredData()
+        let reducedData = Object.values(data).reduce((p, v) => {
+            if(v[key] in p) {
+                p[v[key]] += v[value]
+            } else {
+                p[v[key]] = v[value]
             }
-        ]
-
-        let table = this;
-        this.grid = new Grid({
-            columns: table.columns,
-            sort: true,
-            className: {
-                container: "",
-                table: "table table-hover",
-                td: "pointer",
-                paginationButton: "mt-2 mt-sm-0"
-            },
-            data: async () => Object.values(await this.data_function()).sort((a,b) => b['numJobs'] - a['numJobs']),
-            width: "100%",
-            search: {
-                enabled: true
-            },
-            style: {
-                td: {
-                    'text-align': 'right'
-                }
-            },
-            ...table.tableOptions
-        }).render(table.wrapper);
-        this.grid.on('rowClick', this.row_click);
+            return p
+        }, {})
+        let sortedData = Object.entries(reducedData)
+            .filter(([k,v]) => v > 0)
+            .map(([k,v]) => {return {label: k, [value]: Math.round(v)}})
+            .sort((a, b) => b[value] - a[value])
+        return {
+            labels: sortedData.map(x => x.label),
+            data: sortedData.map(x => x[value])
+        }
     }
 
-    render () {
-        this.grid.forceRender()
-    }
-
-    update = (data) => {
-        this.grid.updateConfig({
-            data: data
-        }).forceRender();
-    }
-    row_click = async (PointerEvent, e) => {
-        let data = await this.data_function()
-        let row_name = e["cells"][0].data
-        this.updateDisplay(data[row_name])
-    }
 }
 
-class FacilityPage {
-    constructor(tableOptions) {
-        this.mode = undefined
-        this.dataFunction = new DataManager().getFilteredData
-        this.wrapper = document.getElementById("wrapper")
-        this.institutionDisplay = new InstitutionDisplay(document.getElementById("display"))
-        this.table = new Table(this.wrapper, this.dataFunction, this.institutionDisplay.update.bind(this.institutionDisplay), tableOptions)
+class ProjectPage{
+    constructor() {
         this.initialize()
     }
+
+    /**
+     * Initializes the project page objects
+     *
+     * Easier to do this all in an async environment so I can wait on data grabs
+     * @returns {Promise<void>}
+     */
     initialize = async () => {
-        await this.usePopulatedFacility()
+        this.mode = undefined
+        this.dataManager = new DataManager()
+
+        let projectDisplayNode = document.getElementById("project-display")
+        this.projectDisplay = new ProjectDisplay(projectDisplayNode)
+
+        this.wrapper = document.getElementById("wrapper")
+        this.table = new Table(this.wrapper, this.dataManager.getFilteredData, this.projectDisplay.update.bind(this.projectDisplay))
+        this.dataManager.consumerToggles.push(this.table.update)
+
+        this.search = new Search(Object.values(await this.dataManager.getData()), this.dataManager.toggleConsumers)
+        this.dataManager.addFilter("search", this.search.filter)
+        this.dataManager.addFilter("minimumJobsFilter", this.minimumJobsFilter)
+
+        this.toggleActiveFilterButton = document.getElementById("toggle-active-filter")
+        this.toggleActiveFilterButton.addEventListener("click", this.toggleActiveFilter)
+
+        this.projectCount = new UpdateTextField(
+            async () => Object.keys(await this.dataManager.getFilteredData()).length,
+            document.getElementById("project-count")
+        )
+
+        let urlProject = new URLSearchParams(window.location.search).get('project')
+        if(urlProject){
+            this.projectDisplay.update((await this.dataManager.getData())[urlProject])
+        }
+
+        this.orgPieChart = new PieChart(
+            "project-fos-cpu-summary",
+            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "cpuHours"),
+            "# of CPU Hours by Field of Science"
+        )
+        this.FosPieChart = new PieChart(
+            "project-fos-job-summary",
+            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "numJobs"),
+            "# of Jobs by Field Of Science"
+        )
+        this.jobPieChart = new PieChart(
+            "project-job-summary",
+            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "numJobs"),
+            "# of Jobs by Project",
+            ({label, value}) => {
+                this.table.updateProjectDisplay(this.dataManager.data[label])
+            }
+        )
+        this.cpuPieChart = new PieChart(
+            "project-cpu-summary",
+            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "cpuHours"),
+            "# of CPU Hours by Project",
+            ({label, value}) => {
+                this.table.updateProjectDisplay(this.dataManager.data[label])
+            }
+        )
+        this.gpuPieChart = new PieChart(
+            "project-gpu-summary",
+            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "gpuHours"),
+            "# of GPU Hours by Project",
+            ({label, value}) => {
+                this.table.updateProjectDisplay(this.dataManager.data[label])
+            }
+        )
+
+        this.dataManager.consumerToggles.push(this.orgPieChart.update)
+        this.dataManager.consumerToggles.push(this.FosPieChart.update)
+        this.dataManager.consumerToggles.push(this.jobPieChart.update)
+        this.dataManager.consumerToggles.push(this.cpuPieChart.update)
+        this.dataManager.consumerToggles.push(this.gpuPieChart.update)
+        this.dataManager.consumerToggles.push(this.projectCount.update)
     }
-    async usePopulatedFacility() {
-        let searchParams = new URLSearchParams(window.location.search)
-        let urlFacility = searchParams.has("institution") ? searchParams.get("institution") : searchParams.get("facility")
-        if(urlFacility){
-            await this.institutionDisplay.update((await this.dataFunction())[urlFacility])
+
+    minimumJobsFilter = (data) => {
+        return Object.entries(data).reduce((pv, [k,v]) => {
+            if(v['numJobs'] >= 100){
+                pv[k] = v
+            }
+            return pv
+        }, {})
+    }
+
+    toggleActiveFilter = () => {
+        if("minimumJobsFilter" in this.dataManager.filters){
+            this.dataManager.removeFilter("minimumJobsFilter")
+        } else {
+            this.dataManager.addFilter("minimumJobsFilter", this.minimumJobsFilter)
         }
     }
 }
 
-const facility_page = new FacilityPage()
-
-class FacilitySummaryPlugin extends BaseComponent {
-
-    constructor(...props) {
-        super(...props);
-
-        this.state = {
-            numInstitutions: 0,
-            numJobs: 0,
-            numDetailedFieldOfScience: 0,
-            numProjects: 0
-        };
-    }
-
-    setTotal() {
-        fetchWithBackup(getInstitutionsOverview).then(data => {
-            this.setState(data['data']);
-        });
-    }
-
-    componentDidMount() {
-        // initial setState
-        this.setTotal();
-    }
-
-    render() {
-        const tdClass = "gridjs-td pointer text-light bg-dark "
-
-
-        let facilitiesLeft = h("div", { className: "col-auto" }, "Summary Statistics:")
-        let facilitiesRight = h("div", { className: "col-auto" }, this.state['numInstitutions'])
-        let facilitiesDiv = h("div", { className: "row justify-content-between" }, facilitiesLeft, facilitiesRight)
-
-        let numFacilities = h('td', { className: tdClass }, facilitiesDiv)
-        let jobsRanTd = h('td', { textContent: this.state['numJobs'].toLocaleString(), className: tdClass + "text-end"})
-        let numFieldsOfScienceTd = h('td', { textContent: this.state['numDetailedFieldOfScience'], className: tdClass + "text-end"})
-        let numProjectsTd = h('td', { textContent: this.state['numProjects'], className: tdClass + "text-end"})
-
-        let row = h("tr", {}, numFacilities, jobsRanTd, numFieldsOfScienceTd, numProjectsTd)
-        let tbody = h("tbody", {}, row)
-        let table = h("table", {className: "gridjs-table"}, tbody)
-
-        return table
-    }
-}
-
-facility_page.table.grid.plugin.add({
-    id: 'facilitySummaryPlugin',
-    component: FacilitySummaryPlugin,
-    position: PluginPosition.Footer,
-    order: 1
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
-facility_page.table.render()
+const project_page = new ProjectPage()
+
+const populate_aggregate_statistics = async () => {
+    const data = await project_page.dataManager.getData()
+    console.log(data)
+    document.getElementById("ospool-projects").textContent = Object.keys(data).length
+    document.getElementById("ospool-jobs").textContent = Object.values(data).reduce((p, v) => p + v.numJobs, 0).toLocaleString()
+    document.getElementById("ospool-institutions").textContent = new Set(Object.values(data).map(v => v.InstitutionID)).size
+    document.getElementById("ospool-fields-of-science").textContent = new Set(Object.values(data).map(v => v.detailedFieldOfScience)).size
+    document.getElementById("ospool-aggregate-text").hidden = false
+}
+
+populate_aggregate_statistics()

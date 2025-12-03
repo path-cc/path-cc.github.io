@@ -1,0 +1,190 @@
+---
+    title: OSPool Active Projects
+    layout: main
+    js_extension:
+    -   src: "https://unpkg.com/gridjs/dist/gridjs.umd.js"
+        loading:
+    -   src: "https://unpkg.com/lunr/lunr.js"
+        loading:
+    -   src: "/assets/js/pages/ospool-nrp-projects-v1.js"
+        loading: "defer"
+        type: "module"
+    css_extension:
+    -  href: "https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+    description: |
+        These projects were active in the last year across reporting pools in the OSG Consortium. Some represent a small research group, while others represent a large collaboration or campus with numerous researchers using capacity in OSG pools.
+
+---
+
+<style>
+    .spinner-grow {
+        height:100px;
+        width:100px;
+        margin-top:auto;
+        margin-bottom:auto;
+    }
+    .overlay {
+        grid-area: 1/1;
+        width: 1000px;
+        z-index: 100000;
+        background-color: #4a4a4ae0;;
+        color: white;
+    }
+    tr td:nth-child(2) {
+        text-decoration: underline;
+    }
+</style>
+<div class="container-xxl pt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8 col-md-10">
+            <h1>
+                NRP’s Collaboration with PATh Delivers Computing Capacity and Services for Researchers
+            </h1>
+
+            <p class="mt-3">
+                PATh and National Research Platform (NRP) collaborate and share a common mission to build open cyberinfrastructure and expand services for scientific research affiliated with US academic institutions. Both projects are supported by the National Science Foundation (NSF)'s Office of Advanced Cyberinfrastructure (OAC) award.
+            </p>
+
+            <h4 class="mt-4">NRP contributes to PATh by:</h4>
+            <ul class="text-start mt-3">
+                <li class="mb-2">Increasing PATh's overall computing capacity by contributing to the OSPool, a pool of shared computing capacity accessible to researchers affiliated with a US academic institution.</li>
+                <li class="mb-2">Sharing their global Kubernetes infrastructure, which manages the deployment of PATh services.</li>
+                <li class="mb-2">Making it easier for institutions to contribute capacity to the OSPool due to the system infrastructure that NRP can run on a contributing institution's behalf.</li>
+                <li class="mb-2">Providing access for its community to PATh's Open Science Data Federation (OSDF) and Pelican services for data access and staging.</li>
+            </ul>
+
+            <p class="mt-4">
+                The below projects used NRP resources on the OSPool to advance their research in the past year and ran more than 100 jobs.
+                To run your own research on the OSPool sign up now on the <a href="https://portal.osg-htc.org">OSG Portal</a>.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="container-xxl">
+    <div class="alert alert-danger" style="display: none" id="error" role="alert"></div>
+</div>
+<div class="container-xxl mb-3">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-8 col-lg-8 col-md-10">
+            <p class="d-none d-sm-block mb-2">
+                <b>Click on a row to view project details and their capacity usage.</b>
+            </p>
+        </div>
+        <div class="col-12 col-xl-8 col-lg-8 col-md-10">
+            <input class="form-control" id="project-search" placeholder="Search Project Details" type="search"/>
+
+            <div id="wrapper" class="overflow-auto"></div>
+        </div>
+    </div>
+</div>
+<div class="container-xxl mb-3 pb-3">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-8 col-lg-8 col-md-10">
+            <div class="row g-3" style="height: 8rem;">
+                <div class="col-12 col-md-6 h-100">
+                    <a href="https://dash.nrp-nautilus.io/" class="btn btn-primary btn-lg w-100 h-100 d-flex align-items-center justify-content-center">Explore NRP Resources</a>
+                </div>
+                <div class="col-12 col-md-6 h-100">
+                    <a href="https://path-cc.io/news/2025-04-07-nrps-path-collaboration/" class="btn btn-primary btn-lg w-100 h-100 d-flex align-items-center justify-content-center">Read more about NRP + PATh Collaboration</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="project-display" tabindex="-1" aria-labelledby="project-Name" style="display: none;">
+    <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
+        <div class="modal-content">
+            <div class="modal-header justify-content-between">
+                <h2 id="project-Name" class="mb-0 project-Name"><span class="placeholder bg-light w-100"></span></h2>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div>
+                            <h5 class="mb-1">PI</h5>
+                            <p class="project-PIName placeholder-glow"><span class="placeholder w-100"></span></p>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Field of Research</h5><p class="project-FieldOfScience placeholder-glow"><span class="placeholder w-100"></span></p>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Organization </h5><p class="project-Organization placeholder-glow"><span class="placeholder w-100"></span></p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <h5 class="mb-1">Description</h5>
+                        <p class="project-Description  placeholder-glow"><span class="placeholder w-100"></span></p>
+                    </div>
+                </div>
+                <div class="row py-2 gx-1">
+                    <div class="col-12 col-md-8 placeholder-glow">
+                        <div class="card">
+                          <div class="card-header">
+                            Institutions Providing Project Resources
+                          </div>
+                            <div class="card-body">
+                                <div id="project-institution-pie-chart" class="graph-slot flex-grow-1">
+                                    <span class="placeholder bg-light w-100"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 placeholder-glow d-flex">
+                        <div class="card text-bg-dark flex-grow-1">
+                          <div class="card-header">
+                            Contributing Institution Count
+                          </div>
+                            <div class="card-body d-flex">
+                                <div id="project-institution-count" class="graph-slot flex-grow-1">
+                                    <span class="placeholder bg-light w-100"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-1">
+                    <div class="col-12 col-md-4 placeholder-glow d-flex">
+                        <div class="card text-bg-dark flex-grow-1">
+                          <div class="card-header">
+                            Jobs Ran by <span class="project-Name"></span>
+                          </div>
+                            <div class="card-body d-flex">
+                                <div id="project-job-count" class="graph-slot flex-grow-1">
+                                    <span class="placeholder bg-light w-100"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 placeholder-glow d-flex">
+                        <div class="card text-bg-dark flex-grow-1">
+                          <div class="card-header">
+                            <span class="project-Name"></span>'s CPU Core Hours
+                          </div>
+                            <div class="card-body d-flex">
+                                <div id="project-cpu-count" class="graph-slot flex-grow-1">
+                                    <span class="placeholder bg-light w-100"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 placeholder-glow d-flex">
+                        <div class="card text-bg-dark flex-grow-1">
+                          <div class="card-header">
+                            <span class="project-Name"></span>'s GPU Hours
+                          </div>
+                            <div class="card-body d-flex">
+                                <div id="project-gpu-count" class="graph-slot flex-grow-1">
+                                    <span class="placeholder bg-light w-100"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

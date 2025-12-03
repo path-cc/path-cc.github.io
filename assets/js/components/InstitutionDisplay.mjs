@@ -1,7 +1,7 @@
 
-import {getInstitutionOverview} from "../../../../osg-htc.github.io/assets/js/adstash.mjs";
-import Count from "../../../../osg-htc.github.io/assets/js/components/Count.mjs";
-import { fetchWithBackup } from "../../../../osg-htc.github.io/assets/js/backup.js";
+import {getInstitutionOverview} from "/assets/js/adstash.mjs";
+import Count from "/assets/js/components/Count.mjs";
+import { fetchWithBackup } from "/assets/js/backup.js";
 
 class InstitutionDisplay{
 	constructor(parentNode) {

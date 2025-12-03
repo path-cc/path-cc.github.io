@@ -20,14 +20,27 @@ export const getInstitutionsOverview = async (startTime = DATE_RANGE['oneYearAgo
 
 	let usageQueryResult = await elasticSearch.search({
 		size: 0,
-		query: {
-			range: {
-				Date: {
-                    gte: startTime,
-					lte: endTime
-				}
-			}
-		},
+        query: {
+            bool: {
+                filter: [
+                    {
+                        range: {
+                            Date: {
+                                gte: startTime,
+                                lte: endTime
+                            }
+                        }
+                    }
+                ],
+                must_not: [
+                    {
+                        term: {
+                            "isNRP.keyword": "UNKNOWN"
+                        }
+                    }
+                ]
+            }
+        },
 		"aggs": {
 			"NumInstitutions": {
 				"terms": {
@@ -128,11 +141,24 @@ export const getInstitutions = async (startTime = DATE_RANGE['oneYearAgo'], endT
 	let usageQueryResult = await elasticSearch.search({
 		size: 0,
 		query: {
-			range: {
-				Date: {
-          gte: startTime,
-          lte: endTime
-				}
+			bool: {
+				filter: [
+					{
+						range: {
+							Date: {
+								gte: startTime,
+								lte: endTime
+							}
+						}
+					}
+				],
+				must_not: [
+					{
+						term: {
+							"isNRP.keyword": "UNKNOWN"
+						}
+					}
+				]
 			}
 		},
 		"aggs": {
@@ -252,14 +278,27 @@ export const getProjects = async (startTime = DATE_RANGE['oneYearAgo'], endTime 
 
 	let usageQueryResult = await elasticSearch.search({
 		size: 0,
-		query: {
-			range: {
-				Date: {
-          gte: startTime,
-          lte: endTime
-				}
-			}
-		},
+        query: {
+            bool: {
+                filter: [
+                    {
+                        range: {
+                            Date: {
+                                gte: startTime,
+                                lte: endTime
+                            }
+                        }
+                    }
+                ],
+                must_not: [
+                    {
+                        term: {
+                            "isNRP.keyword": "UNKNOWN"
+                        }
+                    }
+                ]
+            }
+        },
 		"aggs": {
 			"bucket": {
 				"terms": {
@@ -368,7 +407,14 @@ export const getInstitutionOverview = async (institutionName) => {
 							["ResourceInstitution.name.keyword"]: institutionName,
 						}
 					}
-				]
+				],
+                must_not: [
+                    {
+                        term: {
+                            "isNRP.keyword": "UNKNOWN"
+                        }
+                    }
+                ]
 			}
 		},
 		"aggs": {
@@ -479,7 +525,14 @@ export const getProjectOverview = async (projectName) => {
 							["ProjectName.keyword"]: projectName,
 						}
 					}
-				]
+				],
+                must_not: [
+                    {
+                        term: {
+                            "isNRP.keyword": "UNKNOWN"
+                        }
+                    }
+                ]
 			}
 		},
 		"aggs": {
