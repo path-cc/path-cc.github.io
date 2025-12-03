@@ -3,7 +3,7 @@
 
 import {generateHash} from './util.js';
 import {
-    getProjects, getInstitutions, getInstitutionOverview, getProjectOverview, getLatestOSPoolOverview,
+    getProjects, getInstitutionOverview, getProjectOverview, getLatestOSPoolOverview,
     getInstitutionsOverview
 } from './adstash.mjs';
 

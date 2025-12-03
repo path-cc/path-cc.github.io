@@ -1,10 +1,9 @@
 import { fetchForBackup, fetchWithBackup } from "/assets/js/backup.js";
-import {getProjects} from "/assets/js/adstash.mjs"
+import {getInstitutionsOverview, getProjects} from "/assets/js/adstash.mjs"
 import {locale_int_string_sort, string_sort} from "/assets/js/util.js";
 import {PieChart} from "/assets/js/components/pie-chart.js";
 import ProjectDisplay from "/assets/js/components/ProjectDisplay.mjs";
-import UpdateTextField from "/assets/js/components/UpdateTextField.mjs";
-import Search from "/assets/js/Search.mjs"
+import {Grid, PluginPosition, BaseComponent, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
 
 class Table {
     constructor(wrapper, data_function, updateProjectDisplay){
@@ -51,16 +50,19 @@ class Table {
         ]
 
         let table = this;
-        this.grid =  new gridjs.Grid({
+        this.grid =  new Grid({
             columns: table.columns,
             sort: true,
+            search: {
+                enabled: true
+            },
             className: {
                 container: "",
                 table: "table table-hover",
                 td: "pointer",
                 paginationButton: "mt-2 mt-sm-0"
             },
-            data: async () => Object.values(await table.data_function()).sort((a, b) => b.jobs - a.jobs),
+            data: async () => Object.values(await table.data_function()).sort((a, b) => b.numJobs - a.numJobs),
             pagination: {
                 enabled: true,
                 limit: 5,
@@ -74,12 +76,11 @@ class Table {
         }).render(table.wrapper);
         this.grid.on('rowClick', this.row_click);
     }
-    update = async () => {
-        let table = this
-        this.grid.updateConfig({
-            data: Object.values(await table.data_function()).sort((a, b) => b.numJobs - a.numJobs)
-        }).forceRender();
+
+    render () {
+        this.grid.forceRender()
     }
+
     row_click = async (PointerEvent, e) => {
         let data = await this.data_function()
         let row_name = e["cells"][1].data
@@ -205,19 +206,8 @@ class ProjectPage{
 
         this.wrapper = document.getElementById("wrapper")
         this.table = new Table(this.wrapper, this.dataManager.getFilteredData, this.projectDisplay.update.bind(this.projectDisplay))
-        this.dataManager.consumerToggles.push(this.table.update)
 
-        this.search = new Search(Object.values(await this.dataManager.getData()), this.dataManager.toggleConsumers)
         this.dataManager.addFilter("search", this.search.filter)
-        this.dataManager.addFilter("minimumJobsFilter", this.minimumJobsFilter)
-
-        this.toggleActiveFilterButton = document.getElementById("toggle-active-filter")
-        this.toggleActiveFilterButton.addEventListener("click", this.toggleActiveFilter)
-
-        this.projectCount = new UpdateTextField(
-            async () => Object.keys(await this.dataManager.getFilteredData()).length,
-            document.getElementById("project-count")
-        )
 
         let urlProject = new URLSearchParams(window.location.search).get('project')
         if(urlProject){
@@ -264,24 +254,6 @@ class ProjectPage{
         this.dataManager.consumerToggles.push(this.jobPieChart.update)
         this.dataManager.consumerToggles.push(this.cpuPieChart.update)
         this.dataManager.consumerToggles.push(this.gpuPieChart.update)
-        this.dataManager.consumerToggles.push(this.projectCount.update)
-    }
-
-    minimumJobsFilter = (data) => {
-        return Object.entries(data).reduce((pv, [k,v]) => {
-            if(v['numJobs'] >= 100){
-                pv[k] = v
-            }
-            return pv
-        }, {})
-    }
-
-    toggleActiveFilter = () => {
-        if("minimumJobsFilter" in this.dataManager.filters){
-            this.dataManager.removeFilter("minimumJobsFilter")
-        } else {
-            this.dataManager.addFilter("minimumJobsFilter", this.minimumJobsFilter)
-        }
     }
 }
 
@@ -291,15 +263,3 @@ const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 })
 
 const project_page = new ProjectPage()
-
-const populate_aggregate_statistics = async () => {
-    const data = await project_page.dataManager.getData()
-    console.log(data)
-    document.getElementById("ospool-projects").textContent = Object.keys(data).length
-    document.getElementById("ospool-jobs").textContent = Object.values(data).reduce((p, v) => p + v.numJobs, 0).toLocaleString()
-    document.getElementById("ospool-institutions").textContent = new Set(Object.values(data).map(v => v.InstitutionID)).size
-    document.getElementById("ospool-fields-of-science").textContent = new Set(Object.values(data).map(v => v.detailedFieldOfScience)).size
-    document.getElementById("ospool-aggregate-text").hidden = false
-}
-
-populate_aggregate_statistics()
