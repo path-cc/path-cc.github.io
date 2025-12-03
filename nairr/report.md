@@ -232,7 +232,7 @@ scores are shown in Figure 6.
 
 <figure id="fig:key_metrics_scatterplot">
 <p><img src="/images/nairr/initial_report/plots/scatterplot_test_loss.png" style="width:48.0%"
-alt="image" /> <img src="/images/nairr/initial_report/plots/scatterplot_test pearson_total_score.png"
+alt="image" /> <img src="/images/nairr/initial_report/plots/scatterplot_test%20pearson_total_score.png"
 style="width:48.0%" alt="image" /></p>
 <figcaption>Test loss (left) and Pearson total score (right) for the 21
 model variants (by unique identifier of model)</figcaption>
