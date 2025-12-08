@@ -1,9 +1,25 @@
 import { fetchForBackup, fetchWithBackup } from "/assets/js/backup.js";
 import {getInstitutionsOverview, getProjects} from "/assets/js/adstash.mjs"
-import {locale_int_string_sort, string_sort} from "/assets/js/util.js";
+import {byteStringToBytes, formatBytes, locale_int_string_sort, sortByteString, string_sort} from "/assets/js/util.js";
 import {PieChart} from "/assets/js/components/pie-chart.js";
 import ProjectDisplay from "/assets/js/components/ProjectDisplay.mjs";
 import {Grid, PluginPosition, BaseComponent, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
+
+const formatOrg = (cell, row, column) => {
+
+    let url = row?._cells?.[5]?.['data']
+
+    // If url has no protocol add https
+    if(url !== undefined && !url.startsWith("http")) {
+        url = "https://" + url
+    }
+
+    if(url !== undefined) {
+        return h('td', {}, h('a', {href: url, target: '_blank'}, cell))
+    }
+
+    return h('td', {}, cell)
+}
 
 class Table {
     constructor(wrapper, data_function, updateProjectDisplay){
@@ -13,12 +29,6 @@ class Table {
         this.updateProjectDisplay = updateProjectDisplay
         this.columns = [
             {
-                id: 'numJobs',
-                name: 'Jobs Ran',
-                data: (row) => Math.floor(row.numJobs).toLocaleString(),
-                sort: { compare: locale_int_string_sort }
-            },
-            {
                 id: 'projectName',
                 name: 'Name',
                 sort: { compare: string_sort },
@@ -26,11 +36,24 @@ class Table {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
                 }
             }, {
-                id: 'PIName',
-                name: 'PI Name',
-                sort: { compare: string_sort },
-                attributes: {
-                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                id: 'numJobs',
+                name: 'Jobs Ran',
+                data: (row) => Math.floor(row.numJobs).toLocaleString(),
+                sort: { compare: locale_int_string_sort }
+            }, {
+                id: 'osdfByteTransferCount',
+                name: 'Bytes Transferred',
+                sort: { compare: sortByteString },
+                data: (row) => formatBytes(row.osdfByteTransferCount),
+                attributes: (cell, row, column) => {
+                    if(cell !== null && table?.data !== undefined){
+                        const data = table.data
+                        const maxByteCount = Math.max(...Object.values(data).map(x => x.osdfByteTransferCount))
+                        const cellValue = byteStringToBytes(cell)
+                        const colorValue = Math.min(1, 1 - Math.log(4 * (cellValue / maxByteCount) + 1))
+                        const color = whiteorange(colorValue) // 1 - Math.log((cellValue / maxFileCount))
+                        return {style: {backgroundColor: color}, className: "text-end"}
+                    }
                 }
             }, {
                 id: 'Organization',
@@ -38,7 +61,8 @@ class Table {
                 sort: { compare: string_sort },
                 attributes: {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
-                }
+                },
+                formatter: formatOrg
             }, {
                 id: 'detailedFieldOfScience',
                 name: 'Field Of Science',
@@ -46,6 +70,9 @@ class Table {
                 attributes: {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
                 }
+            }, {
+                id: 'projectInstitutionIpedsWebsiteAddress',
+                hidden: true
             }
         ]
 
@@ -65,7 +92,7 @@ class Table {
             data: async () => Object.values(await table.data_function()).sort((a, b) => b.numJobs - a.numJobs),
             pagination: {
                 enabled: true,
-                limit: 5,
+                limit: 10,
                 buttonsCount: 1
             },
             style: {
@@ -83,7 +110,7 @@ class Table {
 
     row_click = async (PointerEvent, e) => {
         let data = await this.data_function()
-        let row_name = e["cells"][1].data
+        let row_name = e["cells"][0].data
         let project = data[row_name]
         this.updateProjectDisplay({...project, FieldOfScience: project.detailedFieldOfScience})
     }
@@ -257,9 +284,53 @@ class ProjectPage{
     }
 }
 
+class NrpOverview {
+
+    constructor() {
+        this.initialize()
+    }
+
+    async initialize() {
+        const timeConfigs = [
+            {timespan: 1, cardSuffix: 'day'},
+            {timespan: 7, cardSuffix: 'week'},
+            {timespan: 30, cardSuffix: 'month'}
+        ];
+        // Fetch all data in parallel
+        const results = await Promise.all(timeConfigs.map(cfg => this.getData(cfg.timespan)));
+        // Update card sections
+        results.forEach((data, idx) => {
+            const cardSuffix = timeConfigs[idx].cardSuffix;
+            if (document.querySelector(`.card-cpu-${cardSuffix}`)) {
+                document.querySelector(`.card-cpu-${cardSuffix}`).textContent = data['cpu'] ? Number(data['cpu']).toLocaleString() : 'N/A';
+            }
+            if (document.querySelector(`.card-memory-${cardSuffix}`)) {
+                document.querySelector(`.card-memory-${cardSuffix}`).textContent = data['memory'] ? Number(data['memory']).toLocaleString() : 'N/A';
+            }
+            if (document.querySelector(`.card-gpu-${cardSuffix}`)) {
+                document.querySelector(`.card-gpu-${cardSuffix}`).textContent = data['gpu'] ? Number(data['gpu']).toLocaleString() : 'N/A';
+            }
+        });
+    }
+
+    async getData(timespan) {
+
+        const currentTimestamp = Math.floor(Date.now() / 1000)
+        const response = await fetch(`https://thanos.nrp-nautilus.io/api/v1/query?query=sum%20by(resource)%20(sum_over_time(namespace_used_resources{namespace=~%22osg-opportunistic|icecube-ml|osg-icecube|osg-ligo|osg-nrao%22}[${timespan}d:1h]@${currentTimestamp}))&dedup=true&partial_response=false`)
+        const data = await response.json()
+        return data['data']['result'].reduce((acc, item) => {
+            return {
+                ...acc,
+                [item['metric']['resource']]: item['value'][1]
+            }
+        }, {})
+    }
+}
+
 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
 const project_page = new ProjectPage()
+const nrp_overview = new NrpOverview()
