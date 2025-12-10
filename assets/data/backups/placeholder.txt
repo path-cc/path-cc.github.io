@@ -1,0 +1,1 @@
+Used to hold the directory structure for backups.

@@ -3,9 +3,9 @@
 
 import {generateHash} from './util.js';
 import {
-    getProjects, getInstitutionOverview, getProjectOverview, getLatestOSPoolOverview,
-    getInstitutionsOverview
+    getProjects, getProjectOverview
 } from './adstash.mjs';
+import {getNrpPrometheusData, updateTotals} from "./nrp.mjs";
 
 const BACKUP_DIRECTORY = '/assets/data/backups/'
 
@@ -27,33 +27,28 @@ const backupMap = async () => {
       args: ["https://topology.opensciencegrid.org/miscproject/json"],
     },
     {
-      function: fetchForBackup,
-      args: ["https://osg-htc.org/ospool-data/data/daily_reports/latest.json"],
-    },
-    {
-      function: getLatestOSPoolOverview
-    },
-    {
       function: getProjects,
     },
-    {
-      function: getInstitutions,
-    },
-    {
-      function: getInstitutionsOverview
-    },
+      {
+          function: updateTotals,
+        args: [[
+            {timespan: 1, cardSuffix: 'day'},
+            {timespan: 7, cardSuffix: 'week'},
+            {timespan: 30, cardSuffix: 'month'}
+        ]]
+      },
     ...(
       Object.values(await getProjects()).map( project => ({
         function: getProjectOverview,
         args: [project.projectName],
       }) )
     ),
-    ...(
-      Object.values(await getInstitutions()).map( institution => ({
-        function: getInstitutionOverview,
-        args: [institution.institutionName],
-      }) )
-    ),
+      ...(
+          ['icecube', 'ligo'].map(org => ({
+            function: getNrpPrometheusData,
+            args: [365, `%22osg-${org}%22`]
+          }))
+      )
   ]
 }
 

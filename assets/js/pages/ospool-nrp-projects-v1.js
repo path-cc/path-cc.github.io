@@ -1,9 +1,9 @@
 import { fetchForBackup, fetchWithBackup } from "/assets/js/backup.js";
-import {getInstitutionsOverview, getProjects} from "/assets/js/adstash.mjs"
+import {getProjects} from "/assets/js/adstash.mjs"
 import {byteStringToBytes, formatBytes, locale_int_string_sort, sortByteString, string_sort} from "/assets/js/util.js";
-import {PieChart} from "/assets/js/components/pie-chart.js";
 import ProjectDisplay from "/assets/js/components/ProjectDisplay.mjs";
-import {Grid, PluginPosition, BaseComponent, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
+import {Grid, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
+import {getNrpPrometheusData, updateTotals} from "../nrp.mjs";
 
 const formatOrg = (cell, row, column) => {
 
@@ -81,7 +81,7 @@ class Table {
             columns: table.columns,
             sort: true,
             search: {
-                enabled: true
+                enabled: false
             },
             className: {
                 container: "",
@@ -126,16 +126,6 @@ class DataManager {
 
     toggleConsumers = () => {
         this.consumerToggles.forEach(f => f())
-    }
-
-    addFilter = (name, filter) => {
-        this.filters[name] = filter
-        this.toggleConsumers()
-    }
-
-    removeFilter = (name) => {
-        delete this.filters[name]
-        this.toggleConsumers()
     }
 
     getData = async () => {
@@ -234,53 +224,10 @@ class ProjectPage{
         this.wrapper = document.getElementById("wrapper")
         this.table = new Table(this.wrapper, this.dataManager.getFilteredData, this.projectDisplay.update.bind(this.projectDisplay))
 
-        this.dataManager.addFilter("search", this.search.filter)
-
         let urlProject = new URLSearchParams(window.location.search).get('project')
         if(urlProject){
             this.projectDisplay.update((await this.dataManager.getData())[urlProject])
         }
-
-        this.orgPieChart = new PieChart(
-            "project-fos-cpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "cpuHours"),
-            "# of CPU Hours by Field of Science"
-        )
-        this.FosPieChart = new PieChart(
-            "project-fos-job-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "numJobs"),
-            "# of Jobs by Field Of Science"
-        )
-        this.jobPieChart = new PieChart(
-            "project-job-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "numJobs"),
-            "# of Jobs by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
-        this.cpuPieChart = new PieChart(
-            "project-cpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "cpuHours"),
-            "# of CPU Hours by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
-        this.gpuPieChart = new PieChart(
-            "project-gpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "gpuHours"),
-            "# of GPU Hours by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
-
-        this.dataManager.consumerToggles.push(this.orgPieChart.update)
-        this.dataManager.consumerToggles.push(this.FosPieChart.update)
-        this.dataManager.consumerToggles.push(this.jobPieChart.update)
-        this.dataManager.consumerToggles.push(this.cpuPieChart.update)
-        this.dataManager.consumerToggles.push(this.gpuPieChart.update)
     }
 }
 
@@ -291,39 +238,38 @@ class NrpOverview {
     }
 
     async initialize() {
+        await Promise.all([this.updateIndividualOrgs(), this.updateTotals()])
+    }
+
+    async updateIndividualOrgs() {
+        for(const org of ['icecube', 'ligo']) {
+            const orgData = (await fetchWithBackup(getNrpPrometheusData, 365, `%22osg-${org}%22`))['data']
+            for(const key of ['cpu', 'memory', 'nvidia_com_gpu']) {
+                const htmlNode = document.querySelector(`#card-${org}-${key}`);
+                if (htmlNode) {
+                    htmlNode.textContent = orgData[key] ? Math.floor(Number(orgData[key])).toLocaleString() : 'N/A';
+                }
+            }
+        }
+    }
+
+    async updateTotals() {
         const timeConfigs = [
             {timespan: 1, cardSuffix: 'day'},
             {timespan: 7, cardSuffix: 'week'},
             {timespan: 30, cardSuffix: 'month'}
         ];
         // Fetch all data in parallel
-        const results = await Promise.all(timeConfigs.map(cfg => this.getData(cfg.timespan)));
+        const results = (await fetchWithBackup(updateTotals, timeConfigs))['data']
         // Update card sections
         results.forEach((data, idx) => {
             const cardSuffix = timeConfigs[idx].cardSuffix;
-            if (document.querySelector(`.card-cpu-${cardSuffix}`)) {
-                document.querySelector(`.card-cpu-${cardSuffix}`).textContent = data['cpu'] ? Number(data['cpu']).toLocaleString() : 'N/A';
-            }
-            if (document.querySelector(`.card-memory-${cardSuffix}`)) {
-                document.querySelector(`.card-memory-${cardSuffix}`).textContent = data['memory'] ? Number(data['memory']).toLocaleString() : 'N/A';
-            }
-            if (document.querySelector(`.card-gpu-${cardSuffix}`)) {
-                document.querySelector(`.card-gpu-${cardSuffix}`).textContent = data['gpu'] ? Number(data['gpu']).toLocaleString() : 'N/A';
+            for(const key of ['cpu', 'memory', 'nvidia_com_gpu']) {
+                if (document.querySelector(`#card-${key}-${cardSuffix}`)) {
+                    document.querySelector(`#card-${key}-${cardSuffix}`).textContent = data[key] ? Math.floor(Number(data[key])).toLocaleString() : 'N/A';
+                }
             }
         });
-    }
-
-    async getData(timespan) {
-
-        const currentTimestamp = Math.floor(Date.now() / 1000)
-        const response = await fetch(`https://thanos.nrp-nautilus.io/api/v1/query?query=sum%20by(resource)%20(sum_over_time(namespace_used_resources{namespace=~%22osg-opportunistic|icecube-ml|osg-icecube|osg-ligo|osg-nrao%22}[${timespan}d:1h]@${currentTimestamp}))&dedup=true&partial_response=false`)
-        const data = await response.json()
-        return data['data']['result'].reduce((acc, item) => {
-            return {
-                ...acc,
-                [item['metric']['resource']]: item['value'][1]
-            }
-        }, {})
     }
 }
 
