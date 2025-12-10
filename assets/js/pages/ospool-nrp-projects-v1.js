@@ -1,9 +1,25 @@
 import { fetchForBackup, fetchWithBackup } from "/assets/js/backup.js";
-import {getInstitutionsOverview, getProjects} from "/assets/js/adstash.mjs"
-import {locale_int_string_sort, string_sort} from "/assets/js/util.js";
-import {PieChart} from "/assets/js/components/pie-chart.js";
+import {getProjects} from "/assets/js/adstash.mjs"
+import {byteStringToBytes, formatBytes, locale_int_string_sort, sortByteString, string_sort} from "/assets/js/util.js";
 import ProjectDisplay from "/assets/js/components/ProjectDisplay.mjs";
-import {Grid, PluginPosition, BaseComponent, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
+import {Grid, h} from "https://unpkg.com/gridjs@5.1.0/dist/gridjs.module.js"
+import {getNrpPrometheusData, updateTotals} from "../nrp.mjs";
+
+const formatOrg = (cell, row, column) => {
+
+    let url = row?._cells?.[5]?.['data']
+
+    // If url has no protocol add https
+    if(url !== undefined && !url.startsWith("http")) {
+        url = "https://" + url
+    }
+
+    if(url !== undefined) {
+        return h('td', {}, h('a', {href: url, target: '_blank'}, cell))
+    }
+
+    return h('td', {}, cell)
+}
 
 class Table {
     constructor(wrapper, data_function, updateProjectDisplay){
@@ -13,12 +29,6 @@ class Table {
         this.updateProjectDisplay = updateProjectDisplay
         this.columns = [
             {
-                id: 'numJobs',
-                name: 'Jobs Ran',
-                data: (row) => Math.floor(row.numJobs).toLocaleString(),
-                sort: { compare: locale_int_string_sort }
-            },
-            {
                 id: 'projectName',
                 name: 'Name',
                 sort: { compare: string_sort },
@@ -26,11 +36,24 @@ class Table {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
                 }
             }, {
-                id: 'PIName',
-                name: 'PI Name',
-                sort: { compare: string_sort },
-                attributes: {
-                    className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
+                id: 'numJobs',
+                name: 'Jobs Ran',
+                data: (row) => Math.floor(row.numJobs).toLocaleString(),
+                sort: { compare: locale_int_string_sort }
+            }, {
+                id: 'osdfByteTransferCount',
+                name: 'Bytes Transferred',
+                sort: { compare: sortByteString },
+                data: (row) => formatBytes(row.osdfByteTransferCount),
+                attributes: (cell, row, column) => {
+                    if(cell !== null && table?.data !== undefined){
+                        const data = table.data
+                        const maxByteCount = Math.max(...Object.values(data).map(x => x.osdfByteTransferCount))
+                        const cellValue = byteStringToBytes(cell)
+                        const colorValue = Math.min(1, 1 - Math.log(4 * (cellValue / maxByteCount) + 1))
+                        const color = whiteorange(colorValue) // 1 - Math.log((cellValue / maxFileCount))
+                        return {style: {backgroundColor: color}, className: "text-end"}
+                    }
                 }
             }, {
                 id: 'Organization',
@@ -38,7 +61,8 @@ class Table {
                 sort: { compare: string_sort },
                 attributes: {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
-                }
+                },
+                formatter: formatOrg
             }, {
                 id: 'detailedFieldOfScience',
                 name: 'Field Of Science',
@@ -46,6 +70,9 @@ class Table {
                 attributes: {
                     className: "gridjs-th gridjs-td pointer gridjs-th-sort text-start"
                 }
+            }, {
+                id: 'projectInstitutionIpedsWebsiteAddress',
+                hidden: true
             }
         ]
 
@@ -54,7 +81,7 @@ class Table {
             columns: table.columns,
             sort: true,
             search: {
-                enabled: true
+                enabled: false
             },
             className: {
                 container: "",
@@ -65,7 +92,7 @@ class Table {
             data: async () => Object.values(await table.data_function()).sort((a, b) => b.numJobs - a.numJobs),
             pagination: {
                 enabled: true,
-                limit: 5,
+                limit: 10,
                 buttonsCount: 1
             },
             style: {
@@ -83,7 +110,7 @@ class Table {
 
     row_click = async (PointerEvent, e) => {
         let data = await this.data_function()
-        let row_name = e["cells"][1].data
+        let row_name = e["cells"][0].data
         let project = data[row_name]
         this.updateProjectDisplay({...project, FieldOfScience: project.detailedFieldOfScience})
     }
@@ -99,16 +126,6 @@ class DataManager {
 
     toggleConsumers = () => {
         this.consumerToggles.forEach(f => f())
-    }
-
-    addFilter = (name, filter) => {
-        this.filters[name] = filter
-        this.toggleConsumers()
-    }
-
-    removeFilter = (name) => {
-        delete this.filters[name]
-        this.toggleConsumers()
     }
 
     getData = async () => {
@@ -207,53 +224,52 @@ class ProjectPage{
         this.wrapper = document.getElementById("wrapper")
         this.table = new Table(this.wrapper, this.dataManager.getFilteredData, this.projectDisplay.update.bind(this.projectDisplay))
 
-        this.dataManager.addFilter("search", this.search.filter)
-
         let urlProject = new URLSearchParams(window.location.search).get('project')
         if(urlProject){
             this.projectDisplay.update((await this.dataManager.getData())[urlProject])
         }
+    }
+}
 
-        this.orgPieChart = new PieChart(
-            "project-fos-cpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "cpuHours"),
-            "# of CPU Hours by Field of Science"
-        )
-        this.FosPieChart = new PieChart(
-            "project-fos-job-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "detailedFieldOfScience", "numJobs"),
-            "# of Jobs by Field Of Science"
-        )
-        this.jobPieChart = new PieChart(
-            "project-job-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "numJobs"),
-            "# of Jobs by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
-        this.cpuPieChart = new PieChart(
-            "project-cpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "cpuHours"),
-            "# of CPU Hours by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
-        this.gpuPieChart = new PieChart(
-            "project-gpu-summary",
-            this.dataManager.reduceByKey.bind(this.dataManager, "projectName", "gpuHours"),
-            "# of GPU Hours by Project",
-            ({label, value}) => {
-                this.table.updateProjectDisplay(this.dataManager.data[label])
-            }
-        )
+class NrpOverview {
 
-        this.dataManager.consumerToggles.push(this.orgPieChart.update)
-        this.dataManager.consumerToggles.push(this.FosPieChart.update)
-        this.dataManager.consumerToggles.push(this.jobPieChart.update)
-        this.dataManager.consumerToggles.push(this.cpuPieChart.update)
-        this.dataManager.consumerToggles.push(this.gpuPieChart.update)
+    constructor() {
+        this.initialize()
+    }
+
+    async initialize() {
+        await Promise.all([this.updateIndividualOrgs(), this.updateTotals()])
+    }
+
+    async updateIndividualOrgs() {
+        for(const org of ['icecube', 'ligo']) {
+            const orgData = (await fetchWithBackup(getNrpPrometheusData, 365, `%22osg-${org}%22`))['data']
+            for(const key of ['cpu', 'memory', 'nvidia_com_gpu']) {
+                const htmlNode = document.querySelector(`#card-${org}-${key}`);
+                if (htmlNode) {
+                    htmlNode.textContent = orgData[key] ? Math.floor(Number(orgData[key])).toLocaleString() : 'N/A';
+                }
+            }
+        }
+    }
+
+    async updateTotals() {
+        const timeConfigs = [
+            {timespan: 1, cardSuffix: 'day'},
+            {timespan: 7, cardSuffix: 'week'},
+            {timespan: 30, cardSuffix: 'month'}
+        ];
+        // Fetch all data in parallel
+        const results = (await fetchWithBackup(updateTotals, timeConfigs))['data']
+        // Update card sections
+        results.forEach((data, idx) => {
+            const cardSuffix = timeConfigs[idx].cardSuffix;
+            for(const key of ['cpu', 'memory', 'nvidia_com_gpu']) {
+                if (document.querySelector(`#card-${key}-${cardSuffix}`)) {
+                    document.querySelector(`#card-${key}-${cardSuffix}`).textContent = data[key] ? Math.floor(Number(data[key])).toLocaleString() : 'N/A';
+                }
+            }
+        });
     }
 }
 
@@ -263,3 +279,4 @@ const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 })
 
 const project_page = new ProjectPage()
+const nrp_overview = new NrpOverview()

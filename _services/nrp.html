@@ -46,27 +46,170 @@
                 <a href="https://path-cc.io">PATh</a> and <a href="https://nationalresearchplatform.org/">National Research Platform (NRP)</a> collaborate and share a common mission to build open cyberinfrastructure and expand services for scientific research affiliated with US academic institutions. Both projects are supported by the National Science Foundation (NSF)'s Office of Advanced Cyberinfrastructure (OAC) award.
             </p>
 
-            <h4 class="mt-4">NRP contributes to PATh by:</h4>
+            <h2 class="mt-4">NRP contributes to PATh by:</h2>
             <ul class="text-start mt-3">
                 <li class="mb-2">Increasing PATh's overall computing capacity by contributing to the <a href="https://osg-htc.org/services/open_science_pool.html">OSPool</a>, a pool of shared computing capacity accessible to researchers affiliated with a US academic institution.</li>
                 <li class="mb-2">Sharing their global Kubernetes infrastructure, which manages the deployment of PATh services.</li>
                 <li class="mb-2">Making it easier for institutions to contribute capacity to the <a href="https://osg-htc.org/services/open_science_pool.html">OSPool</a> due to the system infrastructure that NRP can run on a contributing institution's behalf.</li>
                 <li class="mb-2">Providing access for its community to PATh's <a href="https://osg-htc.org/services/osdf.html">Open Science Data Federation (OSDF)</a> and <a href="https://pelicanplatform.org/">Pelican</a> services for data access and staging.</li>
             </ul>
-
-            <p class="mt-4">
-                The below projects used NRP resources on the <a href="https://osg-htc.org/services/open_science_pool.html">OSPool</a> to advance their research in the past year and ran more than 100 jobs.
-                To run your own research on the OSPool sign up now on the <a href="https://portal.osg-htc.org">OSG Portal</a>.
-            </p>
+        </div>
+    </div>
+</div>
+<div class="container-xxl mb-3">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8 col-md-10">
+            <h3 class="">
+                Totals
+            </h3>
+            <p>OSPool usage of NRP Contributions.</p>
+        </div>
+        <div class="col-12 col-xl-10 col-lg-10 col-md-12">
+            <div class="row g-4">
+                <!-- Month Card -->
+                <div class="col-12 col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">Month</div>
+                        <div class="card-body">
+                            <div class="mb-3 d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-cpu"></i> CPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-cpu-month" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Core Hours</span>
+                                </div>
+                            </div>
+                            <div class="mb-3 d-none">
+                                <span class="fw-semibold">Memory:</span>
+                                <span id="card-memory-month">[Memory Placeholder]</span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-gpu-card"></i> GPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-nvidia_com_gpu-month" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Hours</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Week Card -->
+                <div class="col-12 col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">Week</div>
+                        <div class="card-body">
+                            <div class="mb-3 d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-cpu"></i> CPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-cpu-week" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Core Hours</span>
+                                </div>
+                            </div>
+                            <div class="mb-3 d-none">
+                                <span class="fw-semibold">Memory:</span>
+                                <span id="card-memory-week">[Memory Placeholder]</span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-gpu-card"></i> GPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-nvidia_com_gpu-week" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Hours</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Day Card -->
+                <div class="col-12 col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">Day</div>
+                        <div class="card-body">
+                            <div class="mb-3 d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-cpu"></i> CPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-cpu-day" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Core Hours</span>
+                                </div>
+                            </div>
+                            <div class="mb-3 d-none">
+                                <span class="fw-semibold">Memory:</span>
+                                <span id="card-memory-day">[Memory Placeholder]</span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <h4 class="fw-semibold my-auto"><i class="bi bi-gpu-card"></i> GPU</h4>
+                                <div class="d-flex align-items-end flex-column">
+                                    <h4 id="card-nvidia_com_gpu-day" class="text-primary mb-0">Loading</h4>
+                                    <span class="fs-7 text-nowrap">Hours</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-xxl mt-3">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8 col-md-10">
+            <h3 class="">
+                NRP Contribution use by Project
+            </h3>
+            <p>Project usage of NRP resource contributions last year.</p>
+        </div>
+    </div>
+</div>
+<div class="container-xxl">
+    <div class="row g-4 justify-content-center">
+        <div class="col-12 col-md-4">
+            <div class="card h-100">
+                <div class="card-header">LIGO</div>
+                <div class="card-body">
+                    <div class="mb-3 d-flex flex-row justify-content-between">
+                        <h4 class="fw-semibold my-auto"><i class="bi bi-cpu"></i> CPU</h4>
+                        <div class="d-flex align-items-end flex-column">
+                            <h4 id="card-ligo-cpu" class="text-primary mb-0">Loading</h4>
+                            <span class="fs-7 text-nowrap">Core Hours</span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <h4 class="fw-semibold my-auto"><i class="bi bi-gpu-card"></i> GPU</h4>
+                        <div class="d-flex align-items-end flex-column">
+                            <h4 id="card-ligo-nvidia_com_gpu" class="text-primary mb-0">Loading</h4>
+                            <span class="fs-7 text-nowrap">Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card h-100">
+                <div class="card-header">IceCube</div>
+                <div class="card-body">
+                    <div class="mb-3 d-flex flex-row justify-content-between">
+                        <h4 class="fw-semibold my-auto"><i class="bi bi-cpu"></i> CPU</h4>
+                        <div class="d-flex align-items-end flex-column">
+                            <h4 id="card-icecube-cpu" class="text-primary mb-0">Loading</h4>
+                            <span class="fs-7 text-nowrap">Core Hours</span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <h4 class="fw-semibold my-auto"><i class="bi bi-gpu-card"></i> GPU</h4>
+                        <div class="d-flex align-items-end flex-column">
+                            <h4 id="card-icecube-nvidia_com_gpu" class="text-primary mb-0">Loading</h4>
+                            <span class="fs-7 text-nowrap">Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <div class="container-xxl">
     <div class="alert alert-danger" style="display: none" id="error" role="alert"></div>
 </div>
-<div class="container-xxl mb-3">
+<div class="container-xxl my-3">
     <div class="row justify-content-center">
-        <div class="col-12 col-xl-8 col-lg-8 col-md-10">
+        <div class="col-12 col-xl-10 col-lg-10 col-md-12">
             <div id="wrapper" class="overflow-auto"></div>
         </div>
     </div>
