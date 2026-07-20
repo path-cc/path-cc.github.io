@@ -18,6 +18,11 @@ footer:
 include:
   - .well-known
   - .nojekyll
+  # Sphinx-generated assets under pearc26-aiml/ (Jekyll drops _-prefixed paths)
+  - _static
+  - _images
+  - _sources
+  - _sphinx_javascript_frameworks_compat.js
 
 seo:
   meta_og_title: "Partnership to Advance Throughput Computing"
