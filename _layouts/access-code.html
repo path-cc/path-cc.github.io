@@ -18,16 +18,35 @@
     </div>
 </div>
 <script>
+    const expectedHash = {{ page.code_hash | jsonify }};
+    const redirectUrl = {{ page.redirect_url | jsonify }};
+    const errorEl = document.getElementById('access-error');
+
     document.getElementById('access-form').addEventListener('submit', async function (e) {
         e.preventDefault();
-        const code = document.getElementById('access-code').value.trim();
-        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(code));
-        const hash = Array.from(new Uint8Array(digest))
-            .map(b => b.toString(16).padStart(2, '0')).join('');
-        if (hash === '{{ page.code_hash }}') {
-            window.location.href = '{{ page.redirect_url }}';
-        } else {
-            document.getElementById('access-error').style.visibility = 'visible';
+        errorEl.style.visibility = 'hidden';
+
+        if (!window.crypto || !window.crypto.subtle) {
+            errorEl.textContent = 'Your browser does not support this access check. Please use a modern browser.';
+            errorEl.style.visibility = 'visible';
+            return;
+        }
+
+        try {
+            const code = document.getElementById('access-code').value.trim();
+            const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(code));
+            const hash = Array.from(new Uint8Array(digest))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+
+            if (hash === expectedHash) {
+                window.location.href = redirectUrl;
+            } else {
+                errorEl.textContent = 'Incorrect access code. Please try again.';
+                errorEl.style.visibility = 'visible';
+            }
+        } catch (err) {
+            errorEl.textContent = 'Unable to verify access code in this browser/context.';
+            errorEl.style.visibility = 'visible';
         }
     });
 </script>
