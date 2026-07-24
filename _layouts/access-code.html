@@ -1,0 +1,52 @@
+<title>{{ page.title | default: "Access Code Required" }}</title>
+<div style="display:flex; height:100vh;">
+    <div style="margin:auto; text-align:center; max-width:400px; padding:0 20px;">
+        <div>
+            <img style="width: 100%;" alt="PATh Logo" src="{{ '/images/logo/Logo_Round_Med.png' | relative_url }}">
+        </div>
+        <div style="margin-top: 20px;">
+            <p>{{ page.prompt_text | default: "Enter the access code to continue" }}</p>
+            <form id="access-form">
+                <input id="access-code" type="password" autocomplete="off" autofocus
+                       style="padding: 8px; font-size: 1rem; width: 60%;">
+                <button type="submit" style="padding: 8px 16px; font-size: 1rem; cursor: pointer;">Submit</button>
+            </form>
+            <p id="access-error" style="color: #b00020; margin-top: 12px; visibility: hidden;">
+                Incorrect access code. Please try again.
+            </p>
+        </div>
+    </div>
+</div>
+<script>
+    const expectedHash = {{ page.code_hash | jsonify }};
+    const redirectUrl = {{ page.redirect_url | jsonify }};
+    const errorEl = document.getElementById('access-error');
+
+    document.getElementById('access-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorEl.style.visibility = 'hidden';
+
+        if (!window.crypto || !window.crypto.subtle) {
+            errorEl.textContent = 'Your browser does not support this access check. Please use a modern browser.';
+            errorEl.style.visibility = 'visible';
+            return;
+        }
+
+        try {
+            const code = document.getElementById('access-code').value.trim();
+            const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(code));
+            const hash = Array.from(new Uint8Array(digest))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+
+            if (hash === expectedHash) {
+                window.location.href = redirectUrl;
+            } else {
+                errorEl.textContent = 'Incorrect access code. Please try again.';
+                errorEl.style.visibility = 'visible';
+            }
+        } catch (err) {
+            errorEl.textContent = 'Unable to verify access code in this browser/context.';
+            errorEl.style.visibility = 'visible';
+        }
+    });
+</script>
