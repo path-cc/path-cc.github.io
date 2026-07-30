@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant AP
+    participant W1 as Worker (epoch 1)
+    participant W2 as Worker (epoch 2)
+    participant W3 as Worker (epoch 3)
+
+    AP->>W1: training data + script + container
+    W1->>W1: train epoch 1
+    W1->>AP: output/ (checkpoints)
+
+    AP->>W2: training data + script + container + checkpoint
+    W2->>W2: train epoch 2 (resume from last.ckpt)
+    W2->>AP: output/ (checkpoints)
+
+    AP->>W3: training data + script + container + checkpoint
+    W3->>W3: train epoch 3 (resume from last.ckpt)
+    W3->>AP: output/ (checkpoints)
