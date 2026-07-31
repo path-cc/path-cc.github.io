@@ -1,7 +1,6 @@
 ---
 layout: markdown
 title: Throughput Machine Learning with Heterogeneous resources - Final Report
-permalink: /nairr/final_report/report.html
 ---
 # PATh Supplement - Status and Progress of Heterogeneous Model Training
 
@@ -31,7 +30,7 @@ As a supplement to the Partnership to Advance Throughput Computing (PATh) projec
 
 3.  Demonstrate running single workloads managed by a single AP effectively across as many of the NAIRR pilot resources as possible.
 
-To accomplish these goals, we used the existing Gitter lab’s published Mutational Effect Transfer Learning (METL) protein language model (Gelman, Johnson, et al. 2025), using existing data and software to train a modest number of model variants (20-30) from a single AP, intentionally moving the training processes between available resources at training epoch boundaries. Comparison of these variants will prove compatibility of the models, ensuring that the heterogeneity of resources did not impact the scientific power of the models. A second round of experiments, leveraging a larger "global" model architecture was also conducted to test the feasibility of training larger models, requiring approximately 60 GB of GPU memory.
+To accomplish these goals, we used the existing Gitter lab’s published Mutational Effect Transfer Learning (METL) protein language model[^1], using existing data and software to train a modest number of model variants (20-30) from a single AP, intentionally moving the training processes between available resources at training epoch boundaries. Comparison of these variants will prove compatibility of the models, ensuring that the heterogeneity of resources did not impact the scientific power of the models. A second round of experiments, leveraging a larger "global" model architecture was also conducted to test the feasibility of training larger models, requiring approximately 60 GB of GPU memory.
 
 # Methodology
 
@@ -57,7 +56,7 @@ We used the OSPool access point `ap40.uw.osg-htc.org` for all training jobs targ
 
 ## Job description
 
-The METL software is well-documented with publicly available sourcecode (<https://github.com/gitter-lab/metl/>). Input data and conda environments are similarly available within Zenodo(Gelman, D’Costa, et al. 2025). In order to ease the distribution and deployment of the training software, a Docker container image was created (<https://github.com/CHTC/METL-Conductor/blob/main/Dockerfile>) which contains the installed software. This image was then converted into an apptainer(<span class="nocase">Kurtzer et al.</span> 2021) image. The apptainer and input data were then stored in the OSPool staging area via OSDF in order to ease the movement across the computing ecosystem. Total input sizes are ~6GB for the image and ~20GB for the data.
+The METL software is well-documented with publicly available sourcecode (<https://github.com/gitter-lab/metl/>). Input data and conda environments are similarly available within Zenodo[^2]. In order to ease the distribution and deployment of the training software, a Docker container image was created (<https://github.com/CHTC/METL-Conductor/blob/main/Dockerfile>) which contains the installed software. This image was then converted into an apptainer[^3] image. The apptainer and input data were then stored in the OSPool staging area via OSDF in order to ease the movement across the computing ecosystem. Total input sizes are ~6GB for the image and ~20GB for the data.
 
 Initial benchmarking of the training task was first tested locally on V100 machines, giving approximate resource needs. Additional benchmarking was done both in the CHTC and OSPool clusters to further test and understand the performance and resource needs of the training process.
 
@@ -82,7 +81,7 @@ We built upon a previous summer fellow’s work to create a suite of tools to cr
 The DAG itself is an array of “shish-kebab” subgraphs, with each stack defining the training process of one model variant. Each of these training runs had run-specific information (an unique identifier, random seed, and the desired number of training epochs). Each node within the graph defines a single job, itself describing a single epoch of training.
 
 <figure id="fig:dag" data-latex-placement="H">
-<p><img src="./images/DAG.png" style="width:80.0%" alt="image" /> <span id="fig:dag" data-label="fig:dag"></span></p>
+<p><img src="/images/nairr/final-report/images/DAG.png" style="width:80.0%" alt="image" /> <span id="fig:dag" data-label="fig:dag"></span></p>
 <figcaption>A diagram showing the shape of the DAG implemented. The diagram shows 2 training runs, each of 5 epochs, for simplicity.</figcaption>
 </figure>
 
@@ -93,7 +92,7 @@ In order to monitor the training processes, a script was developed that tails HT
 Additionally, the tool can provide per-training run summaries, showing where each epoch was completed and the amount of execution time taken. There is also a collection of post-processing and analysis scripts to report on overall behavior of the training process.
 
 <figure id="fig:dagman_monitor" data-latex-placement="H">
-<img src="./images/dagman_monitor.png" style="width:80.0%" />
+<img src="/images/nairr/final-report/images/dagman_monitor.png" style="width:80.0%" />
 <figcaption>A screenshot showing the DAGMan monitor utility, providing an overview of the in-progress training runs.</figcaption>
 </figure>
 
@@ -101,7 +100,7 @@ Additionally, the tool can provide per-training run summaries, showing where eac
 
 ## Model configuration
 
-The initial round of experiments was run on a **METL-Local** model. This is a transformer encoder with 3 layers, 4 attention heads, embedding dimension 256, and feedforward width 1024, resulting in 2.4M total parameters. This model is intended to be trained on a single protein structure and some variants, but during validation, it was discovered that this the dataset used for training was unintentionally the “global” dataset. This dataset, a collection of Rosetta (Leaver-Fay et al. 2011) simulations containing a wide variety of protein structures and variants, is too large and varied to be used as useful input to this model architecture. However, the training process itself was still informative in our experiments, so is included here.
+The initial round of experiments was run on a **METL-Local** model. This is a transformer encoder with 3 layers, 4 attention heads, embedding dimension 256, and feedforward width 1024, resulting in 2.4M total parameters. This model is intended to be trained on a single protein structure and some variants, but during validation, it was discovered that this the dataset used for training was unintentionally the “global” dataset. This dataset, a collection of Rosetta[^4] simulations containing a wide variety of protein structures and variants, is too large and varied to be used as useful input to this model architecture. However, the training process itself was still informative in our experiments, so is included here.
 
 ## Results
 
@@ -121,22 +120,22 @@ In total, 5,318.6 GPU hours were utilized Six different GPU models were utilized
 GPU Utilization Breakdown
 
 <figure id="fig:gpu_distribution" data-latex-placement="H">
-<p><img src="mldag_reports/ospool_misconfigured/gpu_distribution_analysis.png" style="width:80.0%" alt="image" /> <span id="fig:gpu_distribution" data-label="fig:gpu_distribution"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/ospool_misconfigured/gpu_distribution_analysis.png" style="width:80.0%" alt="image" /> <span id="fig:gpu_distribution" data-label="fig:gpu_distribution"></span></p>
 <figcaption>Distribution of epochs by GPU model.</figcaption>
 </figure>
 
 <figure id="fig:resource_time_breakdown" data-latex-placement="H">
-<p><img src="mldag_reports/ospool_misconfigured/resource_computation_time_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_time_breakdown" data-label="fig:resource_time_breakdown"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/ospool_misconfigured/resource_computation_time_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_time_breakdown" data-label="fig:resource_time_breakdown"></span></p>
 <figcaption>Distribution of total computation time by targeted resource.</figcaption>
 </figure>
 
 <figure id="fig:resource_epochs_breakdown" data-latex-placement="H">
-<p><img src="mldag_reports/ospool_misconfigured/resource_epochs_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown" data-label="fig:resource_epochs_breakdown"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/ospool_misconfigured/resource_epochs_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown" data-label="fig:resource_epochs_breakdown"></span></p>
 <figcaption>Distribution of epochs trained by targeted resource.</figcaption>
 </figure>
 
 <figure id="fig:resource_epochs_breakdown_glidein" data-latex-placement="H">
-<p><img src="mldag_reports/ospool_misconfigured/resource_epochs_breakdown_glidein.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_glidein" data-label="fig:resource_epochs_breakdown_glidein"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/ospool_misconfigured/resource_epochs_breakdown_glidein.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_glidein" data-label="fig:resource_epochs_breakdown_glidein"></span></p>
 <figcaption>Distribution of epochs trained by OSPool glidein resource.</figcaption>
 </figure>
 
@@ -145,7 +144,7 @@ GPU Utilization Breakdown
 Once training was completed, the model variants were evaluated using validation data. Due to the training set misconfiguration, the models themselves do not provide scientifically informative predictions, and as a result are only compared to each other for consistency. Training loss and Pearson total scores are shown in Figure <a href="#fig:key_metrics" data-reference-type="ref" data-reference="fig:key_metrics">7</a>.
 
 <figure id="fig:key_metrics" data-latex-placement="H">
-<img src="plots/key_metrics_combined.png" style="width:80.0%" />
+<img src="/images/nairr/final-report/plots/key_metrics_combined.png" style="width:80.0%" />
 <figcaption>Evaluation results of the 21 model variants. Pictured is comparisons of the Pearson total (top) and test loss (bottom) scores.</figcaption>
 </figure>
 
@@ -179,22 +178,22 @@ In total, 612 epochs were completed across five resources (OSPool, Delta, Expans
 GPU Utilization Breakdown — Experiment 2
 
 <figure id="fig:gpu_distribution_global" data-latex-placement="H">
-<p><img src="mldag_reports/global_pretraining/gpu_distribution_analysis.png" style="width:80.0%" alt="image" /> <span id="fig:gpu_distribution_global" data-label="fig:gpu_distribution_global"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/global_pretraining/gpu_distribution_analysis.png" style="width:80.0%" alt="image" /> <span id="fig:gpu_distribution_global" data-label="fig:gpu_distribution_global"></span></p>
 <figcaption>Distribution of epochs by GPU model.</figcaption>
 </figure>
 
 <figure id="fig:resource_time_breakdown_global" data-latex-placement="H">
-<p><img src="mldag_reports/global_pretraining/resource_computation_time_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_time_breakdown_global" data-label="fig:resource_time_breakdown_global"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/global_pretraining/resource_computation_time_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_time_breakdown_global" data-label="fig:resource_time_breakdown_global"></span></p>
 <figcaption>Distribution of total computation time by targeted resource.</figcaption>
 </figure>
 
 <figure id="fig:resource_epochs_breakdown_global" data-latex-placement="H">
-<p><img src="mldag_reports/global_pretraining/resource_epochs_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_global" data-label="fig:resource_epochs_breakdown_global"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/global_pretraining/resource_epochs_breakdown.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_global" data-label="fig:resource_epochs_breakdown_global"></span></p>
 <figcaption>Distribution of epochs trained by targeted resource.</figcaption>
 </figure>
 
 <figure id="fig:resource_epochs_breakdown_glidein_global" data-latex-placement="H">
-<p><img src="mldag_reports/global_pretraining/resource_epochs_breakdown_glidein.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_glidein_global" data-label="fig:resource_epochs_breakdown_glidein_global"></span></p>
+<p><img src="/images/nairr/final-report/mldag_reports/global_pretraining/resource_epochs_breakdown_glidein.png" style="width:80.0%" alt="image" /> <span id="fig:resource_epochs_breakdown_glidein_global" data-label="fig:resource_epochs_breakdown_glidein_global"></span></p>
 <figcaption>Distribution of epochs trained by OSPool glidein resource.</figcaption>
 </figure>
 
@@ -207,12 +206,12 @@ After each training epoch (in both the heterogenous and homogenous resource mode
 To assess whether training outcomes differed systematically by compute environment, we compared evaluation metrics across runs grouped by site of execution: CHTC (homogeneous GPU types) and OSPool/NAIRR (heterogeneous GPU types). For each site group, per-epoch metric values were aggregated across all runs, and the mean and standard deviation were computed at each epoch. A coefficient of variation (CV) was also computed as the standard deviation divided by the mean, providing a relative measure of variability for each training approach. These results are shown in <a href="#fig:test_loss_site_comparison" data-reference-type="ref+label" data-reference="fig:test_loss_site_comparison">12</a> and <a href="#fig:test_pearson_site_comparison" data-reference-type="ref+label" data-reference="fig:test_pearson_site_comparison">13</a> for test loss and Pearson total score, respectively.
 
 <figure id="fig:test_loss_site_comparison" data-latex-placement="H">
-<p><img src="plots/test_loss_site_comparison.png" style="width:80.0%" alt="image" /> <span id="fig:test_loss_site_comparison" data-label="fig:test_loss_site_comparison"></span></p>
+<p><img src="/images/nairr/final-report/plots/test_loss_site_comparison.png" style="width:80.0%" alt="image" /> <span id="fig:test_loss_site_comparison" data-label="fig:test_loss_site_comparison"></span></p>
 <figcaption>Comparison of test loss, grouped by CHTC and OSPool/NAIRR training strategies.</figcaption>
 </figure>
 
 <figure id="fig:test_pearson_site_comparison" data-latex-placement="H">
-<p><img src="plots/test_pearson_total_score_site_comparison.png" style="width:80.0%" alt="image" /> <span id="fig:test_pearson_site_comparison" data-label="fig:test_pearson_site_comparison"></span></p>
+<p><img src="/images/nairr/final-report/plots/test_pearson_total_score_site_comparison.png" style="width:80.0%" alt="image" /> <span id="fig:test_pearson_site_comparison" data-label="fig:test_pearson_site_comparison"></span></p>
 <figcaption>Comparison of Pearson total score, grouped by CHTC and OSPool/NAIRR training strategies.</figcaption>
 </figure>
 
@@ -370,41 +369,23 @@ Each run’s checkpoints directory was periodically manually pruned to minimize 
 ### Per-epoch job data flow
 
 <figure id="fig:dataflow_epoch" data-latex-placement="H">
-<img src="diagrams/dataflow_epoch.png" />
+<img src="/images/nairr/final-report/diagrams/dataflow_epoch.png" />
 <figcaption>Data flow for a single epoch job.</figcaption>
 </figure>
 
 ### Epoch-to-epoch checkpoint chain (within one run)
 
 <figure id="fig:dataflow_chain" data-latex-placement="H">
-<img src="diagrams/dataflow_checkpoint_chain.png" style="width:70.0%" />
+<img src="/images/nairr/final-report/diagrams/dataflow_checkpoint_chain.png" style="width:70.0%" />
 <figcaption>Checkpoint handoff between sequential epochs within one training run.</figcaption>
 </figure>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+# References
 
-<div id="ref-gelman_2025_14916528" class="csl-entry">
+[^1]: Gelman, S., Johnson, B., Freschlin, C. R., et al. (2025). Biophysics-based protein language models for protein engineering. *Nature Methods*, 22(9), 1868–1879. <https://doi.org/10.1038/s41592-025-02776-2>
 
-Gelman, Sam, Sameer D’Costa, Philip Romero, and Anthony Gitter. 2025. “METL Rosetta Datasets.” Zenodo, February. <https://doi.org/10.5281/zenodo.14916528>.
+[^2]: Gelman, S., D’Costa, S., Romero, P., & Gitter, A. (2025). METL Rosetta datasets [Data set]. Zenodo. <https://doi.org/10.5281/zenodo.14916528>
 
-</div>
+[^3]: Kurtzer, G. M., cclerget, Bauer, M., Kaneshiro, I., Trudgian, D., & Godlove, D. (2021). hpcng/singularity: Singularity 3.7.3 (Version v3.7.3) [Computer software]. Zenodo. <https://doi.org/10.5281/zenodo.4667718>
 
-<div id="ref-gelmanBiophysicsbasedProteinLanguage2025" class="csl-entry">
-
-Gelman, Sam, Bryce Johnson, Chase R. Freschlin, et al. 2025. “Biophysics-Based Protein Language Models for Protein Engineering.” *Nature Methods* 22 (9): 1868–79. <https://doi.org/10.1038/s41592-025-02776-2>.
-
-</div>
-
-<div id="ref-apptainer" class="csl-entry">
-
-<span class="nocase">Kurtzer, Gregory M., cclerget, Michael Bauer, Ian Kaneshiro, David Trudgian, and David Godlove</span>. 2021. *Hpcng/Singularity: Singularity 3.7.3*. V. v3.7.3. Zenodo, released April. <https://doi.org/10.5281/zenodo.4667718>.
-
-</div>
-
-<div id="ref-rosetta" class="csl-entry">
-
-Leaver-Fay, Andrew, Michael Tyka, Steven M. Lewis, et al. 2011. “Rosetta3.” *Methods in Enzymology*, 545–74. <https://doi.org/10.1016/b978-0-12-381270-4.00019-6>.
-
-</div>
-
-</div>
+[^4]: Leaver-Fay, A., Tyka, M., Lewis, S. M., et al. (2011). Rosetta3. *Methods in Enzymology*, 545–574. <https://doi.org/10.1016/b978-0-12-381270-4.00019-6>
