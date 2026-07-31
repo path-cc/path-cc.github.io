@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph OSDF["OSDF (cached from AP)"]
+        img["Container image\nmetl_global_fixed_time_2025-10-10.sif"]
+        data["Training data\nprocessed-global.tar.gz (~19 GB)"]
+    end
+
+    subgraph AP["Access Point (ap40)"]
+        script["pretrain.sh"]
+        ckpt_in["Checkpoint dir\noutput/training_logs/{run_uuid}/\n(epoch > 1 only)"]
+        ckpt_out["Checkpoint dir\noutput/training_logs/{run_uuid}/"]
+        logs["Job logs\n{run_uuid}/{epoch}_{CLUSTERID}.out/.err"]
+    end
+
+    subgraph Worker["Worker Node"]
+        sandbox["HTCondor sandbox"]
+        train["train_source_model.py"]
+    end
+
+    WandB["WandB\n(external)"]
+
+    img -->|"OSDF pull"| sandbox
+    data -->|"OSDF pull"| sandbox
+    script -->|"file transfer"| sandbox
+    ckpt_in -->|"file transfer"| sandbox
+
+    sandbox --> train
+    train -->|"metrics stream"| WandB
+    train -->|"ON_EXIT_OR_EVICT"| ckpt_out
+    train -->|"ON_EXIT_OR_EVICT"| logs

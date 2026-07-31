@@ -1,0 +1,84 @@
+EXPERIMENT ANALYSIS SUMMARY REPORT
+==================================================
+
+Analysis Period: 2025-08-20 09:51 to 2026-06-20 05:54
+Total Job Attempts: 1,382
+Unique Jobs: 361
+Total Completed Epochs: 600
+
+RESOURCE UTILIZATION:
+--------------------
+EXPANSE:
+  • Successful Jobs: 78 (100.0%)
+  • Computation Time: 479.7 hours
+  • Time Efficiency: 10.6%
+
+OSPOOL:
+  • Successful Jobs: 367 (100.0%)
+  • Computation Time: 4,278.8 hours
+  • Time Efficiency: 10.1%
+
+BRIDGES2:
+  • Successful Jobs: 18 (100.0%)
+  • Computation Time: 116.4 hours
+  • Time Efficiency: 8.0%
+
+DELTA:
+  • Successful Jobs: 65 (100.0%)
+  • Computation Time: 680.8 hours
+  • Time Efficiency: 11.2%
+
+AWS:
+  • Successful Jobs: 59 (100.0%)
+  • Computation Time: 306.8 hours
+  • Time Efficiency: 22.3%
+
+ANVIL:
+  • Successful Jobs: 1 (100.0%)
+  • Computation Time: 21.6 hours
+  • Time Efficiency: 0.9%
+
+OVERALL METRICS:
+---------------
+Total Success Rate: 102.0%
+Total Computation Time: 5,884.1 hours
+Overall Time Efficiency: 100.0%
+
+GPU UTILIZATION:
+----------------
+Total GPU Hours: 20,045.1
+GPU Types Used: 8
+
+NVIDIA A100 80GB PCIe: 64.0 jobs, 100.0% success rate
+NVIDIA A100-SXM4-40GB: 61.0 jobs, 100.0% success rate
+NVIDIA A100-SXM4-80GB: 135.0 jobs, 100.0% success rate
+NVIDIA A40: 37.0 jobs, 100.0% success rate
+NVIDIA H100 80GB HBM3: 47.0 jobs, 100.0% success rate
+NVIDIA H200: 121.0 jobs, 100.0% success rate
+NVIDIA L40S: 55.0 jobs, 100.0% success rate
+Tesla V100-SXM2-32GB: 92.0 jobs, 100.0% success rate
+
+DATA TRANSFER:
+-------------
+Total Data Transferred: 25,375.2 GB
+
+anvil: 26.0 GB (1.0 jobs)
+aws: 1,957.7 GB (62.0 jobs)
+bridges2: 195.6 GB (27.0 jobs)
+delta: 1,891.3 GB (71.0 jobs)
+expanse: 743.3 GB (104.0 jobs)
+ospool: 20,561.3 GB (557.0 jobs)
+
+INPUT FILE TRANSFER TIMING:
+---------------------------
+Jobs with Transfer Timing: 1,382
+Mean Transfer Duration: 6.6 minutes
+Median Transfer Duration: 2.5 minutes
+Total Transfer Time: 152.4 hours
+
+anvil: median 4.0 min, mean 5.3 min (8 jobs)
+aws: median 4.5 min, mean 6.3 min (74 jobs)
+bridges2: median 7.8 min, mean 13.7 min (34 jobs)
+delta: median 2.2 min, mean 4.6 min (92 jobs)
+expanse: median 2.2 min, mean 4.5 min (138 jobs)
+ospool: median 2.4 min, mean 6.9 min (1036 jobs)
