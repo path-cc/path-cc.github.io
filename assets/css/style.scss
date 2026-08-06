@@ -195,7 +195,6 @@ main {
   background-color: #e61c4e;
   background-blend-mode: soft-light;
   background-size: cover;
-  height: 300px;
   width: 100%;
   transform: scale(-1, 1);
 }
@@ -204,47 +203,64 @@ main {
   transform: scale(-1, 1)
 }
 
-@include media-breakpoint-up(xs) {
-  #nairr {
-    height: 112px;
-  }
+.ai-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba($white, .95);
+  border-radius: .75rem;
+  border-top: 4px solid $primary;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 .25rem .75rem rgba($black, .2);
+  transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
-@include media-breakpoint-up(sm) {
-  #nairr {
-    height: 92px;
-  }
+.ai-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 .75rem 1.5rem rgba($black, .28);
 }
 
-@include media-breakpoint-up(md) {
-
-  #nairr {
-    height: 106px;
-  }
+.ai-card-eyebrow {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: $primary;
+  margin-bottom: .35rem;
 }
 
-@include media-breakpoint-up(lg) {
-
-  #nairr {
-    height: 106px;
-  }
+.ai-card-title {
+  font-weight: 500;
+  font-size: 1.25rem;
+  margin-bottom: .5rem;
 }
 
-@include media-breakpoint-up(xl) {
+.ai-card-text {
+  color: $text-muted;
+  font-size: .95rem;
+  margin-bottom: .75rem;
+}
 
-  #nairr {
-    height: 130px;
-  }
+.ai-card-link {
+  margin-top: auto;
+  align-self: flex-start;
+  font-weight: 600;
+  color: $primary;
+}
+
+.ai-card:hover .ai-card-link i {
+  transform: translateX(3px);
+}
+
+.ai-card-link i {
+  display: inline-block;
+  transition: transform .15s ease-in-out;
 }
 
 @include media-breakpoint-up(xxl) {
 
   .big-text {
     font-size: 3.5rem;
-  }
-
-  #nairr {
-    height: 130px;
   }
 }
 
