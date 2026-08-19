@@ -3,26 +3,25 @@ layout: sub-page
 bodyClass: page-services-list
 ---
 
-<h1 class="mb-4">News Articles</h1>
+<h1 class="section-keyline mb-5">News Articles</h1>
 
-<div class="row">
+<div class="row g-4 pb-5">
     {% include get/news.liquid %}
     {% for article in news %}
-    <div class="col-12 col-sm-6 col-xl-4 mb-4">
-        <div class="news news-summary">
-            <div class="article-content">
-                {% if article.image.path %}
-                <a href="{{ article.url | relative_url }}" class="d-block">
-                    <img class="w-100 image-card-cap rounded mb-3" alt="{{ article.image.alt }}" src="{{ article.image.path | relative_url }}">
-                </a>
-                {% endif %}
-                <h2 class="article-title">
-                    <a href="{{ article.url | relative_url }}">{{ article.title }}</a>
-                    {% unless article.hide_date %}
-                    <small class="text-muted article-date">{{ article.date | date: '%B %d, %Y' }}</small>
-                    {% endunless %}
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="news-list-card">
+            {% if article.image.path %}
+            <img class="news-list-card-img" alt="{{ article.image.alt }}" src="{{ article.image.path | relative_url }}">
+            {% endif %}
+            <div class="news-list-card-body">
+                {% unless article.hide_date %}
+                <div class="news-list-card-date">{{ article.date | date: '%B %d, %Y' }}</div>
+                {% endunless %}
+                <h2 class="news-list-card-title">
+                    <a class="stretched-link" href="{{ article.url | relative_url }}">{{ article.title }}</a>
                 </h2>
-                <p>{{ article.excerpt | markdownify | strip_html }}</p>
+                <p class="news-list-card-excerpt">{{ article.excerpt | markdownify | strip_html }}</p>
+                <span class="ai-card-link">Read more <i class="bi bi-arrow-right"></i></span>
             </div>
         </div>
     </div>

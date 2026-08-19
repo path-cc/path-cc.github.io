@@ -257,6 +257,193 @@ main {
   transition: transform .15s ease-in-out;
 }
 
+// Branded lift card, shared by the AI Hubs example cards and the news list
+%brand-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: $white;
+  border-radius: .75rem;
+  border-top: 4px solid $primary;
+  box-shadow: 0 .25rem .75rem rgba($black, .1);
+  transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .75rem 1.5rem rgba($black, .18);
+  }
+
+  &:hover .ai-card-link i {
+    transform: translateX(3px);
+  }
+
+  .ai-card-link {
+    font-size: .9rem;
+  }
+}
+
+%brand-card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+// Section heading with a short brand keyline underneath
+.section-keyline {
+  font-weight: 500;
+}
+
+.section-keyline::after {
+  content: "";
+  display: block;
+  width: 3.5rem;
+  height: .25rem;
+  margin-top: .6rem;
+  border-radius: 2px;
+  background-color: $primary;
+}
+
+// AI Hubs page (/ai-hubs.html)
+.ai-hub-hero {
+  background: url({{ '/images/nairr.jpg' | relative_url }}) no-repeat center;
+  background-color: #e61c4e;
+  background-blend-mode: soft-light;
+  background-size: cover;
+  height: 220px;
+}
+
+.ai-hub-cta {
+  background-color: rgba($primary, .05);
+  border: 1px solid rgba($primary, .15);
+  border-top: 4px solid $primary;
+  border-radius: .75rem;
+  padding: 1.5rem;
+}
+
+.ai-hub-example-card {
+  @extend %brand-card;
+
+  img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+}
+
+.ai-hub-example-body {
+  @extend %brand-card-body;
+}
+
+.ai-hub-example-title {
+  font-weight: 500;
+  font-size: 1.05rem;
+  margin-bottom: .75rem;
+}
+
+// News listing page (/news)
+.news-list-card {
+  @extend %brand-card;
+}
+
+.news-list-card-img {
+  width: 100%;
+  aspect-ratio: 2;
+  object-fit: cover;
+}
+
+.news-list-card-body {
+  @extend %brand-card-body;
+}
+
+.news-list-card-date {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: $text-muted;
+  margin-bottom: .35rem;
+}
+
+.news-list-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: .5rem;
+
+  a {
+    color: $secondary;
+    text-decoration: none;
+    transition: color .15s ease-in-out;
+  }
+}
+
+.news-list-card:hover .news-list-card-title a {
+  color: $primary;
+}
+
+.news-list-card-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: $text-muted;
+  font-size: .95rem;
+  margin-bottom: .75rem;
+}
+
+// Single news article page (body.page-news-single)
+.page-news-single {
+  .news-back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-size: .9rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    i {
+      display: inline-block;
+      transition: transform .15s ease-in-out;
+    }
+
+    &:hover i {
+      transform: translateX(-3px);
+    }
+  }
+
+  .title {
+    line-height: 1.15;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 3.5rem;
+      height: .25rem;
+      margin-top: .75rem;
+      border-radius: 2px;
+      background-color: $primary;
+    }
+  }
+
+  .article-date {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: $text-muted;
+
+    &:before {
+      content: none;
+    }
+  }
+
+  .content img {
+    border-radius: .5rem;
+  }
+}
+
 @include media-breakpoint-up(xxl) {
 
   .big-text {
