@@ -5,7 +5,7 @@ export const updateTotals = async (timeConfigs) => {
 
 export const getNrpPrometheusData = async (timespan, namespaceFilter=null) => {
     const currentTimestamp = Math.floor(Date.now() / 1000)
-    const response = await fetch(`https://thanos.nrp-nautilus.io/api/v1/query?query=sum%20by(resource)%20(sum_over_time(namespace_used_resources{namespace=${namespaceFilter}}[${timespan}d:1h]@${currentTimestamp}))&dedup=true&partial_response=false`)
+    const response = await fetch(`https://thanos.nrp-nautilus.io/api/v1/query?query=sum%20by(resource)%20(sum_over_time(namespace_used_resources{namespace=${namespaceFilter}}[${timespan}d:1h]@${currentTimestamp}))&dedup=true&partial_response=true`)
     const data = await response.json()
     return data['data']['result'].reduce((acc, item) => {
         return {

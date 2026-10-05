@@ -39,7 +39,7 @@ bodyClass: page-presentations-list
 </div>
 
 <div class="row mb-3">
-    {% for presentation in presentations %}
+    {% for presentation in presentations reversed %}
     <div class="presentation-card col-12 col-md-6 mb-3" data-event="{{ presentation.event }}" data-keywords="{{ presentation.keywords | join: ',' }}">
         <div class="news news-summary">
             <div class="article-content">

@@ -9,6 +9,7 @@ Advancing domain science through machine learning requires an ensemble of models
 To address these challenges, the Partnership to Advance Throughput Computing (PATh) is launching a new collaboration to profile the effects of throughput training and inference on distributed, heterogeneous capacity. Using protein AI as an exemplar scientific domain, the project will characterize the impact of training ensembles across heterogeneous resources, improve capabilities and services to reduce barriers for new ML researchers, and demonstrate running single workloads effectively across NAIRR pilot resources.
 
 ## Links
+- [Final Report](/nairr/final-report/)
 - [Report on initial model configuration](./initial_report/report)
 - [NAIRR Pilot Demonstration Project Page](https://nairrpilot.org/projects/demo/path)
 - [NAIRR Pilot Project - Initial Resource Allocation](https://nairrpilot.org/projects/awarded?_requestNumber=NAIRR240335)
