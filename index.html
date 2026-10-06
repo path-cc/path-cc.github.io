@@ -8,11 +8,23 @@ intro_image_absolute: true
 intro_image_hide_on_mobile: true
 ---
 
+{% comment %}
+    Top-of-page announcement. The Nobel Prize banner shows until nobel_banner_until (exclusive),
+    after which the NSF AI Infrastructure Hub banner returns. The site rebuilds hourly, so the
+    switch happens at build time.
+{% endcomment %}
+{% assign current_time = 'now' | date: '%Y-%m-%d' | date: '%s' | plus: 0 %}
+{% assign nobel_banner_until = '2026-11-03' | date: '%s' | plus: 0 %}
 <div class="bg-primary text-white py-1">
     <div class="container-xxl d-flex justify-content-center">
         <div class='d-flex align-items-center'>
+            {% if current_time < nobel_banner_until %}
+            <span><b>Francis Halzen awarded the 2026 Nobel Prize</b>, marking the 4th prize received by HTCondor users!</span>
+            <a class="ms-3 btn btn-outline-light btn-sm text-nowrap" href="/news/2026-10-06-francis-halzen-nobel-prize/">Read More</a>
+            {% else %}
             <span><b class="shimmer">NSF AI Infrastructure Hub</b> teams, the PATh team is ready to help</span>
             <a class="ms-3 btn btn-outline-light btn-sm" href="/ai-hubs.html">Learn more</a>
+            {% endif %}
         </div>
     </div>
 </div>
