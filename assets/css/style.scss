@@ -177,6 +177,67 @@ main {
   }
 }
 
+// Blockquotes (Markdown `>` quotes and Bootstrap `.blockquote` figures)
+blockquote {
+  position: relative;
+  margin: 30px 0;
+  padding: 1.5em 2em 1.5em 3.25em;
+  color: $steel;
+  font-size: 1.05em;
+  font-style: italic;
+  line-height: 1.6;
+  background: linear-gradient(135deg, rgba($primary, .07), rgba($primary, 0) 70%);
+  border-left: .3em solid $primary;
+  border-radius: 0 .5rem .5rem 0;
+  box-shadow: 0 2px 8px rgba($black, .06);
+
+  // Large decorative opening quotation mark
+  &::before {
+    content: "\201C";
+    position: absolute;
+    top: .1em;
+    left: .35em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 4em;
+    line-height: 1;
+    color: $primary;
+    opacity: .35;
+    pointer-events: none;
+  }
+
+  p {
+    color: inherit;
+    margin-bottom: .75em;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Attribution placed inside the quote
+  footer,
+  cite,
+  .blockquote-footer {
+    display: block;
+    margin-top: .75em;
+    margin-bottom: 0;
+    font-size: .85rem;
+    font-style: normal;
+    color: $text-muted;
+    &::before {
+      content: "\2014\00A0";
+    }
+  }
+}
+
+// Attribution placed after the quote in a <figure> wrapper
+figure > blockquote + .blockquote-footer {
+  margin-top: -16px;
+  margin-bottom: 30px;
+  padding-left: 3.25em;
+  font-size: .85rem;
+  color: $text-muted;
+}
+
 .hover-shadow-sm:hover {
   box-shadow: 0 .125rem .25rem rgba($black, .075) !important;
 }
