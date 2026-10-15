@@ -4,14 +4,13 @@ layout: sub-page
 ---
 
 {% capture content %}
-The Partnership to Advance Throughput Computing (PATh) is a project funded by
-NSF's OAC Campus Cyberinfrastructure (CC\*) program in order to address the
-needs of the rapidly growing community of faculty and students who are
-embracing Distributed High Throughput Computing (dHTC) technologies and
-services to advance their research. Across the science and engineering
-community, a growing number of single-PI groups are joining the cohort of
-international physical science collaborations who have depended on the dHTC
-paradigm for decades.
+The Partnership to Advance Throughput Computing (PATh) brings together 
+organizations and projects committed to address the needs of the rapidly 
+growing community of faculty and students who are embracing Distributed
+High Throughput Computing (dHTC) technologies and services to advance 
+their research. Across the science and engineering community, a growing 
+number of single-PI groups are joining the cohort of international physical
+science collaborations who have depended on the dHTC paradigm for decades.
 
 PATh brings together two entities with a strong history of supporting
 dHTC-enabled research: the Center for High Throughput Computing (CHTC) and the
@@ -48,16 +47,7 @@ to large collaborations, institutions, and industry, with training and outreach
 components designed and executed to empower the communities that can benefit
 from these services.
 
-The institutions in the partnership are:
-
-* [University of Wisconsin-Madison](https://www.wisc.edu/)
-* [Information Sciences Institute](https://www.isi.edu/)
-* [Morgridge Institute for Research](https://morgridge.org/)
-* [The University of Chicago](https://www.uchicago.edu/)
-* [San Diego Supercomputing Center at the University of California San Diego](https://www.sdsc.edu/)
-* [Indiana University](https://www.iu.edu/)
-* [University of Nebraska-Lincoln](https://www.unl.edu/)
-* [Florida International University](https://www.fiu.edu/)
+PATh coordinates activities and effort across the following NSF-funded projects: [FabAID](https://fabaid.io/), [IRIS-HEP](https://iris-hep.org/), [PATh](https://path-cc.io/), and [Pelican](https://pelicanplatform.org/).
 {% endcapture %}
 
 {% capture content %}
