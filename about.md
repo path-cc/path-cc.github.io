@@ -48,6 +48,8 @@ components designed and executed to empower the communities that can benefit
 from these services.
 
 PATh coordinates activities and effort across the following NSF-funded projects: [FabAID](https://fabaid.io/), [IRIS-HEP](https://iris-hep.org/), [PATh](https://path-cc.io/), and [Pelican](https://pelicanplatform.org/).
+
+Leadership of the PATh Partnership - Brian Bockelman (Associate Director of CHTC), Peter Couvares (Executive Director of the OSG) and Miron Livny (Director of the CHTC).
 {% endcapture %}
 
 {% capture content %}
